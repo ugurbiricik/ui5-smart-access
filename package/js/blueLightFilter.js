@@ -1,3 +1,5 @@
+import { setFilter, removeFilter } from './filterManager.js';
+
 function getFilter(level) {
     const sepia = (level / 100) * 0.6;
     const hue = -20 * (level / 100);
@@ -6,13 +8,9 @@ function getFilter(level) {
 }
 
 export const enableBlueLightFilter = (level = 50) => {
-    document.documentElement.style.filter = getFilter(level);
-};
-
-export const updateBlueLightFilter = (level = 50) => {
-    document.documentElement.style.filter = getFilter(level);
+    setFilter('blueLightFilter', getFilter(level));
 };
 
 export const disableBlueLightFilter = () => {
-    document.documentElement.style.filter = '';
-}; 
+    removeFilter('blueLightFilter');
+};

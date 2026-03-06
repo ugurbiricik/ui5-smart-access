@@ -30,25 +30,51 @@ import {
     toggleNightMode
 } from "./js/nightMode.js";
 import {
-    toggleImages
+    toggleImages,
+    initImageHider
 } from "./js/imageHider.js";
 import {
-    toggleContrastMode
+    toggleContrastMode,
+    applyCustomContrast,
+    removeCustomContrast
 } from "./js/contrast.js";
 import { resetAll } from "./js/resetAll.js";
+import { savePref, loadPref, clearPrefs } from "./js/preferences.js";
+
+const PERSISTED_KEYS = [
+    "fontStep", "ttsRate", "ttsVolume", "colorBlindnessType",
+    "blueLightFilterLevel", "blueLightFilterActive", "nightModeActive"
+];
+
+function loadSavedSettings() {
+    const saved = {};
+    PERSISTED_KEYS.forEach(key => {
+        const val = loadPref(key, undefined);
+        if (val !== undefined) saved[key] = val;
+    });
+    return saved;
+}
+
+function saveCurrentSettings() {
+    PERSISTED_KEYS.forEach(key => {
+        savePref(key, oSettingsModel.getProperty("/" + key));
+    });
+}
+
+const savedSettings = loadSavedSettings();
 
 const oSettingsModel = new JSONModel({
-    fontStep: 0,
-    ttsRate: 1,
-    ttsVolume: 1,
+    fontStep: savedSettings.fontStep ?? 0,
+    ttsRate: savedSettings.ttsRate ?? 1,
+    ttsVolume: savedSettings.ttsVolume ?? 1,
     ttsHover: false,
-    colorBlindnessType: 'none',
-    blueLightFilterLevel: 50,
-    blueLightFilterActive: false,
+    colorBlindnessType: savedSettings.colorBlindnessType ?? 'none',
+    blueLightFilterLevel: savedSettings.blueLightFilterLevel ?? 50,
+    blueLightFilterActive: savedSettings.blueLightFilterActive ?? false,
     fontSizeExpanded: false,
     ttsExpanded: false,
     colorBlindnessExpanded: false,
-    blaufilterExpanded: false,
+    blueLightFilterExpanded: false,
     nightModeActive: false,
     toggleImagesActive: false,
     contrastModeActive: false,
@@ -59,6 +85,16 @@ const oSettingsModel = new JSONModel({
     contrastReadable: "LESBAR?",
     contrastUnderlineLinks: true
 });
+
+function updateTitleText(controlId, i18nKey) {
+    const control = Fragment.byId(this._sFragmentId, controlId);
+    if (control && this._oPopover) {
+        const bundle = this._oPopover.getModel("i18n").getResourceBundle();
+        if (bundle) {
+            control.setText(bundle.getText(i18nKey));
+        }
+    }
+}
 
 const popoverInternalController = {
     onFontSizeToolbarPress: function () {
@@ -73,21 +109,14 @@ const popoverInternalController = {
         const expanded = oSettingsModel.getProperty("/colorBlindnessExpanded");
         oSettingsModel.setProperty("/colorBlindnessExpanded", !expanded);
     },
-    onBlaufilterToolbarPress: function () {
-        const expanded = oSettingsModel.getProperty("/blaufilterExpanded");
-        oSettingsModel.setProperty("/blaufilterExpanded", !expanded);
-        
-        
-        const blaufilterTitle = Fragment.byId(this._sFragmentId, "blaufilterTitle");
-        if (blaufilterTitle && this._oPopover) {
-            const i18nModel = this._oPopover.getModel("i18n");
-            if (i18nModel && i18nModel.getResourceBundle) {
-                const bundle = i18nModel.getResourceBundle();
-                const newText = !expanded ? bundle.getText("blueFilter.deactivate") : bundle.getText("blueFilter.activate");
-                blaufilterTitle.setText(newText);
-            }
-        }
-        
+    onBlueLightFilterToolbarPress: function () {
+        const expanded = oSettingsModel.getProperty("/blueLightFilterExpanded");
+        oSettingsModel.setProperty("/blueLightFilterExpanded", !expanded);
+
+        updateTitleText.call(this, "blueLightFilterTitle",
+            !expanded ? "blueFilter.deactivate" : "blueFilter.activate"
+        );
+
         if (!expanded) {
             enableBlueLightFilter(oSettingsModel.getProperty("/blueLightFilterLevel"));
             oSettingsModel.setProperty("/blueLightFilterActive", true);
@@ -95,51 +124,29 @@ const popoverInternalController = {
             disableBlueLightFilter();
             oSettingsModel.setProperty("/blueLightFilterActive", false);
         }
+        saveCurrentSettings();
     },
     onNightModeToolbarPress: function () {
         const active = toggleNightMode();
         oSettingsModel.setProperty("/nightModeActive", active);
-        
-       
-        const nightModeTitle = Fragment.byId(this._sFragmentId, "nightModeTitle");
-        if (nightModeTitle && this._oPopover) {
-            const i18nModel = this._oPopover.getModel("i18n");
-            if (i18nModel && i18nModel.getResourceBundle) {
-                const bundle = i18nModel.getResourceBundle();
-                const newText = active ? bundle.getText("nightMode.deactivate") : bundle.getText("nightMode.activate");
-                nightModeTitle.setText(newText);
-            }
-        }
+        updateTitleText.call(this, "nightModeTitle",
+            active ? "nightMode.deactivate" : "nightMode.activate"
+        );
+        saveCurrentSettings();
     },
     onToggleImagesToolbarPress: function () {
         const active = toggleImages();
         oSettingsModel.setProperty("/toggleImagesActive", active);
-        
- 
-        const toggleImagesTitle = Fragment.byId(this._sFragmentId, "toggleImagesTitle");
-        if (toggleImagesTitle && this._oPopover) {
-            const i18nModel = this._oPopover.getModel("i18n");
-            if (i18nModel && i18nModel.getResourceBundle) {
-                const bundle = i18nModel.getResourceBundle();
-                const newText = active ? bundle.getText("toggleImages.show") : bundle.getText("toggleImages.hide");
-                toggleImagesTitle.setText(newText);
-            }
-        }
+        updateTitleText.call(this, "toggleImagesTitle",
+            active ? "toggleImages.show" : "toggleImages.hide"
+        );
     },
     onContrastModeToolbarPress: function () {
         const active = toggleContrastMode();
         oSettingsModel.setProperty("/contrastModeActive", active);
-        
-       
-        const contrastModeTitle = Fragment.byId(this._sFragmentId, "contrastModeTitle");
-        if (contrastModeTitle && this._oPopover) {
-            const i18nModel = this._oPopover.getModel("i18n");
-            if (i18nModel && i18nModel.getResourceBundle) {
-                const bundle = i18nModel.getResourceBundle();
-                const newText = active ? bundle.getText("contrastMode.deactivate") : bundle.getText("contrastMode.activate");
-                contrastModeTitle.setText(newText);
-            }
-        }
+        updateTitleText.call(this, "contrastModeTitle",
+            active ? "contrastMode.deactivate" : "contrastMode.activate"
+        );
     },
     onResetAllToolbarPress: function () {
         resetAll();
@@ -153,47 +160,71 @@ const popoverInternalController = {
         oSettingsModel.setProperty("/fontSizeExpanded", false);
         oSettingsModel.setProperty("/ttsExpanded", false);
         oSettingsModel.setProperty("/colorBlindnessExpanded", false);
-        oSettingsModel.setProperty("/blaufilterExpanded", false);
+        oSettingsModel.setProperty("/blueLightFilterExpanded", false);
         oSettingsModel.setProperty("/nightModeActive", false);
         oSettingsModel.setProperty("/toggleImagesActive", false);
         oSettingsModel.setProperty("/contrastModeActive", false);
-        
-        // Update text elements after reset
-        if (this._oPopover) {
-            const i18nModel = this._oPopover.getModel("i18n");
-            if (i18nModel && i18nModel.getResourceBundle) {
-                const bundle = i18nModel.getResourceBundle();
-                
-                // Update Night Mode text
-                const nightModeTitle = Fragment.byId(this._sFragmentId, "nightModeTitle");
-                if (nightModeTitle) {
-                    nightModeTitle.setText(bundle.getText("nightMode.activate"));
-                }
-                
-                // Update Blue Filter text
-                const blaufilterTitle = Fragment.byId(this._sFragmentId, "blaufilterTitle");
-                if (blaufilterTitle) {
-                    blaufilterTitle.setText(bundle.getText("blueFilter.activate"));
-                }
-                
-                // Update Toggle Images text
-                const toggleImagesTitle = Fragment.byId(this._sFragmentId, "toggleImagesTitle");
-                if (toggleImagesTitle) {
-                    toggleImagesTitle.setText(bundle.getText("toggleImages.hide"));
-                }
-                
-                // Update Contrast Mode text
-                const contrastModeTitle = Fragment.byId(this._sFragmentId, "contrastModeTitle");
-                if (contrastModeTitle) {
-                    contrastModeTitle.setText(bundle.getText("contrastMode.activate"));
-                }
-            }
-        }
+
+        updateTitleText.call(this, "nightModeTitle", "nightMode.activate");
+        updateTitleText.call(this, "blueLightFilterTitle", "blueFilter.activate");
+        updateTitleText.call(this, "toggleImagesTitle", "toggleImages.hide");
+        updateTitleText.call(this, "contrastModeTitle", "contrastMode.activate");
+        clearPrefs();
+    },
+    onIncreaseFontSize: function () {
+        onIncreaseFontSize();
+        saveCurrentSettings();
+    },
+    onDecreaseFontSize: function () {
+        onDecreaseFontSize();
+        saveCurrentSettings();
+    },
+    onResetFontSize: function () {
+        onResetFontSize();
+        saveCurrentSettings();
+    },
+    onTTSStart: startReading,
+    onTTSStop: stopReading,
+    onTTSRateChange: function (e) {
+        setTTSRate(e.getParameter("value"));
+        saveCurrentSettings();
+    },
+    onTTSVolumeChange: function (e) {
+        setTTSVolume(e.getParameter("value"));
+        saveCurrentSettings();
+    },
+    onTTSHoverChange: function (e) {
+        const active = e.getParameter("state");
+        oSettingsModel.setProperty("/ttsHover", active);
+        if (active) enableHoverRead(); else disableHoverRead();
+    },
+    onColorBlindnessChange: function (e) {
+        const type = e.getParameter("selectedItem").getKey();
+        oSettingsModel.setProperty("/colorBlindnessType", type);
+        applyColorBlindness(type);
+        saveCurrentSettings();
+    },
+    onColorBlindnessReset: function () {
+        oSettingsModel.setProperty("/colorBlindnessType", "none");
+        resetColorBlindness();
+        saveCurrentSettings();
+    },
+    onBlueLightFilterSliderChange: function (e) {
+        const level = e.getParameter("value");
+        oSettingsModel.setProperty("/blueLightFilterLevel", level);
+        enableBlueLightFilter(level);
+        saveCurrentSettings();
+    },
+    onBlueLightFilterReset: function () {
+        oSettingsModel.setProperty("/blueLightFilterLevel", 0);
+        disableBlueLightFilter();
+        saveCurrentSettings();
     },
     onContrastPresetPress: function (oEvent) {
-        const key = oEvent.getSource().getCustomData()[0].getValue();
+        const customData = oEvent.getSource().getCustomData();
+        if (!customData || !customData.length) return;
+        const key = customData[0].getValue();
         let bg = "#000000", text = "#FFFFFF";
-        if (key === "black-white") { bg = "#000000"; text = "#FFFFFF"; }
         if (key === "yellow-black") { bg = "#FFFF00"; text = "#000000"; }
         if (key === "red-black") { bg = "#FF0000"; text = "#000000"; }
         if (key === "green-black") { bg = "#00FF00"; text = "#000000"; }
@@ -202,7 +233,7 @@ const popoverInternalController = {
         updateContrastPreview();
     },
     onContrastApply: function () {
-        applyContrastToDOM(
+        applyCustomContrast(
             oSettingsModel.getProperty("/contrastBgColor"),
             oSettingsModel.getProperty("/contrastTextColor"),
             oSettingsModel.getProperty("/contrastUnderlineLinks")
@@ -210,7 +241,7 @@ const popoverInternalController = {
         oSettingsModel.setProperty("/contrastModeActive", true);
     },
     onContrastReset: function () {
-        removeContrastFromDOM();
+        removeCustomContrast();
         oSettingsModel.setProperty("/contrastBgColor", "#000000");
         oSettingsModel.setProperty("/contrastTextColor", "#FFFFFF");
         oSettingsModel.setProperty("/contrastUnderlineLinks", true);
@@ -232,24 +263,48 @@ const popoverInternalController = {
     }
 };
 
+function restoreSavedState() {
+    const fontStep = oSettingsModel.getProperty("/fontStep");
+    if (fontStep !== 0) {
+        initFontSizer(oSettingsModel);
+        for (let i = 0; i < Math.abs(fontStep); i++) {
+            if (fontStep > 0) onIncreaseFontSize();
+            else onDecreaseFontSize();
+        }
+    }
+
+    const colorBlindnessType = oSettingsModel.getProperty("/colorBlindnessType");
+    if (colorBlindnessType !== 'none') {
+        applyColorBlindness(colorBlindnessType);
+    }
+
+    const blueLightFilterActive = oSettingsModel.getProperty("/blueLightFilterActive");
+    if (blueLightFilterActive) {
+        enableBlueLightFilter(oSettingsModel.getProperty("/blueLightFilterLevel"));
+    }
+
+    if (savedSettings.nightModeActive) {
+        toggleNightMode();
+        oSettingsModel.setProperty("/nightModeActive", true);
+    }
+}
+
 export const openAccessPopover = async (controller, oEvent) => {
-    // DEBUG: Parameter checks
     if (!controller || typeof controller.getView !== "function") {
-        console.error("[ui5-smart-access] ERROR: The controller parameter must be a UI5 Controller!", controller);
         throw new Error("The controller parameter must be a UI5 Controller!");
     }
     if (!oEvent || typeof oEvent.getSource !== "function") {
-        console.error("[ui5-smart-access] ERROR: The oEvent parameter must be a UI5 Event!", oEvent);
         throw new Error("The oEvent parameter must be a UI5 Event!");
     }
     const oView = controller.getView();
     const sFragmentId = oView.getId();
 
     if (!controller._pPopover) {
-        console.debug("[ui5-smart-access] Popover is being loaded for the first time.");
         loadCustomStyleOnce();
         initFontSizer(oSettingsModel);
         initTextToSpeech(oSettingsModel);
+        initImageHider();
+        restoreSavedState();
 
         const i18nModel = createI18nModel();
 
@@ -259,127 +314,32 @@ export const openAccessPopover = async (controller, oEvent) => {
             controller: popoverInternalController
         }).then((oPopover) => {
             if (!oPopover) {
-                console.error("[ui5-smart-access] ERROR: Fragment could not be loaded!");
                 throw new Error("Popover Fragment could not be loaded!");
             }
             oView.addDependent(oPopover);
 
-            try {
-                oPopover.setModel(oSettingsModel, "settings");
-                oPopover.setModel(i18nModel, "i18n");
-                console.log("[ui5-smart-access] I18n model successfully assigned to popover");
-                
-                popoverInternalController._oPopover = oPopover;
-                popoverInternalController._sFragmentId = sFragmentId;
-            } catch (err) {
-                console.error("[ui5-smart-access] ERROR: Model could not be assigned!", err);
-            }
+            oPopover.setModel(oSettingsModel, "settings");
+            oPopover.setModel(i18nModel, "i18n");
 
-            const closeButton = Fragment.byId(sFragmentId, "closePopoverButton");
-            const increaseButton = Fragment.byId(sFragmentId, "increaseFontButton");
-            const decreaseButton = Fragment.byId(sFragmentId, "decreaseFontButton");
-            const resetButton = Fragment.byId(sFragmentId, "resetFontButton");
+            popoverInternalController._oPopover = oPopover;
+            popoverInternalController._sFragmentId = sFragmentId;
 
-            if (!closeButton) console.warn("[ui5-smart-access] WARNING: closePopoverButton not found!");
-            if (!increaseButton) console.warn("[ui5-smart-access] WARNING: increaseFontButton not found!");
-            if (!decreaseButton) console.warn("[ui5-smart-access] WARNING: decreaseFontButton not found!");
-            if (!resetButton) console.warn("[ui5-smart-access] WARNING: resetFontButton not found!");
-
-            closeButton?.attachPress(() => oPopover.close());
-            increaseButton?.attachPress(onIncreaseFontSize);
-            decreaseButton?.attachPress(onDecreaseFontSize);
-            resetButton?.attachPress(onResetFontSize);
-
-            const ttsStartButton = Fragment.byId(sFragmentId, "ttsStartButton");
-            const ttsStopButton = Fragment.byId(sFragmentId, "ttsStopButton");
-            const ttsRateSlider = Fragment.byId(sFragmentId, "ttsRateSlider");
-            const ttsVolumeSlider = Fragment.byId(sFragmentId, "ttsVolumeSlider");
-            const ttsHoverSwitch = Fragment.byId(sFragmentId, "ttsHoverSwitch");
-
-            ttsStartButton?.attachPress(startReading);
-            ttsStopButton?.attachPress(stopReading);
-            ttsRateSlider?.attachChange((e) => setTTSRate(e.getParameter("value")));
-            ttsVolumeSlider?.attachChange((e) => setTTSVolume(e.getParameter("value")));
-            ttsHoverSwitch?.attachChange((e) => {
-                const active = e.getParameter("state");
-                oSettingsModel.setProperty("/ttsHover", active);
-                if (active) enableHoverRead(); else disableHoverRead();
+            oPopover.attachAfterClose(() => {
+                stopReading();
             });
-
-            const colorBlindnessSelect = Fragment.byId(sFragmentId, "colorBlindnessSelect");
-            const colorBlindnessResetButton = Fragment.byId(sFragmentId, "colorBlindnessResetButton");
-            colorBlindnessSelect?.attachChange((e) => {
-                const type = e.getParameter("selectedItem").getKey();
-                oSettingsModel.setProperty("/colorBlindnessType", type);
-                applyColorBlindness(type);
-            });
-            colorBlindnessResetButton?.attachPress(() => {
-                oSettingsModel.setProperty("/colorBlindnessType", "none");
-                resetColorBlindness();
-            });
-
-            const blueLightFilterSlider = Fragment.byId(sFragmentId, "blueLightFilterSlider");
-            const blueLightFilterResetButton = Fragment.byId(sFragmentId, "blueLightFilterResetButton");
-            blueLightFilterSlider?.attachChange((e) => {
-                const level = e.getParameter("value");
-                oSettingsModel.setProperty("/blueLightFilterLevel", level);
-                enableBlueLightFilter(level);
-            });
-            blueLightFilterResetButton?.attachPress(() => {
-                oSettingsModel.setProperty("/blueLightFilterLevel", 0);
-                disableBlueLightFilter();
-            });
-
-            const blueLightFilterHeaderButton = Fragment.byId(sFragmentId, "blueLightFilterHeaderButton");
-            blueLightFilterHeaderButton?.attachPress(() => {
-                const active = oSettingsModel.getProperty("/blueLightFilterActive");
-                if (!active) {
-                    enableBlueLightFilter(oSettingsModel.getProperty("/blueLightFilterLevel"));
-                } else {
-                    disableBlueLightFilter();
-                }
-                oSettingsModel.setProperty("/blueLightFilterActive", !active);
-            });
-
-            oPopover.onPanelHeaderPress = function (oEvent) {
-                const context = oEvent.getSource().getBindingContext("modules");
-                if (context) {
-                    const name = context.getProperty("name");
-                    const expanded = context.getProperty("expanded");
-                    context.getModel().setProperty(context.getPath() + "/expanded", !expanded);
-                 
-                    const activateText = getText("blueFilter.activate");
-                    const deactivateText = getText("blueFilter.deactivate");
-                    if (name === activateText || name === deactivateText) {
-                        if (!expanded) {
-                            const level = oSettingsModel.getProperty("/blueLightFilterLevel");
-                            enableBlueLightFilter(level);
-                        } else {
-                            disableBlueLightFilter();
-                        }
-                    }
-                }
-            };
 
             return oPopover;
         }).catch((err) => {
-            console.error("[ui5-smart-access] ERROR: Error occurred during Fragment.load!", err);
+            controller._pPopover = null;
+            console.error("[ui5-smart-access] Failed to load popover fragment:", err);
             throw err;
         });
     }
 
     const oPopover = await controller._pPopover;
 
-    try {
-        oPopover.setModel(new JSONModel({ items: getPopoverModules() }), "modules");
-    } catch (err) {
-        console.error("[ui5-smart-access] ERROR: Modules model could not be assigned!", err);
-    }
-    try {
-        oPopover.openBy(oEvent.getSource());
-    } catch (err) {
-        console.error("[ui5-smart-access] ERROR: Error during openBy!", err);
-    }
+    oPopover.setModel(new JSONModel({ items: getPopoverModules() }), "modules");
+    oPopover.openBy(oEvent.getSource());
 };
 
 function updateContrastPreview() {
@@ -389,6 +349,7 @@ function updateContrastPreview() {
     oSettingsModel.setProperty("/contrastRatio", ratio.ratioText);
     oSettingsModel.setProperty("/contrastReadable", ratio.readable ? getText("contrast.readable") : getText("contrast.notReadable"));
 }
+
 function getContrastRatio(bg, text) {
     function luminance(hex) {
         let c = hex.replace('#', '');
@@ -401,20 +362,4 @@ function getContrastRatio(bg, text) {
     const l2 = luminance(text);
     const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
     return { ratioText: ratio.toFixed(1) + ":1", readable: ratio >= 4.5 };
-}
-function applyContrastToDOM(bg, text, underlineLinks) {
-    document.body.style.backgroundColor = bg;
-    document.body.style.color = text;
-    Array.from(document.querySelectorAll('a')).forEach(a => {
-        a.style.textDecoration = underlineLinks ? 'underline' : 'none';
-        a.style.color = text;
-    });
-}
-function removeContrastFromDOM() {
-    document.body.style.backgroundColor = '';
-    document.body.style.color = '';
-    Array.from(document.querySelectorAll('a')).forEach(a => {
-        a.style.textDecoration = '';
-        a.style.color = '';
-    });
 }

@@ -1,13 +1,3 @@
-.abicsAccessibilityPopover * {
-  border: 0 0 0 1px solid rgba(0, 57, 133, 0.863) !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  background-color: whitesmoke !important;
-  color: rgba(0, 57, 133, 0.863) !important;
-
-
-}
-
 .abicsAccessibilityPopover {
   border-radius: 10px !important;
 }
@@ -16,81 +6,129 @@
   border-radius: 10px !important;
 }
 
+.abicsAccessibilityPopover .sapMPanel,
+.abicsAccessibilityPopover .sapMPanelContent,
+.abicsAccessibilityPopover .sapMTB,
+.abicsAccessibilityPopover .sapMTitle,
+.abicsAccessibilityPopover .sapUiIcon,
+.abicsAccessibilityPopover .sapMLabel,
+.abicsAccessibilityPopover .sapMSwt,
+.abicsAccessibilityPopover .sapMSlt,
+.abicsAccessibilityPopover .sapMBtn,
+.abicsAccessibilityPopover .sapMSlider,
+.abicsAccessibilityPopover .sapMVBox,
+.abicsAccessibilityPopover .sapMHBox {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: whitesmoke;
+  color: rgba(0, 57, 133, 0.863);
+}
+
 .abicsAccessibilityPopover .sapMPanelContent:not(.sapMPanelBGTransparent) {
-  border-bottom: 0 !important;
+  border-bottom: 0;
 }
 
 .abicsAccessibilityPopover .sapMPanel.resetAllPanel .sapMTB.sapMTBStandard {
-  border: 0 !important;
+  border: 0;
 }
 
 .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner .sapUiIcon {
-  border: 0 !important;
-  border-radius: 7px !important;
-
+  border: 0;
+  border-radius: 7px;
 }
 
 .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner {
-  border: 1px solid rgba(0, 57, 133, 0.863) !important;
-  border-radius: 7px !important;
+  border: 1px solid rgba(0, 57, 133, 0.863);
+  border-radius: 7px;
 }
 
-
 .abicsAccessibilityPopover .sapMPanelContent .sapMSlt {
-  border: 1px solid rgba(0, 57, 133, 0.863) !important;
-  border-radius: 7px !important;
+  border: 1px solid rgba(0, 57, 133, 0.863);
+  border-radius: 7px;
 }
 
 .abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB {
-  background-color: whitesmoke !important;
-  color: rgba(0, 57, 133, 0.863) !important;
+  background-color: whitesmoke;
+  color: rgba(0, 57, 133, 0.863);
 }
 
 .abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB .sapMTitle,
 .abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB .sapUiIcon {
-  color: rgba(0, 57, 133, 0.863) !important;
-  background-color: whitesmoke !important;
-
+  color: rgba(0, 57, 133, 0.863);
+  background-color: whitesmoke;
 }
 
 .abicsAccessibilityPopover .sapMPanelContent {
-  padding: 3px !important;
+  padding: 3px;
 }
 
 .abicsAccessibilityPopover .sapMSliderProgress,
 .abicsAccessibilityPopover .sapMSliderInner {
-  background-color: rgba(0, 57, 133, 0.863) !important;
+  background-color: rgba(0, 57, 133, 0.863);
 }
 
 .abicsAccessibilityPopover .sapMSwtLabel {
-  background-color: rgba(0, 57, 133, 0.863) !important;
-  color: whitesmoke !important;
-  border-radius: 7px !important;
+  background-color: rgba(0, 57, 133, 0.863);
+  color: whitesmoke;
+  border-radius: 7px;
 }
 
 .abicsAccessibilityPopover .sapMSwt {
-  border-radius: 7px !important;
-  border: 0 !important;
+  border-radius: 7px;
+  border: 0;
 }
 
 .abicsAccessibilityPopover .sapMSwtInner .sapMSwtHandle {
-  background-color: rgba(0, 57, 133, 0.863) !important;
-  border-radius: 7px !important;
-  border: 0 !important;
+  background-color: rgba(0, 57, 133, 0.863);
+  border-radius: 7px;
+  border: 0;
 }
 
 .abicsAccessibilityPopover .sapMSwtText {
-  border-radius: 7px !important;
-  border: 0 !important;
+  border-radius: 7px;
+  border: 0;
 }
 
 .abicsAccessibilityPopover .sapMPopoverHeader .sapMBarContainer *,
 .abicsAccessibilityPopover .sapMPopoverHeader .sapMBarContainer {
   background-color: rgb(39, 39, 134) !important;
   color: whitesmoke !important;
-
 }
 
 .abicsAccessibilityPopover .sapMPopoverHeader .sapMBtnIcon {
   color: whitesmoke !important;
+}
+
+/* Keyboard focus indicators */
+.abicsAccessibilityPopover .sapMBtnInner:focus-visible,
+.abicsAccessibilityPopover .sapMSltArrow:focus-visible,
+.abicsAccessibilityPopover .sapMSwtInner:focus-visible,
+.abicsAccessibilityPopover .sapMSliderHandle:focus-visible,
+.abicsAccessibilityPopover .sapMTB:focus-visible {
+  outline: 2px solid rgba(0, 57, 133, 0.863);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: more) {
+  .abicsAccessibilityPopover .sapMPanel,
+  .abicsAccessibilityPopover .sapMPanelContent,
+  .abicsAccessibilityPopover .sapMTB,
+  .abicsAccessibilityPopover .sapMTitle,
+  .abicsAccessibilityPopover .sapMLabel {
+    background-color: #ffffff;
+    color: #000000;
+    border-color: #000000;
+  }
+
+  .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner {
+    border: 2px solid #000000;
+  }
+
+  .abicsAccessibilityPopover .sapMPopoverHeader .sapMBarContainer *,
+  .abicsAccessibilityPopover .sapMPopoverHeader .sapMBarContainer {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
 }

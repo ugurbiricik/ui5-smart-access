@@ -4,7 +4,8 @@ import { resetColorBlindness } from './colorBlindness.js';
 import { disableBlueLightFilter } from './blueLightFilter.js';
 import { disableNightMode } from './nightMode.js';
 import { showImages } from './imageHider.js';
-import { toggleContrastMode, isContrastModeActive } from './contrast.js';
+import { removeCustomContrast, isContrastModeActive, toggleContrastMode } from './contrast.js';
+import { clearAllFilters } from './filterManager.js';
 
 export const resetAll = () => {
     onResetFontSize();
@@ -14,7 +15,9 @@ export const resetAll = () => {
     disableHoverRead();
     resetColorBlindness();
     disableBlueLightFilter();
+    clearAllFilters();
     disableNightMode();
     showImages();
+    removeCustomContrast();
     if (isContrastModeActive()) toggleContrastMode();
-}; 
+};

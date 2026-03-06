@@ -1,8 +1,9 @@
 import { getText } from "./js/i18nModel.js";
 
 /**
- * 
- * @returns {Array} 
+ * Returns popover module definitions with current i18n texts.
+ * Called each time the popover opens, so translations are always fresh.
+ * @returns {Array}
  */
 function getPopoverModules() {
   return [
@@ -13,9 +14,8 @@ function getPopoverModules() {
       expandable: true,
       expanded: false,
     },
-
     {
-      id: "contrast",
+      id: "tts",
       icon: "sap-icon://microphone",
       name: getText("tts.title"),
       expandable: true,
@@ -29,7 +29,7 @@ function getPopoverModules() {
       expanded: false,
     },
     {
-      id: "blauFilter",
+      id: "blueLightFilter",
       icon: "sap-icon://light-mode",
       name: getText("blueFilter.activate"),
       expandable: true,
@@ -42,7 +42,6 @@ function getPopoverModules() {
       expandable: false,
       expanded: false,
     },
-
     {
       id: "nightMode",
       icon: "sap-icon://dark-mode",
@@ -50,7 +49,6 @@ function getPopoverModules() {
       expandable: false,
       expanded: false,
     },
-
     {
       id: "tabNavigation",
       icon: "sap-icon://keyboard-and-mouse",
@@ -58,7 +56,6 @@ function getPopoverModules() {
       expandable: false,
       expanded: false,
     },
-
     {
       id: "toggleImages",
       icon: "sap-icon://picture",

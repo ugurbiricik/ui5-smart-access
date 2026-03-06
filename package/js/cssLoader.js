@@ -1,5 +1,5 @@
-
 let isCustomStyleLoaded = false;
+
 export function loadCustomStyleOnce() {
   if (isCustomStyleLoaded) {
     return;
@@ -14,9 +14,9 @@ export function loadCustomStyleOnce() {
     link.type = "text/css";
     link.href = sCorrectPath;
     document.head.appendChild(link);
-    
+
     isCustomStyleLoaded = true;
   } catch (error) {
-      console.error("Failed to load custom CSS:", error);
+    console.error("[ui5-smart-access] Failed to load custom CSS:", error);
   }
 }

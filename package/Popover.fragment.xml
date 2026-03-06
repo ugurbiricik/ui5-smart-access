@@ -16,7 +16,7 @@
                     <Title text="{i18n>popover.header.title}" class="popoverTitle" />
                 </contentMiddle>
                 <contentRight>
-                    <Button id="closePopoverButton" icon="sap-icon://notification" press=".onPopoverClosePress" tooltip="{i18n>popover.close.tooltip}" class="closePopoverButton"/>
+                    <Button id="closePopoverButton" icon="sap-icon://decline" press=".onPopoverClosePress" tooltip="{i18n>aria.close}" ariaLabelledBy="" class="closePopoverButton"/>
                 </contentRight>
             </Bar>
         </customHeader>
@@ -34,7 +34,7 @@
                 type="XML"
             />
             <core:Fragment
-                fragmentName="ui5-smart-access.fragments.BlaufilterPanel"
+                fragmentName="ui5-smart-access.fragments.BlueLightFilterPanel"
                 type="XML"
             />
             <core:Fragment

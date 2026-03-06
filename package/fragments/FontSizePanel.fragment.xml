@@ -1,20 +1,20 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
    <Panel id="fontSizePanel" expandable="true" expanded="{settings>/fontSizeExpanded}" width="auto" class="fontSizePanel">
       <headerToolbar>
-         <OverflowToolbar active="true" press="onFontSizeToolbarPress">
+         <OverflowToolbar active="true" press=".onFontSizeToolbarPress">
           <core:Icon src="sap-icon://text" size="20px" />
           <Title text="{i18n>fontSize.title}"/>
          </OverflowToolbar>
       </headerToolbar>
       <content>
          <VBox justifyContent="Center" alignItems="Center" width="100%">
-            <Button id="fontStepInput" text="{settings>/fontStep}" width="150px"/>
+            <Text id="fontStepDisplay" text="{settings>/fontStep}" width="150px" textAlign="Center"/>
             <HBox alignItems="Center" width="150px" justifyContent="SpaceBetween">
-               <Button id="decreaseFontButton" icon="sap-icon://less" />
-               <Button id="resetFontButton" icon="sap-icon://refresh" />
-               <Button id="increaseFontButton" icon="sap-icon://add" />
+               <Button id="decreaseFontButton" icon="sap-icon://less" press=".onDecreaseFontSize" tooltip="{i18n>aria.decreaseFontSize}"/>
+               <Button id="resetFontButton" icon="sap-icon://refresh" press=".onResetFontSize" tooltip="{i18n>aria.resetFontSize}"/>
+               <Button id="increaseFontButton" icon="sap-icon://add" press=".onIncreaseFontSize" tooltip="{i18n>aria.increaseFontSize}"/>
             </HBox>
          </VBox>
       </content>
    </Panel>
-</core:FragmentDefinition> 
+</core:FragmentDefinition>

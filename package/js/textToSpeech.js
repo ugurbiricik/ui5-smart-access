@@ -1,14 +1,18 @@
-let synth = window.speechSynthesis;
+const synth = window.speechSynthesis || null;
 let utterance = null;
 let isReading = false;
 let settingsModel = null;
+
+function isTTSSupported() {
+    return synth !== null;
+}
 
 export const initTextToSpeech = (oSettingsModel) => {
     settingsModel = oSettingsModel;
 };
 
 export const startReading = () => {
-    if (isReading) return;
+    if (!isTTSSupported() || isReading) return;
     stopReading();
     const text = document.body.innerText;
     utterance = new SpeechSynthesisUtterance(text);
@@ -20,6 +24,7 @@ export const startReading = () => {
 };
 
 export const stopReading = () => {
+    if (!isTTSSupported()) return;
     if (synth.speaking) synth.cancel();
     isReading = false;
 };
@@ -33,14 +38,19 @@ export const setTTSVolume = (volume) => {
 };
 
 let hoverActive = false;
+let hoverDebounceTimer = null;
+
 function hoverHandler(e) {
-    if (e.target && e.target.innerText) {
+    if (!e.target || !e.target.innerText || !isTTSSupported()) return;
+
+    clearTimeout(hoverDebounceTimer);
+    hoverDebounceTimer = setTimeout(() => {
         stopReading();
         utterance = new SpeechSynthesisUtterance(e.target.innerText);
         utterance.rate = settingsModel?.getProperty("/ttsRate") || 1;
         utterance.volume = settingsModel?.getProperty("/ttsVolume") || 1;
         synth.speak(utterance);
-    }
+    }, 300);
 }
 
 export const enableHoverRead = () => {
@@ -53,6 +63,7 @@ export const enableHoverRead = () => {
 export const disableHoverRead = () => {
     if (hoverActive) {
         document.body.removeEventListener("mouseover", hoverHandler);
+        clearTimeout(hoverDebounceTimer);
         hoverActive = false;
     }
-}; 
+};
