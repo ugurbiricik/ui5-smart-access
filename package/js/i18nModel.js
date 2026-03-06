@@ -23,36 +23,13 @@ export function createI18nModel() {
 
     const detectedLanguage = detectBrowserLanguage();
 
-    const bundleNames = [
-        "ui5-smart-access.i18n.i18n",
-        "ui5-smart-access/i18n/i18n",
-        "./i18n/i18n"
-    ];
-
-    for (const bundleName of bundleNames) {
-        try {
-            i18nModel = new ResourceModel({
-                bundleName: bundleName,
-                supportedLocales: ["en", "de", ""],
-                locale: detectedLanguage,
-                fallbackLocale: "de"
-            });
-
-            const resourceBundle = i18nModel.getResourceBundle();
-            if (resourceBundle) {
-                const testText = resourceBundle.getText("fontSize.title");
-                if (testText && testText !== "fontSize.title") {
-                    return i18nModel;
-                }
-            }
-        } catch (error) {
-            continue;
-        }
-    }
+    // Use bundleUrl with sap.ui.require.toUrl to resolve the correct path
+    // regardless of how the package is consumed (ui5-tooling-modules, cds-plugin-ui5, etc.)
+    const bundleUrl = sap.ui.require.toUrl("ui5-smart-access/i18n/i18n.properties");
 
     i18nModel = new ResourceModel({
-        bundleName: "ui5-smart-access.i18n.i18n",
-        supportedLocales: ["en", "de"],
+        bundleUrl: bundleUrl,
+        supportedLocales: ["en", "de", ""],
         locale: detectedLanguage,
         fallbackLocale: "de"
     });
