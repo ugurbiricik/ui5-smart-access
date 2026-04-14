@@ -86,6 +86,17 @@ const oSettingsModel = new JSONModel({
     contrastUnderlineLinks: true
 });
 
+function toggleActiveFeatureClass(panelId, active) {
+    const panel = Fragment.byId(this._sFragmentId, panelId);
+    if (panel) {
+        if (active) {
+            panel.addStyleClass("activeFeature");
+        } else {
+            panel.removeStyleClass("activeFeature");
+        }
+    }
+}
+
 function updateTitleText(controlId, i18nKey) {
     const control = Fragment.byId(this._sFragmentId, controlId);
     if (control && this._oPopover) {
@@ -124,6 +135,7 @@ const popoverInternalController = {
             disableBlueLightFilter();
             oSettingsModel.setProperty("/blueLightFilterActive", false);
         }
+        toggleActiveFeatureClass.call(this, "blueLightFilterPanel", !expanded);
         saveCurrentSettings();
     },
     onNightModeToolbarPress: function () {
@@ -132,6 +144,7 @@ const popoverInternalController = {
         updateTitleText.call(this, "nightModeTitle",
             active ? "nightMode.deactivate" : "nightMode.activate"
         );
+        toggleActiveFeatureClass.call(this, "nightModePanel", active);
         saveCurrentSettings();
     },
     onToggleImagesToolbarPress: function () {
@@ -140,6 +153,7 @@ const popoverInternalController = {
         updateTitleText.call(this, "toggleImagesTitle",
             active ? "toggleImages.show" : "toggleImages.hide"
         );
+        toggleActiveFeatureClass.call(this, "toggleImagesPanel", active);
     },
     onContrastModeToolbarPress: function () {
         const active = toggleContrastMode();
@@ -147,6 +161,7 @@ const popoverInternalController = {
         updateTitleText.call(this, "contrastModeTitle",
             active ? "contrastMode.deactivate" : "contrastMode.activate"
         );
+        toggleActiveFeatureClass.call(this, "contrastModePanel", active);
     },
     onResetAllToolbarPress: function () {
         resetAll();
@@ -169,6 +184,10 @@ const popoverInternalController = {
         updateTitleText.call(this, "blueLightFilterTitle", "blueFilter.activate");
         updateTitleText.call(this, "toggleImagesTitle", "toggleImages.hide");
         updateTitleText.call(this, "contrastModeTitle", "contrastMode.activate");
+        toggleActiveFeatureClass.call(this, "nightModePanel", false);
+        toggleActiveFeatureClass.call(this, "toggleImagesPanel", false);
+        toggleActiveFeatureClass.call(this, "contrastModePanel", false);
+        toggleActiveFeatureClass.call(this, "blueLightFilterPanel", false);
         clearPrefs();
     },
     onIncreaseFontSize: function () {
@@ -289,6 +308,17 @@ function restoreSavedState() {
     }
 }
 
+function restoreActiveFeatureClasses(sFragmentId) {
+    if (oSettingsModel.getProperty("/nightModeActive")) {
+        const panel = Fragment.byId(sFragmentId, "nightModePanel");
+        if (panel) panel.addStyleClass("activeFeature");
+    }
+    if (oSettingsModel.getProperty("/blueLightFilterActive")) {
+        const panel = Fragment.byId(sFragmentId, "blueLightFilterPanel");
+        if (panel) panel.addStyleClass("activeFeature");
+    }
+}
+
 export const openAccessPopover = async (controller, oEvent) => {
     if (!controller || typeof controller.getView !== "function") {
         throw new Error("The controller parameter must be a UI5 Controller!");
@@ -323,6 +353,8 @@ export const openAccessPopover = async (controller, oEvent) => {
 
             popoverInternalController._oPopover = oPopover;
             popoverInternalController._sFragmentId = sFragmentId;
+
+            restoreActiveFeatureClasses(sFragmentId);
 
             oPopover.attachAfterClose(() => {
                 stopReading();

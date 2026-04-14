@@ -7,41 +7,144 @@ const applyPopoverDarkMode = () => {
     const style = document.createElement('style');
     style.id = 'popover-dark-mode-styles';
     style.textContent = `
-        .abicsAccessibilityPopover * {
-            background-color: #2b2b2b !important;
-            color: #ffffff !important;
-            border-color: #555555 !important;
+        /* Popover background & scroll area */
+        .abicsAccessibilityPopover .sapMPopoverScroll,
+        .abicsAccessibilityPopover .sapMPopoverCont {
+            background-color: #1e1e1e !important;
         }
 
+        /* Header */
+        .abicsAccessibilityPopover .sapMPopoverHeader {
+            background: linear-gradient(135deg, #0f1a3a, #1e3a6a) !important;
+        }
+
+        .abicsAccessibilityPopover .sapMPopoverHeader * {
+            background: transparent !important;
+            color: #ffffff !important;
+        }
+
+        /* Panel cards */
+        .abicsAccessibilityPopover .sapMPanel {
+            background-color: #2b2b2b !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+            border-color: #444 !important;
+        }
+
+        /* Panel header toolbar */
         .abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB {
             background-color: #2b2b2b !important;
-            color: #ffffff !important;
         }
 
-        .abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB .sapMTitle,
-        .abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB .sapUiIcon {
-            color: #ffffff !important;
+        /* Panel content (expanded panels like FontSize) */
+        .abicsAccessibilityPopover .sapMPanelContent {
             background-color: #2b2b2b !important;
         }
 
-        .abicsAccessibilityPopover .sapMPopoverHeader .sapMBarContainer *,
-        .abicsAccessibilityPopover .sapMPopoverHeader .sapMBarContainer {
-            background-color: #1a1a1a !important;
+        /* All text & icons inside popover */
+        .abicsAccessibilityPopover .sapMTitle,
+        .abicsAccessibilityPopover .sapMLabel,
+        .abicsAccessibilityPopover .sapMText,
+        .abicsAccessibilityPopover .sapMBtnContent,
+        .abicsAccessibilityPopover .sapUiIcon,
+        .abicsAccessibilityPopover .sapMPanelExpandableIcon {
+            color: #e0e0e0 !important;
+            background-color: transparent !important;
+        }
+
+        /* Buttons inside panels */
+        .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner {
+            border-color: #6b9eff !important;
+            background-color: transparent !important;
+            color: #e0e0e0 !important;
+        }
+
+        .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner:hover {
+            background-color: rgba(107, 158, 255, 0.15) !important;
+        }
+
+        .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner .sapUiIcon {
+            color: #e0e0e0 !important;
+        }
+
+        /* Select dropdown */
+        .abicsAccessibilityPopover .sapMPanelContent .sapMSlt {
+            border-color: #6b9eff !important;
+            background-color: transparent !important;
+            color: #e0e0e0 !important;
+        }
+
+        /* Switch */
+        .abicsAccessibilityPopover .sapMSwtLabel {
+            background-color: #6b9eff !important;
             color: #ffffff !important;
         }
 
-        .abicsAccessibilityPopover .sapMSwtLabel {
+        .abicsAccessibilityPopover .sapMSwtOff .sapMSwtLabel {
             background-color: #555555 !important;
-            color: #ffffff !important;
         }
 
         .abicsAccessibilityPopover .sapMSwtInner .sapMSwtHandle {
             background-color: #ffffff !important;
         }
 
-        .abicsAccessibilityPopover .sapMSliderProgress,
+        /* Slider */
         .abicsAccessibilityPopover .sapMSliderInner {
-            background-color: #555555 !important;
+            background-color: #444 !important;
+        }
+
+        .abicsAccessibilityPopover .sapMSliderProgress {
+            background-color: #6b9eff !important;
+        }
+
+        /* Active feature indicator (dark mode version) */
+        .abicsAccessibilityPopover .sapMPanel.activeFeature {
+            border-left: 3px solid #6b9eff !important;
+            background-color: rgba(107, 158, 255, 0.1) !important;
+        }
+
+        .abicsAccessibilityPopover .sapMPanel.activeFeature .sapMPanelContent,
+        .abicsAccessibilityPopover .sapMPanel.activeFeature .sapMTB.sapMPanelHeaderTB {
+            background-color: rgba(107, 158, 255, 0.1) !important;
+        }
+
+        /* Footer toolbar (Reset All) */
+        .abicsAccessibilityPopover .resetAllToolbar {
+            background-color: transparent !important;
+        }
+
+        .abicsAccessibilityPopover .resetAllButton .sapMBtnInner {
+            border-color: #ef4444 !important;
+            color: #ef4444 !important;
+            background-color: transparent !important;
+        }
+
+        .abicsAccessibilityPopover .resetAllButton .sapMBtnInner .sapUiIcon {
+            color: #ef4444 !important;
+        }
+
+        .abicsAccessibilityPopover .resetAllButton .sapMBtnInner:hover {
+            background-color: rgba(239, 68, 68, 0.15) !important;
+        }
+
+        /* Close button */
+        .abicsAccessibilityPopover .closePopoverButton .sapMBtnInner {
+            background-color: transparent !important;
+        }
+
+        .abicsAccessibilityPopover .closePopoverButton .sapMBtnIcon {
+            color: #ffffff !important;
+        }
+
+        /* VBox, HBox, Toolbar backgrounds */
+        .abicsAccessibilityPopover .sapMVBox,
+        .abicsAccessibilityPopover .sapMHBox,
+        .abicsAccessibilityPopover .sapMTB {
+            background-color: transparent !important;
+        }
+
+        /* Popover wrapper */
+        .abicsAccessibilityPopover .sapMPopoverWrapper {
+            background-color: #1e1e1e !important;
         }
     `;
     document.head.appendChild(style);

@@ -5,9 +5,17 @@ let imagesHidden = false;
 let observer = null;
 let debounceTimer = null;
 
+function isInsidePopover(el) {
+    return el.closest(".abicsAccessibilityPopover");
+}
+
 function setVisibilityAll(value) {
-    document.querySelectorAll(IMAGE_SELECTORS).forEach(el => el.style.visibility = value);
-    document.querySelectorAll('[style*="background-image"]').forEach(el => el.style.visibility = value);
+    document.querySelectorAll(IMAGE_SELECTORS).forEach(el => {
+        if (!isInsidePopover(el)) el.style.visibility = value;
+    });
+    document.querySelectorAll('[style*="background-image"]').forEach(el => {
+        if (!isInsidePopover(el)) el.style.visibility = value;
+    });
     setVisibilityInShadowRoots(value);
 }
 
