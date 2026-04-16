@@ -27,7 +27,8 @@ import {
     disableBlueLightFilter
 } from "./js/blueLightFilter.js";
 import {
-    toggleNightMode
+    toggleNightMode,
+    prefetchDarkTheme
 } from "./js/nightMode.js";
 import {
     toggleImages,
@@ -335,6 +336,9 @@ export const openAccessPopover = async (controller, oEvent) => {
         initTextToSpeech(oSettingsModel);
         initImageHider();
         restoreSavedState();
+        // Warm up the dark theme stylesheet cache so that toggling night mode
+        // later is near-instant (avoids a visible delay on panel chevrons etc.).
+        prefetchDarkTheme();
 
         const i18nModel = createI18nModel();
 
