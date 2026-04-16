@@ -1,182 +1,91 @@
-# 📦 Creating and Testing a Local NPM Package for UI5 Applications
+# ui5-smart-access
 
-This guide explains how to create a modern **JavaScript-based NPM package** for **SAPUI5 applications**, test it locally, and support both **JavaScript** and **TypeScript**-based UI5 projects with proper configuration.
+An accessibility popover for SAP UI5 applications. Plug in one button, get
+a ready-made panel with font scaling, text-to-speech, color-blindness
+filters, blue-light filter, night mode, image hider, contrast mode and a
+reset-all action.
 
----
-
-## 🧱 1. Create the NPM Package
-
-To use **ES Modules** (instead of CommonJS), your `package.json` must include the following:
-
-```json
-{
-  "name": "your-new-npm-package",
-  "version": "1.0.0",
-  "description": "A reusable utility for UI5 applications.",
-  "main": "index.js",
-  "type": "module"
-}
-```
-
-This enables modern syntax like:
-
-```js
-export function doSomething() { ... }
-import { doSomething } from 'your-new-npm-package';
-```
-
----
-
-## 🔗 2. Link the Package Locally (Development Without Publishing)
-
-You can link your local package to your UI5 app using `npm link`:
-
-### Step 1: Register the Package Globally
+## Install
 
 ```bash
-cd /path/to/your-npm-package
-npm link
+npm install ui5-smart-access
 ```
 
-### Step 2: Link the Package to Your UI5 Application
+Make sure your UI5 consumer project is configured with
+[`ui5-tooling-modules`](https://www.npmjs.com/package/ui5-tooling-modules)
+so imports from `node_modules` resolve at dev-server and build time.
 
-```bash
-cd /path/to/your-ui5-app
-npm link your-new-npm-package
-```
-
-> 🔄 This creates a symlink in `node_modules`, so your UI5 app will instantly reflect code changes in your local package.
-
----
-
-## ⚙️ 3. Enable NPM Modules in UI5 with `ui5-tooling-modules`
-
-By default, UI5 tooling doesn’t load packages from `node_modules`. To support this:
-
-### Install the Middleware
-
-```bash
-npm install ui5-tooling-modules --save-dev
-```
-
-### Configure `ui5.yaml`
+`ui5.yaml`:
 
 ```yaml
 builder:
   customTasks:
     - name: ui5-tooling-modules-task
       afterTask: replaceVersion
-	  
 server:
   customMiddleware:
-    - name: ui5-tooling-modules
+    - name: ui5-tooling-modules-middleware
       afterMiddleware: compression
-    - name: fiori-tools-proxy
-      afterMiddleware: ui5-tooling-modules-middleware   // Important !!
-      configuration:
-        backend:
-          - path: /resources
-            url: https://ui5.sap.com
-          - path: /test-resources
-            url: https://ui5.sap.com
-          - path: /odata
-            url: http://localhost:4004
 ```
 
-📚 More info: [ui5-tooling-modules on npm](https://www.npmjs.com/package/ui5-tooling-modules)
+## Usage
 
----
-
-## 🧠 4. Support TypeScript Consumers
-
-If your UI5 application is written in **TypeScript**, your package must expose typings.
-
-### Update `package.json`
-
-```json
-{
-  ...
-  "types": "index.d.ts"
-}
-```
-
-### Create `index.d.ts` in your package root
+TypeScript:
 
 ```ts
-// index.d.ts
-export function openAbicsAccessibilityPopover(controller: any, oEvent: any): void;
-```
-
-This enables proper **type checking**, **auto-completion**, and **editor integration** in TypeScript projects.
-
----
-
-## 🚀 5. Example Usage
-
-### JavaScript-Based UI5 App
-
-```js
-sap.ui.define([
-  "./BaseController",
-  "sap/m/MessageBox",
-  "ui5-smart-access",
-  "sap/ui/base/Event"
-], function (BaseController, MessageBox, AccessibilityPopover, Event) {
-  "use strict";
-
-  return BaseController.extend("jsapp.controller.Main", {
-    sayHello: function (Event) {
-      AccessibilityPopover.openAbicsAccessibilityPopover(this, Event);
-    }
-  });
-});
-```
-
----
-
-### TypeScript-Based UI5 App
-
-```ts
-import MessageBox from "sap/m/MessageBox";
 import BaseController from "./BaseController";
+import { openAccessPopover } from "ui5-smart-access";
 import UIEvent from "sap/ui/base/Event";
-import { openAbicsAccessibilityPopover } from "ui5-smart-access";
 
 /**
- * @namespace tsapp.controller
+ * @namespace myapp.controller
  */
 export default class Main extends BaseController {
-  public sayHello(Event: UIEvent): void {
-    openAbicsAccessibilityPopover(this, Event);
-  }
+    public openAccessibilityPopover(oEvent: UIEvent): void {
+        void openAccessPopover(this, oEvent);
+    }
 }
 ```
 
----
+View:
 
-## ✅ Summary
+```xml
+<Button
+    icon="sap-icon://accessibility"
+    press=".openAccessibilityPopover"
+    type="Emphasized"/>
+```
 
-- ✅ Use `"type": "module"` for modern JS syntax.
-- 🔁 Use `npm link` for local development without publishing.
-- 🧩 Use `ui5-tooling-modules` to resolve dependencies from `node_modules`.
-- 🧠 Add `"types": "index.d.ts"` and define exported APIs to support TypeScript usage.
+That's it. The popover opens anchored to the event source, injects its
+own CSS and i18n, and remembers user preferences in `localStorage`.
 
----
+## Documentation
 
-> This workflow allows you to develop, test, and reuse powerful UI5 utilities across projects with full compatibility for both JavaScript and TypeScript-based environments.
+Full documentation lives in the repository under
+[`docs/`](https://github.com/ugurbiricik/ui5-smart-access/tree/main/docs):
 
-## Cap Project
+- [ARCHITECTURE.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/docs/ARCHITECTURE.md) — high-level architecture and data flow
+- [PACKAGE_STRUCTURE.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/docs/PACKAGE_STRUCTURE.md) — file-by-file breakdown
+- [FEATURES.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/docs/FEATURES.md) — each accessibility feature explained
+- [STYLING.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/docs/STYLING.md) — CSS strategy, popover isolation, night-mode prefetch
+- [PUBLIC_API.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/docs/PUBLIC_API.md) — `openAccessPopover` reference
+- [TEST_APP.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/docs/TEST_APP.md) — the bundled test app
+- [DEVELOPMENT.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/docs/DEVELOPMENT.md) — local setup, `npm link`, release
 
-root package.json
+## TypeScript
 
-  "cds": {
-    "cds-plugin-ui5": {
-      "modules": {
-        "test": {
-          "configFile": "ui5.yaml"
-        }
-      }
-    }
-  }
+The package ships typings via `index.d.ts`:
 
+```ts
+import Controller from "sap/ui/core/mvc/Controller";
+import Event from "sap/ui/base/Event";
 
+export function openAccessPopover(
+    controller: Controller,
+    oEvent: Event
+): Promise<void>;
+```
+
+## License
+
+ISC
