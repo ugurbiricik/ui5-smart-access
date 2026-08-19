@@ -5,328 +5,159 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form"
-	xmlns:u="sap.ui.unified"
-	xmlns:core="sap.ui.core"
-	core:require="{
-		formatter: 'test/model/formatter'
-	}">
+	xmlns:core="sap.ui.core">
 
-	<Page
-		title="{i18n>appTitle}"
-		id="page"
-		showNavButton="false">
-		<headerContent>
-			<Button text="{i18n>openAccessibility}" press=".openAbicsAccessibilityPopover" icon="sap-icon://accessibility" type="Emphasized" />
-		</headerContent>
+	<Page title="{i18n>appTitle}" id="page" showNavButton="false" class="sapUiResponsiveContentPadding">
 		<content>
-			<IconTabBar
-				id="itb"
-				expanded="true"
-				class="sapUiResponsiveContentPadding">
+			<VBox class="demoPage" width="100%">
 
-				<!-- ============ Typography / Text ============ -->
-				<items>
-					<IconTabFilter icon="sap-icon://text" text="{i18n>tabTypography}" key="typography">
-						<VBox class="sapUiMediumMargin">
-							<Title text="{i18n>typoH1}" level="H1" titleStyle="H1" />
-							<Title text="{i18n>typoH2}" level="H2" titleStyle="H2" class="sapUiSmallMarginTop" />
-							<Title text="{i18n>typoH3}" level="H3" titleStyle="H3" class="sapUiSmallMarginTop" />
-							<Title text="{i18n>typoH4}" level="H4" titleStyle="H4" class="sapUiSmallMarginTop" />
+				<!-- ============ Hero ============ -->
+				<VBox class="saHero">
+					<!-- Decorative, always-running CSS animation (top-right). Pure @keyframes
+					     so the assistant's "Animationen stoppen" feature freezes it. -->
+					<core:HTML content='&lt;div class=&quot;saHeroAnim&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;saHeroAnimRing&quot;&gt;&lt;/span&gt;&lt;span class=&quot;saHeroAnimCore&quot;&gt;&lt;/span&gt;&lt;span class=&quot;saHeroAnimOrbit saHeroAnimOrbit1&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/span&gt;&lt;span class=&quot;saHeroAnimOrbit saHeroAnimOrbit2&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/span&gt;&lt;/div&gt;' />
 
-							<Text text="{i18n>paragraph1}" class="sapUiMediumMarginTop" />
-							<Text text="{i18n>paragraph2}" class="sapUiSmallMarginTop" />
-							<Text text="{i18n>paragraph3}" class="sapUiSmallMarginTop" />
+					<Image src="img/abics-logo.png" densityAware="false" decorative="false" alt="abics" class="saHeroLogo" />
 
-							<HBox class="sapUiMediumMarginTop" alignItems="Center" wrap="Wrap">
-								<Label text="{i18n>labelExample}" design="Bold" class="sapUiTinyMarginEnd" />
-								<Link text="{i18n>linkExample}" href="https://ui5.sap.com" target="_blank" class="sapUiTinyMarginEnd" />
-								<Text text="{i18n>inlineExample}" />
-							</HBox>
+					<Title text="{i18n>appTitle}" level="H1" titleStyle="H1" class="saHeroTitle sapUiMediumMarginTop" />
+					<Text text="{i18n>heroTagline}" class="saHeroTagline sapUiSmallMarginTop" />
+					<Text text="{i18n>heroIntro}" class="saHeroIntro sapUiSmallMarginTop" />
 
-							<MessageStrip
-								text="{i18n>msgInfo}"
-								type="Information"
-								showIcon="true"
-								class="sapUiMediumMarginTop" />
-							<MessageStrip
-								text="{i18n>msgSuccess}"
-								type="Success"
-								showIcon="true"
-								class="sapUiTinyMarginTop" />
-							<MessageStrip
-								text="{i18n>msgWarning}"
-								type="Warning"
-								showIcon="true"
-								class="sapUiTinyMarginTop" />
-							<MessageStrip
-								text="{i18n>msgError}"
-								type="Error"
-								showIcon="true"
-								class="sapUiTinyMarginTop" />
+					<HBox class="saHeroBadges sapUiMediumMarginTop" wrap="Wrap">
+						<Text text="{i18n>badgeVersion}" class="saBadge" />
+						<Text text="{i18n>badgeLicense}" class="saBadge" />
+						<Text text="{i18n>badgeClient}" class="saBadge" />
+					</HBox>
+
+					<HBox class="sapUiMediumMarginTop" wrap="Wrap" alignItems="Center">
+						<Link text="{i18n>linkNpm}" href="https://www.npmjs.com/package/ui5-smart-access" target="_blank" class="saHeroLink sapUiMediumMarginEnd" />
+						<Link text="{i18n>linkGithub}" href="https://github.com/ugurbiricik/ui5-smart-access" target="_blank" class="saHeroLink sapUiMediumMarginEnd" />
+						<Link text="abics.de" href="https://www.abics.de" target="_blank" class="saHeroLink" />
+					</HBox>
+
+					<MessageStrip text="{i18n>heroHint}" type="Information" showIcon="true" class="sapUiMediumMarginTop saHeroHint" />
+				</VBox>
+
+				<!-- ============ What is it ============ -->
+				<VBox class="demoSection">
+					<Title text="{i18n>whatTitle}" level="H2" titleStyle="H2" />
+					<Text text="{i18n>whatP1}" class="sapUiSmallMarginTop" />
+					<Text text="{i18n>whatP2}" class="sapUiSmallMarginTop" />
+				</VBox>
+
+				<!-- ============ Features ============ -->
+				<VBox class="demoSection">
+					<Title text="{i18n>featuresTitle}" level="H2" titleStyle="H2" />
+					<Text text="{i18n>featuresIntro}" class="sapUiSmallMarginTop" />
+
+					<l:Grid content="{/features}" defaultSpan="XL3 L3 M6 S12" hSpacing="1" vSpacing="1" class="sapUiMediumMarginTop">
+						<VBox class="featureCard">
+							<core:Icon src="{icon}" size="1.75rem" class="featureCardIcon" />
+							<Title text="{name}" level="H4" titleStyle="H4" wrapping="true" class="sapUiTinyMarginTop" />
+							<Text text="{desc}" class="featureCardDesc sapUiTinyMarginTop" />
 						</VBox>
-					</IconTabFilter>
+					</l:Grid>
+				</VBox>
 
-					<!-- ============ Images ============ -->
-					<IconTabFilter icon="sap-icon://picture" text="{i18n>tabImages}" key="images">
-						<VBox class="sapUiMediumMargin">
-							<Title text="{i18n>imagesTitle}" level="H2" />
-							<Text text="{i18n>imagesHint}" class="sapUiSmallMarginTop" />
+				<!-- ============ Why accessibility (typography demo) ============ -->
+				<VBox class="demoSection">
+					<Title text="{i18n>whyTitle}" level="H2" titleStyle="H2" />
+					<Text text="{i18n>whyP1}" class="sapUiSmallMarginTop" />
+					<Text text="{i18n>whyP2}" class="sapUiSmallMarginTop" />
+					<Text text="{i18n>whyP3}" class="sapUiSmallMarginTop" />
 
-							<l:Grid defaultSpan="L4 M6 S12" class="sapUiMediumMarginTop" hSpacing="1" vSpacing="1">
-								<Image src="https://picsum.photos/id/10/400/250" densityAware="false" decorative="false" alt="Landscape 1" />
-								<Image src="https://picsum.photos/id/20/400/250" densityAware="false" decorative="false" alt="Landscape 2" />
-								<Image src="https://picsum.photos/id/30/400/250" densityAware="false" decorative="false" alt="Landscape 3" />
-								<Image src="https://picsum.photos/id/40/400/250" densityAware="false" decorative="false" alt="Landscape 4" />
-								<Image src="https://picsum.photos/id/50/400/250" densityAware="false" decorative="false" alt="Landscape 5" />
-								<Image src="https://picsum.photos/id/60/400/250" densityAware="false" decorative="false" alt="Landscape 6" />
-							</l:Grid>
+					<Link text="{i18n>whyLink}" href="https://www.w3.org/WAI/WCAG21/quickref/" target="_blank" class="sapUiSmallMarginTop" />
 
-							<Panel headerText="{i18n>avatarsTitle}" class="sapUiMediumMarginTop" expandable="true" expanded="true">
-								<HBox wrap="Wrap" class="sapUiSmallMargin">
-									<Avatar src="https://i.pravatar.cc/150?img=1" displaySize="L" class="sapUiTinyMarginEnd" />
-									<Avatar src="https://i.pravatar.cc/150?img=2" displaySize="L" class="sapUiTinyMarginEnd" />
-									<Avatar src="https://i.pravatar.cc/150?img=3" displaySize="L" class="sapUiTinyMarginEnd" />
-									<Avatar src="https://i.pravatar.cc/150?img=4" displaySize="L" class="sapUiTinyMarginEnd" />
-									<Avatar initials="UB" displaySize="L" backgroundColor="Accent6" class="sapUiTinyMarginEnd" />
-								</HBox>
-							</Panel>
-						</VBox>
-					</IconTabFilter>
+					<MessageStrip text="{i18n>whyMsgInfo}" type="Information" showIcon="true" class="sapUiMediumMarginTop" />
+					<MessageStrip text="{i18n>whyMsgSuccess}" type="Success" showIcon="true" class="sapUiTinyMarginTop" />
+					<MessageStrip text="{i18n>whyMsgWarning}" type="Warning" showIcon="true" class="sapUiTinyMarginTop" />
+					<MessageStrip text="{i18n>whyMsgError}" type="Error" showIcon="true" class="sapUiTinyMarginTop" />
+				</VBox>
 
-					<!-- ============ Forms ============ -->
-					<IconTabFilter icon="sap-icon://form" text="{i18n>tabForms}" key="forms">
-						<VBox class="sapUiMediumMargin">
-							<Title text="{i18n>formsTitle}" level="H2" />
+				<!-- ============ Images ============ -->
+				<VBox class="demoSection">
+					<Title text="{i18n>imagesTitle}" level="H2" titleStyle="H2" />
+					<Text text="{i18n>imagesHint}" class="sapUiSmallMarginTop" />
 
-							<f:SimpleForm
-								class="sapUiSmallMarginTop"
-								editable="true"
-								layout="ResponsiveGridLayout"
-								labelSpanXL="3"
-								labelSpanL="3"
-								labelSpanM="4"
-								labelSpanS="12"
-								adjustLabelSpan="false"
-								emptySpanXL="4"
-								emptySpanL="4"
-								emptySpanM="0"
-								emptySpanS="0"
-								columnsXL="1"
-								columnsL="1"
-								columnsM="1"
-								singleContainerFullSize="false">
-								<core:Title text="{i18n>formPersonalInfo}" />
+					<l:Grid defaultSpan="L4 M6 S12" class="sapUiMediumMarginTop" hSpacing="1" vSpacing="1">
+						<Image src="https://picsum.photos/id/1067/400/250" densityAware="false" decorative="false" alt="Motiv 1" />
+						<Image src="https://picsum.photos/id/1059/400/250" densityAware="false" decorative="false" alt="Motiv 2" />
+						<Image src="https://picsum.photos/id/1043/400/250" densityAware="false" decorative="false" alt="Motiv 3" />
+						<Image src="https://picsum.photos/id/1025/400/250" densityAware="false" decorative="false" alt="Motiv 4" />
+						<Image src="https://picsum.photos/id/1024/400/250" densityAware="false" decorative="false" alt="Motiv 5" />
+						<Image src="https://picsum.photos/id/1015/400/250" densityAware="false" decorative="false" alt="Motiv 6" />
+					</l:Grid>
+				</VBox>
 
-								<Label text="{i18n>formName}" />
-								<Input placeholder="{i18n>formNamePh}" />
+				<!-- ============ Colors & contrast ============ -->
+				<VBox class="demoSection">
+					<Title text="{i18n>colorsTitle}" level="H2" titleStyle="H2" />
+					<Text text="{i18n>colorsHint}" class="sapUiSmallMarginTop" />
 
-								<Label text="{i18n>formEmail}" />
-								<Input type="Email" placeholder="{i18n>formEmailPh}" />
+					<HBox wrap="Wrap" class="sapUiMediumMarginTop">
+						<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#e74c3c;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;margin:4px"&gt;Rot&lt;/div&gt;' />
+						<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#e67e22;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;margin:4px"&gt;Orange&lt;/div&gt;' />
+						<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#f1c40f;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-weight:bold;margin:4px"&gt;Gelb&lt;/div&gt;' />
+						<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#2ecc71;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;margin:4px"&gt;Grün&lt;/div&gt;' />
+						<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#3498db;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;margin:4px"&gt;Blau&lt;/div&gt;' />
+						<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#9b59b6;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;margin:4px"&gt;Lila&lt;/div&gt;' />
+					</HBox>
 
-								<Label text="{i18n>formAge}" />
-								<StepInput value="25" min="0" max="120" />
+					<Title text="{i18n>contrastTitle}" level="H3" titleStyle="H3" class="sapUiMediumMarginTop" />
+					<Text text="{i18n>contrastHint}" class="sapUiSmallMarginTop" />
+					<core:HTML content='&lt;div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"&gt;&lt;div style="padding:16px;background:#fafafa;color:#7a7a7a;border-radius:6px;min-width:180px"&gt;Niedriger Kontrast: Grau auf Hellgrau&lt;/div&gt;&lt;div style="padding:16px;background:#ffffff;color:#000;border:1px solid #ddd;border-radius:6px;min-width:180px"&gt;Hoher Kontrast: Schwarz auf Weiß&lt;/div&gt;&lt;div style="padding:16px;background:#ffe066;color:#664d00;border-radius:6px;min-width:180px"&gt;Gelb auf Dunkelgelb&lt;/div&gt;&lt;/div&gt;' />
+				</VBox>
 
-								<Label text="{i18n>formGender}" />
-								<Select>
-									<core:Item key="m" text="{i18n>formMale}" />
-									<core:Item key="f" text="{i18n>formFemale}" />
-									<core:Item key="x" text="{i18n>formOther}" />
-								</Select>
+				<!-- ============ Compatibility ============ -->
+				<VBox class="demoSection">
+					<Title text="{i18n>compatTitle}" level="H2" titleStyle="H2" />
+					<Text text="{i18n>compatHint}" class="sapUiSmallMarginTop" />
 
-								<Label text="{i18n>formDate}" />
-								<DatePicker />
+					<Table items="{/compat}" class="sapUiMediumMarginTop">
+						<columns>
+							<Column><Text text="{i18n>colComponent}" /></Column>
+							<Column hAlign="Center"><Text text="{i18n>colVersion}" /></Column>
+							<Column hAlign="End"><Text text="{i18n>colStatus}" /></Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<cells>
+									<ObjectIdentifier title="{name}" />
+									<Text text="{detail}" />
+									<ObjectStatus text="{note}" state="{statusState}" icon="sap-icon://accept" />
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</VBox>
 
-								<Label text="{i18n>formNotes}" />
-								<TextArea rows="4" placeholder="{i18n>formNotesPh}" />
+				<!-- ============ Use cases ============ -->
+				<VBox class="demoSection">
+					<Title text="{i18n>useCasesTitle}" level="H2" titleStyle="H2" />
+					<Panel expandable="false" class="sapUiSmallMarginTop">
+						<List items="{/useCases}">
+							<ObjectListItem title="{name}" intro="{intro}">
+								<attributes>
+									<ObjectAttribute text="{benefit1}" />
+									<ObjectAttribute text="{benefit2}" />
+								</attributes>
+								<firstStatus>
+									<ObjectStatus text="{status}" state="{statusState}" />
+								</firstStatus>
+							</ObjectListItem>
+						</List>
+					</Panel>
+				</VBox>
 
-								<core:Title text="{i18n>formPreferences}" />
-
-								<Label text="{i18n>formNewsletter}" />
-								<CheckBox text="{i18n>formNewsletterText}" selected="true" />
-
-								<Label text="{i18n>formContactMethod}" />
-								<RadioButtonGroup columns="3" selectedIndex="0">
-									<RadioButton text="{i18n>formEmail}" />
-									<RadioButton text="{i18n>formPhone}" />
-									<RadioButton text="{i18n>formPost}" />
-								</RadioButtonGroup>
-
-								<Label text="{i18n>formSatisfaction}" />
-								<RatingIndicator value="4" maxValue="5" />
-
-								<Label text="{i18n>formRange}" />
-								<Slider value="40" min="0" max="100" enableTickmarks="true" step="10" />
-							</f:SimpleForm>
-
-							<HBox class="sapUiSmallMarginTop" justifyContent="End">
-								<Button text="{i18n>btnCancel}" class="sapUiTinyMarginEnd" />
-								<Button text="{i18n>btnSave}" type="Emphasized" press=".onSavePress" />
-							</HBox>
-						</VBox>
-					</IconTabFilter>
-
-					<!-- ============ Table ============ -->
-					<IconTabFilter icon="sap-icon://table-view" text="{i18n>tabTable}" key="table">
-						<VBox class="sapUiMediumMargin">
-							<Title text="{i18n>tableTitle}" level="H2" />
-							<Text text="{i18n>tableHint}" class="sapUiSmallMarginTop" />
-
-							<Table
-								class="sapUiMediumMarginTop"
-								items="{/products}"
-								growing="true"
-								growingThreshold="10">
-								<headerToolbar>
-									<OverflowToolbar>
-										<Title text="{i18n>tableProducts}" level="H3" />
-										<ToolbarSpacer />
-										<SearchField width="15rem" placeholder="{i18n>search}" />
-										<Button icon="sap-icon://add" tooltip="{i18n>add}" />
-										<Button icon="sap-icon://refresh" tooltip="{i18n>refresh}" />
-									</OverflowToolbar>
-								</headerToolbar>
-								<columns>
-									<Column>
-										<Text text="{i18n>colProduct}" />
-									</Column>
-									<Column>
-										<Text text="{i18n>colCategory}" />
-									</Column>
-									<Column hAlign="End">
-										<Text text="{i18n>colPrice}" />
-									</Column>
-									<Column hAlign="Center">
-										<Text text="{i18n>colStatus}" />
-									</Column>
-								</columns>
-								<items>
-									<ColumnListItem>
-										<cells>
-											<ObjectIdentifier title="{name}" text="{code}" />
-											<Text text="{category}" />
-											<ObjectNumber number="{price}" unit="EUR" />
-											<ObjectStatus text="{status}" state="{statusState}" />
-										</cells>
-									</ColumnListItem>
-								</items>
-							</Table>
-						</VBox>
-					</IconTabFilter>
-
-					<!-- ============ Lists & Cards ============ -->
-					<IconTabFilter icon="sap-icon://list" text="{i18n>tabLists}" key="lists">
-						<l:Grid defaultSpan="L6 M12 S12" class="sapUiMediumMargin" hSpacing="2" vSpacing="2">
-							<Panel headerText="{i18n>standardList}" expandable="false">
-								<List items="{/tasks}">
-									<StandardListItem
-										title="{title}"
-										description="{description}"
-										icon="{icon}"
-										info="{info}"
-										infoState="{infoState}" />
-								</List>
-							</Panel>
-							<Panel headerText="{i18n>objectList}" expandable="false">
-								<List items="{/contacts}">
-									<ObjectListItem
-										title="{name}"
-										number="{phone}"
-										numberUnit="{i18n>phone}"
-										intro="{role}">
-										<attributes>
-											<ObjectAttribute text="{email}" />
-											<ObjectAttribute text="{city}" />
-										</attributes>
-										<firstStatus>
-											<ObjectStatus text="{status}" state="{statusState}" />
-										</firstStatus>
-									</ObjectListItem>
-								</List>
-							</Panel>
-						</l:Grid>
-					</IconTabFilter>
-
-					<!-- ============ Color Palette ============ -->
-					<IconTabFilter icon="sap-icon://color-fill" text="{i18n>tabColors}" key="colors">
-						<VBox class="sapUiMediumMargin">
-							<Title text="{i18n>colorsTitle}" level="H2" />
-							<Text text="{i18n>colorsHint}" class="sapUiSmallMarginTop" />
-
-							<HBox wrap="Wrap" class="sapUiMediumMarginTop">
-								<VBox class="colorSwatch" width="8rem" height="6rem" justifyContent="Center" alignItems="Center" backgroundDesign="Solid">
-									<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#e74c3c;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;margin:4px"&gt;Red&lt;/div&gt;' />
-								</VBox>
-								<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#e67e22;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;margin:4px"&gt;Orange&lt;/div&gt;' />
-								<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#f1c40f;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-weight:bold;margin:4px"&gt;Yellow&lt;/div&gt;' />
-								<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#2ecc71;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;margin:4px"&gt;Green&lt;/div&gt;' />
-								<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#3498db;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;margin:4px"&gt;Blue&lt;/div&gt;' />
-								<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#9b59b6;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;margin:4px"&gt;Purple&lt;/div&gt;' />
-								<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#1abc9c;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;margin:4px"&gt;Teal&lt;/div&gt;' />
-								<core:HTML content='&lt;div style="width:7rem;height:5rem;background:#34495e;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;margin:4px"&gt;Dark&lt;/div&gt;' />
-							</HBox>
-
-							<Title text="{i18n>contrastTitle}" level="H3" class="sapUiMediumMarginTop" />
-							<Text text="{i18n>contrastHint}" class="sapUiSmallMarginTop" />
-							<core:HTML content='&lt;div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"&gt;&lt;div style="padding:16px;background:#fafafa;color:#7a7a7a;border-radius:6px;min-width:180px"&gt;Niedriger Kontrast: Grau auf Hellgrau&lt;/div&gt;&lt;div style="padding:16px;background:#ffffff;color:#000;border:1px solid #ddd;border-radius:6px;min-width:180px"&gt;Hoher Kontrast: Schwarz auf Weiß&lt;/div&gt;&lt;div style="padding:16px;background:#ffe066;color:#664d00;border-radius:6px;min-width:180px"&gt;Gelb auf Dunkelgelb&lt;/div&gt;&lt;/div&gt;' />
-
-							<Title text="{i18n>imagesColorTitle}" level="H3" class="sapUiMediumMarginTop" />
-							<HBox wrap="Wrap" class="sapUiSmallMarginTop">
-								<Image src="https://picsum.photos/id/237/200/150" densityAware="false" decorative="false" alt="Test color 1" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-								<Image src="https://picsum.photos/id/1043/200/150" densityAware="false" decorative="false" alt="Test color 2" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-								<Image src="https://picsum.photos/id/1025/200/150" densityAware="false" decorative="false" alt="Test color 3" class="sapUiTinyMarginBottom" />
-							</HBox>
-						</VBox>
-					</IconTabFilter>
-
-					<!-- ============ Buttons / Actions ============ -->
-					<IconTabFilter icon="sap-icon://action" text="{i18n>tabButtons}" key="buttons">
-						<VBox class="sapUiMediumMargin">
-							<Title text="{i18n>buttonsTitle}" level="H2" />
-							<HBox wrap="Wrap" class="sapUiSmallMarginTop">
-								<Button text="Default" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-								<Button text="Emphasized" type="Emphasized" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-								<Button text="Accept" type="Accept" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-								<Button text="Reject" type="Reject" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-								<Button text="Transparent" type="Transparent" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-								<Button text="Ghost" type="Ghost" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-								<Button text="Attention" type="Attention" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-							</HBox>
-
-							<Title text="{i18n>iconButtonsTitle}" level="H3" class="sapUiMediumMarginTop" />
-							<HBox wrap="Wrap" class="sapUiSmallMarginTop">
-								<Button icon="sap-icon://home" class="sapUiTinyMarginEnd" />
-								<Button icon="sap-icon://search" class="sapUiTinyMarginEnd" />
-								<Button icon="sap-icon://favorite" class="sapUiTinyMarginEnd" />
-								<Button icon="sap-icon://edit" class="sapUiTinyMarginEnd" />
-								<Button icon="sap-icon://delete" class="sapUiTinyMarginEnd" />
-								<Button icon="sap-icon://share" class="sapUiTinyMarginEnd" />
-							</HBox>
-
-							<Title text="{i18n>toggleButtonsTitle}" level="H3" class="sapUiMediumMarginTop" />
-							<HBox wrap="Wrap" class="sapUiSmallMarginTop">
-								<ToggleButton text="Bold" icon="sap-icon://bold-text" pressed="true" class="sapUiTinyMarginEnd" />
-								<ToggleButton text="Italic" icon="sap-icon://italic-text" class="sapUiTinyMarginEnd" />
-								<SegmentedButton selectedKey="b1">
-									<items>
-										<SegmentedButtonItem text="One" key="b1" />
-										<SegmentedButtonItem text="Two" key="b2" />
-										<SegmentedButtonItem text="Three" key="b3" />
-									</items>
-								</SegmentedButton>
-							</HBox>
-
-							<Title text="{i18n>dialogsTitle}" level="H3" class="sapUiMediumMarginTop" />
-							<HBox wrap="Wrap" class="sapUiSmallMarginTop">
-								<Button text="{i18n>showInfoDialog}" press=".onShowInfoDialog" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-								<Button text="{i18n>showSuccessToast}" press=".onShowToast" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-								<Button text="{i18n>showErrorDialog}" press=".onShowErrorDialog" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-							</HBox>
-						</VBox>
-					</IconTabFilter>
-
-				</items>
-			</IconTabBar>
+			</VBox>
 		</content>
 	</Page>
+
+	<!-- Floating accessibility launcher (fixed top-right, always visible) -->
+	<Button
+		icon="sap-icon://accessibility"
+		class="accessFab"
+		press=".openAbicsAccessibilityPopover"
+		tooltip="{i18n>openAccessibility}" />
 
 </mvc:View>

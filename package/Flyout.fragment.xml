@@ -1,0 +1,202 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+    <Popover
+        class="abicsAccessibilityPopover abicsAccessibilityFlyout"
+        id="abicsAccessibilityFlyout"
+        placement="HorizontalPreferredLeft"
+        showArrow="true"
+        offsetX="-12"
+        contentWidth="340px"
+    >
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <core:Icon src="{settings>/activeFlyoutIcon}" size="20px" class="flyoutHeaderIcon" />
+                    <Title text="{settings>/activeFlyoutTitle}" class="popoverTitle" />
+                </contentLeft>
+                <contentRight>
+                    <Button icon="sap-icon://decline" press=".onCloseFlyout" tooltip="{i18n>aria.close}" class="closePopoverButton" />
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+
+            <!-- Font (zoom, size, line height, word/letter spacing, alignment) -->
+            <VBox visible="{= ${settings>/activeFlyout} === 'font'}" class="flyoutSection" width="100%">
+
+                <VBox class="typoRow" width="100%">
+                    <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
+                        <Label text="{i18n>font.zoom}" />
+                        <Text text="{settings>/typoZoom}%" class="cbPercent" />
+                    </HBox>
+                    <HBox alignItems="Center" width="100%" class="typoSliderRow">
+                        <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" custom:typo="zoom" />
+                        <Slider min="50" max="200" step="5" value="{settings>/typoZoom}" change=".onTypoSliderChange" custom:typo="zoom">
+                            <layoutData><FlexItemData growFactor="1" /></layoutData>
+                        </Slider>
+                        <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" custom:typo="zoom" />
+                    </HBox>
+                </VBox>
+
+                <VBox class="typoRow" width="100%">
+                    <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
+                        <Label text="{i18n>font.lineHeight}" />
+                        <Text text="+{settings>/typoLineHeight}%" class="cbPercent" />
+                    </HBox>
+                    <HBox alignItems="Center" width="100%" class="typoSliderRow">
+                        <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" custom:typo="lineHeight" />
+                        <Slider min="0" max="100" step="5" value="{settings>/typoLineHeight}" change=".onTypoSliderChange" custom:typo="lineHeight">
+                            <layoutData><FlexItemData growFactor="1" /></layoutData>
+                        </Slider>
+                        <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" custom:typo="lineHeight" />
+                    </HBox>
+                </VBox>
+
+                <VBox class="typoRow" width="100%">
+                    <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
+                        <Label text="{i18n>font.wordSpacing}" />
+                        <Text text="+{settings>/typoWordSpacing}%" class="cbPercent" />
+                    </HBox>
+                    <HBox alignItems="Center" width="100%" class="typoSliderRow">
+                        <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" custom:typo="wordSpacing" />
+                        <Slider min="0" max="100" step="5" value="{settings>/typoWordSpacing}" change=".onTypoSliderChange" custom:typo="wordSpacing">
+                            <layoutData><FlexItemData growFactor="1" /></layoutData>
+                        </Slider>
+                        <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" custom:typo="wordSpacing" />
+                    </HBox>
+                </VBox>
+
+                <VBox class="typoRow" width="100%">
+                    <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
+                        <Label text="{i18n>font.letterSpacing}" />
+                        <Text text="+{settings>/typoLetterSpacing}%" class="cbPercent" />
+                    </HBox>
+                    <HBox alignItems="Center" width="100%" class="typoSliderRow">
+                        <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" custom:typo="letterSpacing" />
+                        <Slider min="0" max="100" step="5" value="{settings>/typoLetterSpacing}" change=".onTypoSliderChange" custom:typo="letterSpacing">
+                            <layoutData><FlexItemData growFactor="1" /></layoutData>
+                        </Slider>
+                        <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" custom:typo="letterSpacing" />
+                    </HBox>
+                </VBox>
+
+                <VBox class="typoRow" width="100%">
+                    <Label text="{i18n>font.alignment}" />
+                    <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="typoAlignRow">
+                        <Button icon="sap-icon://decline" press=".onTypoAlign" class="cbIntBtn" custom:align="none" />
+                        <Button icon="sap-icon://text-align-left" press=".onTypoAlign" class="cbIntBtn" custom:align="left" />
+                        <Button icon="sap-icon://text-align-center" press=".onTypoAlign" class="cbIntBtn" custom:align="center" />
+                        <Button icon="sap-icon://text-align-right" press=".onTypoAlign" class="cbIntBtn" custom:align="right" />
+                        <Button icon="sap-icon://text-align-justified" press=".onTypoAlign" class="cbIntBtn" custom:align="justify" />
+                    </HBox>
+                </VBox>
+
+            </VBox>
+
+            <!-- Reading aid -->
+            <VBox visible="{= ${settings>/activeFlyout} === 'readingGuide'}" class="flyoutSection" alignItems="Center" width="100%">
+                <HBox alignItems="Center" width="100%" justifyContent="SpaceBetween">
+                    <Select selectedKey="{settings>/readingGuideMode}" type="Default" change=".onReadingGuideChange" width="200px">
+                        <core:Item key="none" text="{i18n>readingGuide.none}" />
+                        <core:Item key="guide" text="{i18n>readingGuide.guide}" />
+                        <core:Item key="mask" text="{i18n>readingGuide.mask}" />
+                    </Select>
+                    <Button icon="sap-icon://refresh" press=".onReadingGuideReset" tooltip="{i18n>aria.resetReadingGuide}" class="cbIntBtn" />
+                </HBox>
+            </VBox>
+
+            <!-- Text to speech -->
+            <VBox visible="{= ${settings>/activeFlyout} === 'tts'}" class="flyoutSection" alignItems="Center" width="100%">
+                <HBox alignItems="Center" width="100%" justifyContent="Center" class="flyoutTtsButtons">
+                    <Button text="{i18n>tts.start}" icon="sap-icon://begin" press=".onTTSStart" />
+                    <Button text="{i18n>tts.stop}" icon="sap-icon://stop" press=".onTTSStop" />
+                </HBox>
+                <VBox alignItems="Center" width="100%">
+                    <Label text="{i18n>tts.speed}" />
+                    <Slider min="0.5" max="2" step="0.1" value="{settings>/ttsRate}" width="100%" change=".onTTSRateChange" />
+                </VBox>
+                <VBox alignItems="Center" width="100%">
+                    <Label text="{i18n>tts.volume}" />
+                    <Slider min="0" max="1" step="0.1" value="{settings>/ttsVolume}" width="100%" change=".onTTSVolumeChange" />
+                </VBox>
+                <HBox alignItems="Center" width="100%" justifyContent="SpaceBetween">
+                    <Label text="{i18n>tts.hover}" />
+                    <Switch state="{settings>/ttsHover}" change=".onTTSHoverChange" />
+                </HBox>
+            </VBox>
+
+            <!-- Color blindness (cards + intensity) -->
+            <VBox visible="{= ${settings>/activeFlyout} === 'colorBlindness'}" class="flyoutSection" width="100%">
+                <List items="{settings>/colorBlindnessModes}" showSeparators="None" mode="None" backgroundDesign="Transparent" width="100%" class="cbList">
+                    <CustomListItem type="Active" press=".onColorBlindnessSelect" class="cbItem">
+                        <VBox class="cbCard" width="100%">
+                            <HBox alignItems="Center" width="100%" class="cbCardRow">
+                                <Image src="{settings>icon}" width="36px" height="36px" densityAware="false" class="cbSwatch" />
+                                <VBox class="cbTexts">
+                                    <layoutData>
+                                        <FlexItemData growFactor="1" />
+                                    </layoutData>
+                                    <Text text="{settings>title}" class="cbTitle" />
+                                    <Text text="{settings>sub}" class="cbSub" />
+                                </VBox>
+                            </HBox>
+                            <VBox class="cbIntensity" width="100%" visible="{= ${settings>key} === ${settings>/colorBlindnessType}}">
+                                <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
+                                    <Label text="{i18n>colorBlindness.intensity}" />
+                                    <Text text="{settings>/colorBlindnessIntensity}%" class="cbPercent" />
+                                </HBox>
+                                <Slider min="0" max="100" step="1" value="{settings>/colorBlindnessIntensity}" width="100%" change=".onColorBlindnessIntensityChange" />
+                                <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="cbIntensityBtns">
+                                    <Button icon="sap-icon://less" press=".onColorBlindnessIntensityDecrease" tooltip="{i18n>aria.colorIntensityDecrease}" class="cbIntBtn" />
+                                    <Button icon="sap-icon://refresh" press=".onColorBlindnessIntensityReset" tooltip="{i18n>aria.colorIntensityReset}" class="cbIntBtn" />
+                                    <Button icon="sap-icon://add" press=".onColorBlindnessIntensityIncrease" tooltip="{i18n>aria.colorIntensityIncrease}" class="cbIntBtn" />
+                                </HBox>
+                            </VBox>
+                        </VBox>
+                    </CustomListItem>
+                </List>
+            </VBox>
+
+            <!-- Blue light filter -->
+            <VBox visible="{= ${settings>/activeFlyout} === 'blueLightFilter'}" class="flyoutSection" alignItems="Center" width="100%">
+                <HBox alignItems="Center" width="100%" justifyContent="SpaceBetween">
+                    <Slider min="0" max="100" step="1" value="{settings>/blueLightFilterLevel}" width="200px" change=".onBlueLightFilterSliderChange" />
+                    <Button icon="sap-icon://refresh" press=".onBlueLightFilterReset" tooltip="{i18n>aria.resetBlueLightFilter}" class="cbIntBtn" />
+                </HBox>
+            </VBox>
+
+            <!-- Contrast mode (presets + background/text colour + live preview) -->
+            <VBox visible="{= ${settings>/activeFlyout} === 'contrast'}" class="flyoutSection contrastSection" width="100%">
+                <Label text="{i18n>contrast.preset}" class="contrastLabel" />
+                <HBox class="contrastPresetRow" items="{settings>/contrastPresets}" alignItems="Center" justifyContent="SpaceBetween" width="100%">
+                    <Image src="{settings>preview}" width="40px" height="40px" densityAware="false" press=".onContrastPresetSelect" class="contrastPreset" />
+                </HBox>
+
+                <Label text="{i18n>contrast.background}" class="contrastLabel" />
+                <HBox class="contrastSwatchRow" items="{settings>/contrastColors}" alignItems="Center" justifyContent="SpaceBetween" width="100%">
+                    <Image src="{settings>preview}" width="28px" height="28px" densityAware="false" press=".onContrastBgSelect" tooltip="{= ${settings>color} === 'custom' ? ${i18n>contrast.custom} : ${settings>color}}" class="contrastSwatch" />
+                </HBox>
+
+                <Label text="{i18n>contrast.text}" class="contrastLabel" />
+                <HBox class="contrastSwatchRow" items="{settings>/contrastColors}" alignItems="Center" justifyContent="SpaceBetween" width="100%">
+                    <Image src="{settings>preview}" width="28px" height="28px" densityAware="false" press=".onContrastTextSelect" tooltip="{= ${settings>color} === 'custom' ? ${i18n>contrast.custom} : ${settings>color}}" class="contrastSwatch" />
+                </HBox>
+
+                <Label text="{i18n>contrast.preview}" class="contrastLabel" />
+                <HBox class="contrastPreviewBox" alignItems="Center" justifyContent="Center" width="100%">
+                    <Text text="{i18n>contrast.sample}" class="contrastPreviewText" />
+                </HBox>
+
+                <HBox class="contrastActions" alignItems="Center" justifyContent="SpaceBetween" width="100%">
+                    <Button icon="sap-icon://accept" press=".onContrastSet" tooltip="{i18n>contrast.set}" class="contrastSetBtn" />
+                    <Button icon="sap-icon://refresh" press=".onContrastReset" tooltip="{i18n>contrast.reset}" class="contrastActionBtn" />
+                    <Button icon="sap-icon://decline" press=".onContrastCancel" tooltip="{i18n>contrast.cancel}" class="contrastActionBtn" />
+                </HBox>
+            </VBox>
+
+        </content>
+    </Popover>
+</core:FragmentDefinition>

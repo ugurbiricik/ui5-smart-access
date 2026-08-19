@@ -8,7 +8,7 @@
         placement="Bottom"
         showArrow="false"
         title="{i18n>popover.title}"
-        contentWidth="320px"
+        contentWidth="290px"
     >
         <customHeader>
             <Bar>
@@ -23,6 +23,18 @@
         <content>
             <core:Fragment
                 fragmentName="ui5-smart-access.fragments.FontSizePanel"
+                type="XML"
+            />
+            <core:Fragment
+                fragmentName="ui5-smart-access.fragments.ReadingGuidePanel"
+                type="XML"
+            />
+            <core:Fragment
+                fragmentName="ui5-smart-access.fragments.BigCursorPanel"
+                type="XML"
+            />
+            <core:Fragment
+                fragmentName="ui5-smart-access.fragments.HighlightLinksPanel"
                 type="XML"
             />
             <core:Fragment
@@ -42,11 +54,15 @@
                 type="XML"
             />
             <core:Fragment
-                fragmentName="ui5-smart-access.fragments.ToggleImagesPanel"
+                fragmentName="ui5-smart-access.fragments.ContrastModePanel"
                 type="XML"
             />
             <core:Fragment
-                fragmentName="ui5-smart-access.fragments.ContrastModePanel"
+                fragmentName="ui5-smart-access.fragments.StopAnimationsPanel"
+                type="XML"
+            />
+            <core:Fragment
+                fragmentName="ui5-smart-access.fragments.ToggleImagesPanel"
                 type="XML"
             />
         </content>

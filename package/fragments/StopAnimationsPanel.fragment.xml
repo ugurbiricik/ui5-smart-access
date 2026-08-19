@@ -1,0 +1,10 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+   <Panel id="stopAnimationsPanel" expandable="false" width="auto" class="stopAnimationsPanel">
+      <headerToolbar>
+         <OverflowToolbar active="true" press=".onStopAnimationsToolbarPress">
+            <core:Icon id="stopAnimationsIcon" src="sap-icon://media-pause" size="20px" />
+            <Title id="stopAnimationsTitle" text="{i18n>stopAnimations.title}" />
+         </OverflowToolbar>
+      </headerToolbar>
+   </Panel>
+</core:FragmentDefinition>

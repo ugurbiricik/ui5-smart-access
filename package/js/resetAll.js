@@ -6,6 +6,12 @@ import { disableNightMode } from './nightMode.js';
 import { showImages } from './imageHider.js';
 import { removeCustomContrast, isContrastModeActive, toggleContrastMode } from './contrast.js';
 import { clearAllFilters } from './filterManager.js';
+import { resetTextSpacing } from './textSpacing.js';
+import { disableBigCursor } from './bigCursor.js';
+import { disableHighlightLinks } from './highlightLinks.js';
+import { disableStopAnimations } from './stopAnimations.js';
+import { resetReadingGuide } from './readingGuide.js';
+import { resetTypography } from './typography.js';
 
 export const resetAll = () => {
     onResetFontSize();
@@ -20,4 +26,10 @@ export const resetAll = () => {
     showImages();
     removeCustomContrast();
     if (isContrastModeActive()) toggleContrastMode();
+    resetTextSpacing();
+    disableBigCursor();
+    disableHighlightLinks();
+    disableStopAnimations();
+    resetReadingGuide();
+    resetTypography();
 };

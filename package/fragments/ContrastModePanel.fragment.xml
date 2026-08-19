@@ -1,11 +1,9 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
     <Panel id="contrastModePanel" expandable="false" width="auto" class="contrastModePanel">
         <headerToolbar>
-            <OverflowToolbar>
+            <OverflowToolbar active="true" press=".onContrastModeToolbarPress">
                 <core:Icon src="sap-icon://paint-bucket" size="20px" />
                 <Title id="contrastModeTitle" text="{i18n>contrastMode.activate}" />
-                <ToolbarSpacer />
-                <Switch state="{settings>/contrastModeActive}" change=".onContrastModeToolbarPress" />
             </OverflowToolbar>
         </headerToolbar>
     </Panel>

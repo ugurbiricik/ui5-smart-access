@@ -7,10 +7,16 @@
          </OverflowToolbar>
       </headerToolbar>
       <content>
-         <VBox justifyContent="Center" alignItems="Center" width="100%">
-            <HBox alignItems="Center" width="200px" justifyContent="SpaceBetween">
-               <Slider id="blueLightFilterSlider" min="0" max="100" step="1" value="{settings>/blueLightFilterLevel}" width="150px" change=".onBlueLightFilterSliderChange"/>
-               <Button id="blueLightFilterResetButton" icon="sap-icon://refresh" press=".onBlueLightFilterReset" tooltip="{i18n>aria.resetBlueLightFilter}"/>
+         <VBox class="cbQuick" width="100%">
+            <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
+               <Label text="{i18n>blueFilter.intensity}" />
+               <Text text="{settings>/blueLightFilterLevel}%" class="cbPercent" />
+            </HBox>
+            <Slider id="blueLightFilterSlider" min="0" max="100" step="1" value="{settings>/blueLightFilterLevel}" width="100%" change=".onBlueLightFilterSliderChange" class="blueFilterSlider"/>
+            <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="cbIntensityBtns">
+               <Button icon="sap-icon://less" press=".onBlueLightFilterDecrease" tooltip="{i18n>aria.blueFilterDecrease}" class="cbIntBtn"/>
+               <Button id="blueLightFilterResetButton" icon="sap-icon://refresh" press=".onBlueLightFilterReset" tooltip="{i18n>aria.resetBlueLightFilter}" class="cbIntBtn"/>
+               <Button icon="sap-icon://add" press=".onBlueLightFilterIncrease" tooltip="{i18n>aria.blueFilterIncrease}" class="cbIntBtn"/>
             </HBox>
          </VBox>
       </content>

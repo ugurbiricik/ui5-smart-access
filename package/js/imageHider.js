@@ -1,4 +1,4 @@
-const STORAGE_KEY = "eye-able-images-hidden";
+const STORAGE_KEY = "ui5-smart-access-images-hidden";
 const IMAGE_SELECTORS = 'img,svg,.sapMImg,.sapMBtnIcon,.sapUiIcon,.sapFAvatar,.sapMIllustratedMessage-illu';
 
 let imagesHidden = false;

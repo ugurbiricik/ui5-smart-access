@@ -25,6 +25,14 @@ export function updateTitleText(controlId, i18nKey) {
     }
 }
 
+// Swaps the icon of a control inside the popover (e.g. play/pause on a toggle).
+export function updateIconSrc(controlId, src) {
+    const control = Fragment.byId(this._sFragmentId, controlId);
+    if (control && control.setSrc) {
+        control.setSrc(src);
+    }
+}
+
 // Walks up the control tree from the event source until it finds the
 // surrounding sap.m.Popover, then closes it. Used by the header close button.
 export function closePopoverFromEvent(oEvent) {

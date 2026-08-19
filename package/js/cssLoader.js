@@ -12,7 +12,9 @@ export function loadCustomStyleOnce() {
     link.id = "ui5-smart-access-styles";
     link.rel = "stylesheet";
     link.type = "text/css";
-    link.href = sCorrectPath;
+    // Cache-bust so an updated stylesheet is always picked up (browsers
+    // otherwise keep serving a cached copy from the same URL).
+    link.href = sCorrectPath + "?v=" + Date.now();
     document.head.appendChild(link);
 
     isCustomStyleLoaded = true;

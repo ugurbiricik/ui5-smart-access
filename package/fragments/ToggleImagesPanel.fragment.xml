@@ -1,11 +1,9 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
    <Panel id="toggleImagesPanel" expandable="false" width="auto" class="toggleImagesPanel">
       <headerToolbar>
-         <OverflowToolbar>
+         <OverflowToolbar active="true" press=".onToggleImagesToolbarPress">
             <core:Icon src="sap-icon://background" size="20px" />
             <Title id="toggleImagesTitle" text="{i18n>toggleImages.hide}" />
-            <ToolbarSpacer />
-            <Switch state="{settings>/toggleImagesActive}" change=".onToggleImagesToolbarPress" />
          </OverflowToolbar>
       </headerToolbar>
    </Panel>

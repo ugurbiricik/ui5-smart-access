@@ -1,11 +1,9 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
    <Panel id="nightModePanel" expandable="false" width="auto" class="nightModePanel">
       <headerToolbar>
-         <OverflowToolbar>
+         <OverflowToolbar active="true" press=".onNightModeToolbarPress">
             <core:Icon src="sap-icon://dark-mode" size="20px" />
             <Title id="nightModeTitle" text="{i18n>nightMode.activate}" />
-            <ToolbarSpacer />
-            <Switch state="{settings>/nightModeActive}" change=".onNightModeToolbarPress" />
          </OverflowToolbar>
       </headerToolbar>
    </Panel>

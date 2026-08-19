@@ -2,8 +2,6 @@ import BaseController from "./BaseController";
 import { openAccessPopover } from "ui5-smart-access";
 import UIEvent from "sap/ui/base/Event";
 import JSONModel from "sap/ui/model/json/JSONModel";
-import MessageToast from "sap/m/MessageToast";
-import MessageBox from "sap/m/MessageBox";
 
 /**
  * @namespace test.controller
@@ -12,30 +10,30 @@ export default class Main extends BaseController {
 
 	public onInit(): void {
 		const oData = {
-			products: [
-				{ name: "Smartphone X", code: "SPX-100", category: "Electronics", price: 799, status: "Verfügbar", statusState: "Success" },
-				{ name: "Laptop Pro 15", code: "LP-215", category: "Electronics", price: 1499, status: "Wenige", statusState: "Warning" },
-				{ name: "Bluetooth Kopfhörer", code: "BK-050", category: "Audio", price: 129, status: "Verfügbar", statusState: "Success" },
-				{ name: "4K Monitor", code: "MON-4K", category: "Electronics", price: 349, status: "Nicht verfügbar", statusState: "Error" },
-				{ name: "Kaffeemaschine", code: "KM-010", category: "Haushalt", price: 89, status: "Verfügbar", statusState: "Success" },
-				{ name: "Bürostuhl Ergo", code: "BS-ERG", category: "Möbel", price: 259, status: "Verfügbar", statusState: "Success" },
-				{ name: "Gaming Maus", code: "GM-700", category: "Accessoires", price: 59, status: "Wenige", statusState: "Warning" },
-				{ name: "Tastatur Mechanisch", code: "TM-RGB", category: "Accessoires", price: 119, status: "Verfügbar", statusState: "Success" },
-				{ name: "Smartwatch Lite", code: "SW-LT", category: "Wearables", price: 199, status: "Verfügbar", statusState: "Success" },
-				{ name: "Tablet 11 Zoll", code: "TB-11", category: "Electronics", price: 499, status: "Nicht verfügbar", statusState: "Error" }
+			// The eight capabilities the accessibility assistant ships with.
+			features: [
+				{ name: "Schriftgröße", category: "Anzeige", icon: "sap-icon://text", desc: "Vergrößern oder verkleinern Sie die Schrift der gesamten Seite – stufenlos, auch unter die Ausgangsgröße.", status: "Verfügbar", statusState: "Success" },
+				{ name: "Vorlesen (TTS)", category: "Audio", icon: "sap-icon://sound-loud", desc: "Liest markierten oder überfahrenen Text vor – mit einstellbarem Tempo und Lautstärke.", status: "Verfügbar", statusState: "Success" },
+				{ name: "Farbschwäche-Filter", category: "Farbe", icon: "sap-icon://palette", desc: "Kompensiert Rot-Grün- und Blau-Gelb-Sehschwächen über Farbmatrizen.", status: "Verfügbar", statusState: "Success" },
+				{ name: "Blaulichtfilter", category: "Farbe", icon: "sap-icon://filter", desc: "Reduziert den Blauanteil der Anzeige für angenehmeres Lesen bei wenig Licht.", status: "Verfügbar", statusState: "Success" },
+				{ name: "Nachtmodus", category: "Anzeige", icon: "sap-icon://lightbulb", desc: "Schaltet die Anwendung in ein augenschonendes dunkles Design um.", status: "Verfügbar", statusState: "Success" },
+				{ name: "Bilder ausblenden", category: "Anzeige", icon: "sap-icon://hide", desc: "Blendet alle Bilder aus, um Ablenkungen und kognitive Last zu reduzieren.", status: "Verfügbar", statusState: "Success" },
+				{ name: "Kontrastmodus", category: "Farbe", icon: "sap-icon://color-fill", desc: "Setzt frei wählbare Hinter- und Vordergrundfarben für maximale Lesbarkeit.", status: "Verfügbar", statusState: "Success" },
+				{ name: "Großer Mauszeiger", category: "Navigation", icon: "sap-icon://cursor-arrow", desc: "Vergrößert und färbt den Mauszeiger für bessere Sichtbarkeit und Orientierung.", status: "Verfügbar", statusState: "Success" }
 			],
-			tasks: [
-				{ title: "Dokumentation lesen", description: "Die neue UI5 Dokumentation prüfen", icon: "sap-icon://document-text", info: "Heute", infoState: "Information" },
-				{ title: "Meeting vorbereiten", description: "Agenda für morgen erstellen", icon: "sap-icon://meeting-room", info: "Wichtig", infoState: "Warning" },
-				{ title: "Code Review", description: "Pull Requests durchsehen", icon: "sap-icon://inspect-down", info: "3 offen", infoState: "Error" },
-				{ title: "Release Notes", description: "Version 1.2 vorbereiten", icon: "sap-icon://release", info: "Erledigt", infoState: "Success" },
-				{ title: "Tests laufen lassen", description: "E2E Tests aktualisieren", icon: "sap-icon://begin", info: "Heute", infoState: "Information" }
+			// Runtime environments the library is tested against.
+			compat: [
+				{ name: "Google Chrome", detail: "≥ 90", note: "Voll unterstützt", statusState: "Success" },
+				{ name: "Microsoft Edge", detail: "≥ 90", note: "Voll unterstützt", statusState: "Success" },
+				{ name: "Mozilla Firefox", detail: "≥ 88", note: "Voll unterstützt", statusState: "Success" },
+				{ name: "Apple Safari", detail: "≥ 14", note: "Voll unterstützt", statusState: "Success" },
+				{ name: "SAPUI5 / OpenUI5", detail: "≥ 1.120", note: "Empfohlen ab 1.136", statusState: "Success" }
 			],
-			contacts: [
-				{ name: "Anna Müller", role: "Projektleiterin", email: "anna.mueller@example.com", city: "München", phone: "+49 89 1234567", status: "Online", statusState: "Success" },
-				{ name: "Max Schmidt", role: "Frontend Entwickler", email: "max.schmidt@example.com", city: "Berlin", phone: "+49 30 7654321", status: "Abwesend", statusState: "Warning" },
-				{ name: "Lisa Weber", role: "UX Designerin", email: "lisa.weber@example.com", city: "Hamburg", phone: "+49 40 2233445", status: "Offline", statusState: "Error" },
-				{ name: "Tom Fischer", role: "Backend Entwickler", email: "tom.fischer@example.com", city: "Köln", phone: "+49 221 9988776", status: "Online", statusState: "Success" }
+			useCases: [
+				{ name: "Öffentliche Verwaltung", intro: "BITV 2.0 · EN 301 549", benefit1: "Erfüllt gesetzliche Vorgaben zur Barrierefreiheit", benefit2: "Keine Backend-Anpassungen nötig", status: "Empfohlen", statusState: "Success" },
+				{ name: "E-Commerce", intro: "Mehr Reichweite", benefit1: "Erreicht Nutzer mit Einschränkungen", benefit2: "Bessere Lesbarkeit steigert die Conversion", status: "Empfohlen", statusState: "Success" },
+				{ name: "Bildung & E-Learning", intro: "Inklusives Lernen", benefit1: "Vorlesefunktion für lange Texte", benefit2: "Anpassbare Schrift und Kontraste", status: "Beliebt", statusState: "Information" },
+				{ name: "Gesundheitswesen", intro: "Für alle Altersgruppen", benefit1: "Große Schrift und großer Mauszeiger", benefit2: "Kontrastmodus für Sehschwächen", status: "Empfohlen", statusState: "Success" }
 			]
 		};
 		const oModel = new JSONModel(oData);
@@ -44,25 +42,5 @@ export default class Main extends BaseController {
 
 	public openAbicsAccessibilityPopover(oEvent: UIEvent): void {
 		void openAccessPopover(this, oEvent);
-	}
-
-	public onSavePress(): void {
-		MessageToast.show("Formulardaten gespeichert (Demo)");
-	}
-
-	public onShowToast(): void {
-		MessageToast.show("Aktion erfolgreich ausgeführt");
-	}
-
-	public onShowInfoDialog(): void {
-		MessageBox.information("Dies ist ein Beispiel-Info-Dialog zum Testen des Night Mode und der Schriftgrößen-Funktion.", {
-			title: "Information"
-		});
-	}
-
-	public onShowErrorDialog(): void {
-		MessageBox.error("Dies ist ein Beispiel-Fehler-Dialog zum Testen der Barrierefreiheit.", {
-			title: "Fehler"
-		});
 	}
 }

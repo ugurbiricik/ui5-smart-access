@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <Panel id="bigCursorPanel" expandable="false" width="auto" class="bigCursorPanel">
+      <headerToolbar>
+         <OverflowToolbar active="true" press=".onBigCursorToggle">
+            <core:Icon src="sap-icon://cursor-arrow" size="20px" />
+            <Title text="{i18n>bigCursor.title}" />
+         </OverflowToolbar>
+      </headerToolbar>
+      <content>
+         <!-- Cursor colours + a custom (rainbow) chip, spread across the width;
+              the reset sits at the right (custom chip just to its left). -->
+         <HBox
+            class="bigCursorRow"
+            visible="{settings>/bigCursorExpanded}"
+            alignItems="Center"
+            width="100%">
+            <HBox class="bigCursorSwatches" items="{settings>/bigCursorColors}" alignItems="Center" justifyContent="SpaceBetween">
+               <layoutData><FlexItemData growFactor="1" /></layoutData>
+               <Image
+                  src="{settings>preview}"
+                  width="34px"
+                  height="34px"
+                  densityAware="false"
+                  tooltip="{settings>label}"
+                  press=".onBigCursorSelect"
+                  class="bigCursorSwatch">
+                  <customData>
+                     <core:CustomData
+                        key="sacursorsel"
+                        writeToDom="true"
+                        value="{= ${settings>key} === ${settings>/bigCursorColor} ? 'yes' : 'no' }" />
+                  </customData>
+               </Image>
+            </HBox>
+            <Button icon="sap-icon://refresh" press=".onBigCursorReset" tooltip="{i18n>aria.bigCursorReset}" class="cbIntBtn bigCursorResetBtn" />
+         </HBox>
+      </content>
+   </Panel>
+</core:FragmentDefinition>

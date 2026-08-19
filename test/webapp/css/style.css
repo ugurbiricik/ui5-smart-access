@@ -1,0 +1,293 @@
+/* Floating accessibility launcher — a round, gradient, icon-only button fixed
+   to the top-right corner so it stays visible while the page scrolls. */
+.accessFab {
+	position: fixed !important;
+	top: 52px;
+	right: 44px;
+	z-index: 100;
+	/* Outer button must be fully transparent — the visible round shape is the
+	   inner. Otherwise the default button chrome shows as a white box behind. */
+	background: transparent !important;
+	background-color: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	padding: 0 !important;
+	min-width: 0 !important;
+	height: auto !important;
+}
+
+.accessFab .sapMBtnInner {
+	width: 56px !important;
+	height: 56px !important;
+	min-width: 56px !important;
+	border-radius: 50% !important;
+	background: linear-gradient(135deg, #1e3a8a, #3b82f6) !important;
+	border: none !important;
+	box-shadow: 0 6px 18px rgba(30, 58, 138, 0.4) !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.accessFab .sapMBtnInner:hover {
+	background: linear-gradient(135deg, #1e3a8a, #3b82f6) !important;
+	box-shadow: 0 8px 24px rgba(30, 58, 138, 0.55) !important;
+	transform: scale(1.06);
+}
+
+.accessFab .sapMBtnInner:active {
+	transform: scale(0.97);
+}
+
+.accessFab .sapMBtnInner .sapUiIcon {
+	color: #ffffff !important;
+	font-size: 28px !important;
+}
+
+/* No focus ring / outline / border on click. The OUTER button stays fully
+   flat and transparent (no shadow → no square box); the drop shadow lives
+   only on the round inner element below. */
+.accessFab,
+.accessFab:focus,
+.accessFab:focus-visible,
+.accessFab:active {
+	outline: none !important;
+	border: none !important;
+	box-shadow: none !important;
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+.accessFab .sapMBtnInner:focus,
+.accessFab .sapMBtnInner:focus-visible,
+.accessFab .sapMBtnInner:active {
+	outline: none !important;
+	border: none !important;
+	box-shadow: 0 6px 18px rgba(30, 58, 138, 0.4) !important;
+}
+
+.accessFab .sapMBtnInner::before,
+.accessFab .sapMBtnInner::after {
+	display: none !important;
+	content: none !important;
+}
+
+/* One meaningful, scrollable presentation page, centred on wide screens. */
+.demoPage {
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.demoPage .demoSection {
+	padding: 1.75rem 0;
+	border-bottom: 1px solid #e2e8f0;
+}
+
+.demoPage .demoSection:last-child {
+	border-bottom: 0;
+}
+
+/* ============ Hero (abics-branded intro for the package) ============ */
+.saHero {
+	position: relative;
+	overflow: hidden;
+	background: #ffffff;
+	border-radius: 16px;
+	padding: 2rem 2.25rem;
+	margin: 1rem 0 1.5rem;
+	box-shadow: 0 10px 30px rgba(15, 42, 74, 0.08);
+}
+
+/* thin abics teal → orange brand bar across the top of the hero card */
+.saHero::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 4px;
+	background: linear-gradient(90deg, #0a7d74 0%, #0a7d74 55%, #f39200 100%);
+}
+
+.saHeroLogo {
+	height: 48px !important;
+	width: auto !important;
+	max-width: 100%;
+}
+
+.saHeroTitle,
+.saHeroTitle .sapMTitleInner,
+.saHeroTitle span {
+	color: #1e3a8a !important;
+	font-weight: 800 !important;
+}
+
+.saHeroTagline {
+	font-size: 1.15rem;
+	font-weight: 600;
+	color: #0a7d74;
+}
+
+.saHeroIntro {
+	color: #475569;
+	max-width: 62rem;
+	line-height: 1.6;
+}
+
+.saHeroBadges .saBadge {
+	display: inline-block;
+	padding: 4px 12px;
+	margin-right: 8px;
+	margin-bottom: 6px;
+	background: #eef2ff;
+	color: #1e3a8a;
+	border-radius: 999px;
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+
+.saHeroLink {
+	font-weight: 600;
+}
+
+.saHeroHint {
+	max-width: 62rem;
+}
+
+/* Decorative, continuously-running animation in the hero's top-right corner.
+   Pure CSS @keyframes so the assistant's "Animationen stoppen" feature
+   (global animation-duration: 0.001s) freezes it — a live test surface. */
+
+/* UI5 wraps the core:HTML in a position:relative flex item; neutralise it so
+   the animation anchors to the hero card itself, not to that wrapper. */
+.saHero > .sapMFlexItem:has(> .saHeroAnim) {
+	position: static !important;
+}
+
+.saHeroAnim {
+	position: absolute;
+	top: 1.5rem;
+	right: 1.75rem;
+	width: 84px;
+	height: 84px;
+	pointer-events: none;
+}
+
+.saHeroAnim span {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+}
+
+.saHeroAnimRing {
+	width: 84px;
+	height: 84px;
+	margin: -42px 0 0 -42px;
+	border-radius: 50%;
+	border: 2px solid rgba(59, 130, 246, 0.25);
+	animation: saHeroPulse 2.4s ease-in-out infinite;
+}
+
+.saHeroAnimCore {
+	width: 14px;
+	height: 14px;
+	margin: -7px 0 0 -7px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+	animation: saHeroCore 1.6s ease-in-out infinite;
+}
+
+.saHeroAnimOrbit {
+	width: 0;
+	height: 0;
+}
+
+.saHeroAnimOrbit i {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: block;
+	border-radius: 50%;
+}
+
+.saHeroAnimOrbit1 {
+	animation: saHeroSpin 3.2s linear infinite;
+}
+
+.saHeroAnimOrbit1 i {
+	width: 10px;
+	height: 10px;
+	margin: -5px 0 0 -5px;
+	transform: translateX(32px);
+	background: #f39200;
+}
+
+.saHeroAnimOrbit2 {
+	animation: saHeroSpin 4.8s linear infinite reverse;
+}
+
+.saHeroAnimOrbit2 i {
+	width: 8px;
+	height: 8px;
+	margin: -4px 0 0 -4px;
+	transform: translateX(-36px);
+	background: #0a7d74;
+}
+
+@keyframes saHeroSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes saHeroPulse {
+	0%, 100% {
+		transform: scale(1);
+		opacity: 0.55;
+	}
+	50% {
+		transform: scale(1.12);
+		opacity: 1;
+	}
+}
+
+@keyframes saHeroCore {
+	0%, 100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.35);
+	}
+}
+
+@media (max-width: 640px) {
+	.saHeroAnim {
+		display: none;
+	}
+}
+
+/* ============ Feature cards ============ */
+.featureCard {
+	background: #ffffff;
+	border: 1px solid #eef1f5;
+	border-radius: 12px;
+	padding: 1.25rem;
+	min-height: 172px;
+	box-shadow: 0 4px 14px rgba(15, 42, 74, 0.06);
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.featureCard:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 10px 24px rgba(15, 42, 74, 0.12);
+}
+
+.featureCardIcon.sapUiIcon {
+	color: #3b82f6 !important;
+}
+
+.featureCardDesc {
+	color: #64748b;
+	line-height: 1.5;
+}

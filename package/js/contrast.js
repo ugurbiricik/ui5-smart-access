@@ -1,3 +1,7 @@
+import { injectStyle, removeStyle } from "./styleInjector.js";
+
+const STYLE_ID = "ui5-smart-access-contrast";
+
 let contrastActive = false;
 
 export const toggleContrastMode = () => {
@@ -14,15 +18,23 @@ export const toggleContrastMode = () => {
     return contrastActive;
 };
 
+// Recolour the whole page (background + text + borders) via an injected style.
+// Setting body.style alone is NOT enough in a UI5 app because content
+// containers/controls paint their own backgrounds over it — so we force the
+// colours on the app content. The popover + flyout live in #sap-ui-static, which
+// we EXCLUDE so the assistant itself keeps its own styling.
 export const applyCustomContrast = (bg, text, underlineLinks) => {
     contrastActive = true;
     document.body.style.filter = '';
-    document.body.style.backgroundColor = bg;
-    document.body.style.color = text;
-    document.querySelectorAll('a').forEach(a => {
-        a.style.textDecoration = underlineLinks ? 'underline' : 'none';
-        a.style.color = text;
-    });
+    const underline = underlineLinks ? 'text-decoration: underline !important;' : '';
+    injectStyle(
+        STYLE_ID,
+        `html, body { background-color: ${bg} !important; }\n` +
+        `body > *:not(#sap-ui-static) { background-color: ${bg} !important; color: ${text} !important; }\n` +
+        `body > *:not(#sap-ui-static) *:not(input):not(textarea):not(select) {` +
+        ` background-color: ${bg} !important; color: ${text} !important; border-color: ${text} !important; }\n` +
+        `body > *:not(#sap-ui-static) a { color: ${text} !important; ${underline} }`
+    );
 };
 
 export const removeCustomContrast = () => {
@@ -30,10 +42,7 @@ export const removeCustomContrast = () => {
     document.body.style.filter = '';
     document.body.style.backgroundColor = '';
     document.body.style.color = '';
-    document.querySelectorAll('a').forEach(a => {
-        a.style.textDecoration = '';
-        a.style.color = '';
-    });
+    removeStyle(STYLE_ID);
 };
 
 export const isContrastModeActive = () => contrastActive;

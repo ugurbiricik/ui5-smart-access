@@ -1,19 +1,39 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-   <Panel id="fontSizePanel" expandable="true" expanded="{settings>/fontSizeExpanded}" width="auto" class="fontSizePanel">
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <Panel id="fontSizePanel" expandable="false" width="auto" class="fontSizePanel">
       <headerToolbar>
-         <OverflowToolbar active="true" press=".onFontSizeToolbarPress">
-          <core:Icon src="sap-icon://text" size="20px" />
-          <Title text="{i18n>fontSize.title}"/>
+         <OverflowToolbar active="true" press=".onFontToggle">
+            <core:Icon src="sap-icon://text" size="20px" />
+            <Title text="{i18n>fontSize.title}" />
          </OverflowToolbar>
       </headerToolbar>
       <content>
-         <VBox justifyContent="Center" alignItems="Center" width="100%">
-            <Text id="fontStepDisplay" text="{settings>/fontStep}" width="150px" textAlign="Center"/>
-            <HBox alignItems="Center" width="150px" justifyContent="SpaceBetween">
-               <Button id="decreaseFontButton" icon="sap-icon://less" press=".onDecreaseFontSize" tooltip="{i18n>aria.decreaseFontSize}"/>
-               <Button id="resetFontButton" icon="sap-icon://refresh" press=".onResetFontSize" tooltip="{i18n>aria.resetFontSize}"/>
-               <Button id="increaseFontButton" icon="sap-icon://add" press=".onIncreaseFontSize" tooltip="{i18n>aria.increaseFontSize}"/>
+         <!-- Simple font-size stepper (value box + − / reset / + buttons), shown
+              inline when the row is opened. The full typography panel (zoom,
+              line height, spacing, alignment) opens in the left flyout via the
+              "Advanced settings" opener at the bottom. -->
+         <VBox class="fontQuick" width="100%" visible="{settings>/fontSizeExpanded}">
+            <HBox width="100%" justifyContent="Center">
+               <HBox class="fontValueBox" alignItems="Center" justifyContent="Center">
+                  <Text text="{settings>/typoFontPct}" class="fontValueText" />
+               </HBox>
             </HBox>
+            <HBox class="fontStepRow" width="100%" alignItems="Center" justifyContent="Center">
+               <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" custom:typo="fontPct" tooltip="{i18n>aria.decreaseFontSize}" />
+               <Button icon="sap-icon://refresh" press=".onFontSizeReset" class="cbIntBtn" tooltip="{i18n>aria.resetFontSize}" />
+               <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" custom:typo="fontPct" tooltip="{i18n>aria.increaseFontSize}" />
+            </HBox>
+            <Button
+               text="{i18n>font.advanced}"
+               icon="sap-icon://slim-arrow-right"
+               iconFirst="false"
+               type="Transparent"
+               press=".onFontOpenFlyout"
+               class="advancedSettingsBtn"
+               width="100%" />
          </VBox>
       </content>
    </Panel>

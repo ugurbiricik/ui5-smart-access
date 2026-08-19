@@ -24,7 +24,7 @@
 
 .abicsAccessibilityPopover .sapMPopoverScroll,
 .abicsAccessibilityPopover .sapMPopoverCont {
-  background-color: #f0f2f5 !important;
+  background-color: #ffffff !important;
   overflow-x: hidden !important;
 }
 
@@ -39,18 +39,44 @@
 }
 
 /* ── Panel cards ── */
-.abicsAccessibilityPopover .sapMPanel {
-  background-color: #ffffff !important;
-  border-radius: 12px !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10) !important;
-  margin: 6px 10px !important;
-  border: none !important;
+/* Main popover: flat list rows (no separators, no borders; cards live only
+   inside the flyout). Hover/selected are conveyed purely by background color. */
+.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel {
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  border: 0 !important;
   overflow: hidden;
+}
+
+/* Header toolbar + content transparent so the panel-level hover/selected
+   background shows through the whole row. */
+.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMTB.sapMPanelHeaderTB,
+.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelContent {
+  background-color: transparent !important;
+}
+
+/* Hover: subtle SOLID tint on the HEADER ROW only — never on the expanded
+   inner content area (opaque so tones never blend/stack inconsistently). */
+.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMTB.sapMPanelHeaderTB:hover {
+  background-color: #f2f6fd !important;
+}
+
+/* Kill the rounded corners AND every inner border the theme puts on the
+   (still-expandable) rows, so the list reads as flat with no lines at all. */
+.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelWrappingDivTb,
+.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelWrappingDivTbExpanded,
+.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelHdr,
+.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMTB.sapMPanelHeaderTB,
+.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelContent {
+  border: 0 !important;
+  border-radius: 0 !important;
 }
 
 .abicsAccessibilityPopover .sapMPanelContent {
   background-color: #ffffff !important;
-  padding: 10px 12px;
+  padding: 10px 16px;
   border-bottom: 0 !important;
   border: 0 !important;
 }
@@ -59,16 +85,82 @@
   border-bottom: 0;
 }
 
+/* fontSize + colorBlindness are non-expandable panels whose inline compact
+   control is visibility-bound; when it is hidden the content div must not
+   reserve vertical padding (else an empty gap shows). The compact controls
+   (.fontQuick / .cbQuick) supply their own vertical spacing when visible. */
+.abicsAccessibilityPopover .fontSizePanel > .sapMPanelContent,
+.abicsAccessibilityPopover .colorBlindnessPanel > .sapMPanelContent,
+.abicsAccessibilityPopover .bigCursorPanel > .sapMPanelContent,
+.abicsAccessibilityPopover .contrastModePanel > .sapMPanelContent {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* The Font panel's content shrink-wraps to the stepper (~154px), which left the
+   "Advanced settings" link looking centred in the row. Force the content +
+   inline box to the full panel width so the link sits at the true left edge
+   (the value box + stepper stay centred via their own alignment). */
+.abicsAccessibilityPopover .fontSizePanel > .sapMPanelContent,
+.abicsAccessibilityPopover .fontSizePanel .fontQuick {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Big-cursor colour swatches + reset (swatches spread across; reset at right) */
+.abicsAccessibilityPopover .bigCursorRow {
+  padding: 10px 0;
+  gap: 10px;
+}
+
+.abicsAccessibilityPopover .bigCursorSwatches {
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+
+/* No background on the swatches (user request) — just the plain arrows. Only
+   the SELECTED one gets a soft tint (the selection indicator). */
+.abicsAccessibilityPopover .bigCursorSwatch {
+  padding: 3px;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  box-sizing: content-box;
+}
+
+/* Selected: soft tint only. NO border/outline/ring in ANY state (unconditional
+   so it beats sap.m.Image's focus/press ring whatever form it takes).
+   (Selected is a writeToDom CustomData attribute — XML `class` can't be bound.) */
+.abicsAccessibilityPopover .bigCursorSwatch[data-sacursorsel="yes"] {
+  background: #cfe0fb;
+}
+
+.abicsAccessibilityPopover .bigCursorSwatch,
+.abicsAccessibilityPopover img.bigCursorSwatch,
+.abicsAccessibilityPopover .bigCursorSwatch:hover,
+.abicsAccessibilityPopover .bigCursorSwatch:focus,
+.abicsAccessibilityPopover .bigCursorSwatch:focus-visible,
+.abicsAccessibilityPopover .bigCursorSwatch:active,
+.abicsAccessibilityPopover .bigCursorPanel .sapMImg,
+.abicsAccessibilityPopover .bigCursorPanel .sapMImg:focus,
+.abicsAccessibilityPopover .bigCursorPanel .sapMImg:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
 /* ── Switch-only panels (no content, non-expandable) ── */
 .abicsAccessibilityPopover .nightModePanel,
 .abicsAccessibilityPopover .toggleImagesPanel,
-.abicsAccessibilityPopover .contrastModePanel {
+.abicsAccessibilityPopover .highlightLinksPanel,
+.abicsAccessibilityPopover .stopAnimationsPanel {
   padding: 0 !important;
 }
 
 .abicsAccessibilityPopover .nightModePanel > .sapMPanelContent,
 .abicsAccessibilityPopover .toggleImagesPanel > .sapMPanelContent,
-.abicsAccessibilityPopover .contrastModePanel > .sapMPanelContent {
+.abicsAccessibilityPopover .highlightLinksPanel > .sapMPanelContent,
+.abicsAccessibilityPopover .stopAnimationsPanel > .sapMPanelContent {
   display: none !important;
 }
 
@@ -80,7 +172,7 @@
   border-radius: 0;
   box-shadow: none !important;
   height: 2.75rem !important;
-  padding: 0 0.5rem !important;
+  padding: 0 1rem !important;
   min-height: unset !important;
 }
 
@@ -103,15 +195,123 @@
   color: #1e3a8a;
 }
 
-/* ── Active feature indicator ── */
+/* ── Active feature indicator (no border/outline) ──
+   The active tone lives ONLY on the header row; the expanded inner content
+   stays clean white on every panel. */
 .abicsAccessibilityPopover .sapMPanel.activeFeature {
-  border-left: 3px solid #3b82f6 !important;
-  background-color: rgba(59, 130, 246, 0.06) !important;
+  border-left: 0 !important;
+  background-color: #ffffff !important;
 }
 
-.abicsAccessibilityPopover .sapMPanel.activeFeature .sapMPanelContent,
+/* Exact same SOLID header tone on EVERY active panel (toggle or expandable);
+   opaque so it never blends with the layer behind it — matches the Großer
+   Mauszeiger row. */
 .abicsAccessibilityPopover .sapMPanel.activeFeature .sapMTB.sapMPanelHeaderTB {
-  background-color: rgba(59, 130, 246, 0.06) !important;
+  background-color: #d5e3fa !important;
+}
+
+/* Inner content: plain white on every active panel (no blue tint). */
+.abicsAccessibilityPopover .sapMPanel.activeFeature .sapMPanelContent {
+  background-color: #ffffff !important;
+}
+
+/* ── Hide the expand chevron (sap.m.Panel renders it as a Button whose id
+      ends with "-expandButton") so every panel's icon + title align ── */
+.abicsAccessibilityPopover [id$="-expandButton"] {
+  display: none !important;
+}
+
+/* Remove the inline-start space the hidden expand button reserved on
+   expandable panels, so their icon + title line up with the other rows. */
+.abicsAccessibilityPopover .sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTb,
+.abicsAccessibilityPopover .sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTbExpanded {
+  padding-inline-start: 0 !important;
+  padding-left: 0 !important;
+}
+
+.abicsAccessibilityPopover .sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTb .sapMPanelHeaderTB,
+.abicsAccessibilityPopover .sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTbExpanded .sapMPanelHeaderTB {
+  padding-inline-start: 1rem !important;
+  padding-left: 1rem !important;
+  margin-inline-start: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* ── Larger panel header icons ── */
+.abicsAccessibilityPopover .sapMPanel .sapMPanelHeaderTB .sapUiIcon {
+  font-size: 22px !important;
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+}
+
+/* (Row hover is handled by the flat-list background rule above — no ring.) */
+
+/* ── Per-feature hover hint tooltip (rendered on <body>, styled like the popover) ── */
+.abicsHoverHint {
+  position: fixed;
+  z-index: 2147483647;
+  max-width: 280px;
+  box-sizing: border-box;
+  background: #ffffff;
+  color: #1e3a8a;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 8px 24px rgba(30, 58, 138, 0.25);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  font-family: "72", "72full", Arial, Helvetica, sans-serif;
+}
+
+.abicsHoverHint.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.abicsHoverHintTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e3a8a;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(30, 58, 138, 0.15);
+}
+
+.abicsHoverHintDesc {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #475569;
+}
+
+.abicsHoverHintKey {
+  text-align: right;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 10px;
+  color: #3b82f6;
+  letter-spacing: 0.5px;
+}
+
+/* Arrow pointing right toward the panel (tooltip sits to the left) */
+.abicsHoverHint::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -8px;
+  transform: translateY(-50%);
+  border-width: 8px 0 8px 8px;
+  border-style: solid;
+  border-color: transparent transparent transparent #ffffff;
+}
+
+/* Flipped: tooltip sits to the right, arrow points left */
+.abicsHoverHint.flip::after {
+  right: auto;
+  left: -8px;
+  border-width: 8px 8px 8px 0;
+  border-color: transparent #ffffff transparent transparent;
 }
 
 /* ── Buttons ── */
@@ -119,29 +319,578 @@
   border-radius: 8px !important;
 }
 
+/* App-wide button standard: solid light-blue fill, no border/outline. */
 .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner {
-  border: 1px solid #3b82f6;
-  border-radius: 8px;
-  background-color: transparent;
+  border: none !important;
+  border-radius: 9px !important;
+  background-color: #eaf1fd !important;
+  box-shadow: none !important;
   color: #1e3a8a;
 }
 
 .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner .sapUiIcon {
   border: 0;
-  border-radius: 8px;
   color: #1e3a8a;
 }
 
 .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner:hover {
-  background-color: rgba(59, 130, 246, 0.08);
+  background-color: #d5e3fa !important;
+}
+
+.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner:focus,
+.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner:focus-visible,
+.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner::before,
+.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner::after {
+  display: none !important;
 }
 
 /* ── Select ── */
-.abicsAccessibilityPopover .sapMPanelContent .sapMSlt {
-  border: 1px solid #3b82f6;
+/* Uniform with the −/+ buttons: solid light-blue fill, no border/outline. */
+.abicsAccessibilityPopover .sapMSlt {
+  border: none !important;
+  border-radius: 9px !important;
+  background-color: #eaf1fd !important;
+  box-shadow: none !important;
+  color: #1e3a8a !important;
+}
+
+.abicsAccessibilityPopover .sapMSlt:hover {
+  background-color: #d5e3fa !important;
+}
+
+.abicsAccessibilityPopover .sapMSlt .sapMSltLabel,
+.abicsAccessibilityPopover .sapMSltInner {
+  color: #1e3a8a !important;
+  background-color: transparent !important;
+}
+
+.abicsAccessibilityPopover .sapMSltArrow {
+  color: #3b82f6 !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+/* Kill the Horizon underline / value-state line under the field. */
+.abicsAccessibilityPopover .sapMSlt::before,
+.abicsAccessibilityPopover .sapMSlt::after,
+.abicsAccessibilityPopover .sapMSltInner::before,
+.abicsAccessibilityPopover .sapMSltInner::after {
+  display: none !important;
+  content: none !important;
+  border: none !important;
+}
+
+.abicsAccessibilityPopover .sapMSltInner {
+  border: none !important;
+}
+
+.abicsAccessibilityPopover .sapMSlt:focus,
+.abicsAccessibilityPopover .sapMSlt:focus-visible,
+.abicsAccessibilityPopover .sapMSlt.sapMSltPressed,
+.abicsAccessibilityPopover .sapMSltArrow:focus,
+.abicsAccessibilityPopover .sapMSltArrow:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* ── Select dropdown (rendered in the static area) ──
+   Scoped to OUR picker only via the programmatically-added `.saSelectPicker`
+   class (see index.js) so host-app selects are never affected. Removes the
+   item focus/selection border/outline. NOT prefixed with the popover class
+   because the picker lives outside the popover DOM. */
+/* The item is `.sapMSelectListItemBase` (NOT `.sapMLIB`), and the blue ring is
+   drawn by its `::after` pseudo-element's outline — verified via DOM. */
+.saSelectPicker .sapMSelectList,
+.saSelectPicker .sapMSelectListItemBase,
+.saSelectPicker .sapMSelectListItem,
+.saSelectPicker .sapMSelectListItemBase:focus,
+.saSelectPicker .sapMSelectListItemBaseSelected,
+.saSelectPicker .sapMSelectListItemBaseHoverable:hover {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+.saSelectPicker .sapMSelectListItemBase::after,
+.saSelectPicker .sapMSelectListItem::after,
+.saSelectPicker .sapMSelectListItemBase::before {
+  display: none !important;
+  content: none !important;
+  outline: none !important;
+  border: none !important;
+}
+
+/* ── Colour picker (Simplified) polish — applies to all 3 of our pickers ── */
+/* Remove the old|new comparison swatch entirely (the ugly strip left of "Hex";
+   the colour is already visible in the big picker box). */
+.sapUiCPComparisonWrapper {
+  display: none !important;
+}
+
+/* No scrollbar — the picker content fits; scoped to the picker's own popover
+   via :has() so the main popover is unaffected. */
+.sapMPopover:has(.sapUnifiedColorPicker) .sapMPopoverScroll,
+.sapMPopover:has(.sapUnifiedColorPicker) .sapMPopoverCont {
+  overflow: hidden !important;
+}
+
+/* Cleaner Hex row. The label (.sapUiCPHexWrapper) and the input
+   (.sapUiColorPicker-ColorPickerHexField) are SIBLINGS in the matrix, so we
+   centre them together as inline-blocks on one line. */
+.sapUiColorPicker-ColorPickerMatrix {
+  text-align: center !important;
+}
+
+.sapUiCPHexWrapper {
+  display: inline-block !important;
+  width: auto !important;
+  margin: 0 8px 0 0 !important;
+  padding: 10px 0 6px 0 !important;
+  vertical-align: middle !important;
+}
+
+.sapUiCPHexWrapper .sapUiColorPicker-ColorPickerHexText,
+.sapUiCPHexWrapper label {
+  font-weight: 600 !important;
+  color: #1e3a8a !important;
+}
+
+.sapUiColorPicker-ColorPickerHexField.sapMInputBase {
+  display: inline-block !important;
+  width: 110px !important;
+  vertical-align: middle !important;
+  float: none !important;
+  margin: 0 !important;
+}
+
+.sapUiColorPicker-ColorPickerHexField .sapMInputBaseInner {
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  text-align: center !important;
+}
+
+/* ── Color-blindness mode cards ── */
+.abicsAccessibilityPopover .cbList {
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.abicsAccessibilityPopover .cbList .sapMListUl,
+.abicsAccessibilityPopover .cbList .sapMLIB,
+.abicsAccessibilityPopover .cbList .sapMCLI {
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* No focus/selection outline or ring on the colour cards. */
+.abicsAccessibilityPopover .cbList .sapMLIB:focus,
+.abicsAccessibilityPopover .cbList .sapMLIB:focus-visible,
+.abicsAccessibilityPopover .cbList .sapMCLI:focus,
+.abicsAccessibilityPopover .cbList .sapMCLI:focus-visible,
+.abicsAccessibilityPopover .cbList .sapMLIB::after,
+.abicsAccessibilityPopover .cbList .sapMLIB::before {
+  outline: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  content: none !important;
+}
+
+.abicsAccessibilityPopover .cbCard {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin: 4px 0;
+  background: #ffffff;
+}
+
+.abicsAccessibilityPopover .cbCardRow {
+  gap: 10px;
+}
+
+.abicsAccessibilityPopover .cbSwatch {
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.abicsAccessibilityPopover .cbTitle {
+  font-weight: 600 !important;
+}
+
+.abicsAccessibilityPopover .cbSub {
+  color: #64748b !important;
+  font-size: 12px !important;
+}
+
+.abicsAccessibilityPopover .cbCheck {
+  color: #3b82f6 !important;
+  flex-shrink: 0;
+}
+
+.abicsAccessibilityPopover .cbIntensity {
+  padding-top: 10px;
+  margin-top: 8px;
+  border-top: 1px solid #eef0f3;
+}
+
+.abicsAccessibilityPopover .cbPercent {
+  font-weight: 700 !important;
+  color: #3b82f6 !important;
+}
+
+.abicsAccessibilityPopover .cbIntensityBtns {
+  margin-top: 10px;
+}
+
+/* −/reset/+ icon buttons: solid rounded-square, blue icon, fixed box so they
+   line up cleanly with the slider (matches the Eye-Able reference). */
+.abicsAccessibilityPopover .cbIntBtn {
+  flex: 0 0 auto;
+}
+
+.abicsAccessibilityPopover .cbIntBtn .sapMBtnInner {
+  min-width: 34px !important;
+  width: 34px !important;
+  height: 34px !important;
+  border: none !important;
+  border-radius: 9px !important;
+  background-color: #eaf1fd !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.abicsAccessibilityPopover .cbIntBtn .sapMBtnInner .sapUiIcon {
+  color: #3b82f6 !important;
+  width: auto !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+}
+
+.abicsAccessibilityPopover .cbIntBtn .sapMBtnInner:hover {
+  background-color: #d5e3fa !important;
+}
+
+/* Selected card highlight — just a soft tinted fill, NO border/outline
+   (user request). Only the selected card has a live .cbIntensity child. */
+.abicsAccessibilityPopover .cbCard:has(.cbIntensity) {
+  border-color: transparent;
+  background: #eaf1fd;
+}
+
+/* Compact inline quick control in the main list (full picker is in flyout).
+   The panel content already supplies the horizontal inset, so the quick
+   control only adds vertical breathing room — keeps both compact controls
+   aligned to the same left edge as the row icon/title. */
+.abicsAccessibilityPopover .cbQuick {
+  padding: 4px 0 10px 0;
+}
+
+/* Colour-blindness inline panel (compact intensity + "Advanced settings"). */
+.abicsAccessibilityPopover .cbAdvancedBox {
+  padding: 8px 0 6px 0;
+}
+
+/* ── Contrast-mode flyout (presets + colour pickers + live preview) ── */
+.abicsAccessibilityPopover .contrastSection .contrastLabel {
+  font-weight: 600 !important;
+  color: #1e3a8a !important;
+  margin: 10px 0 4px 0;
+}
+
+/* Preset + swatch rows: items evenly spread across the full width
+   (SpaceBetween in the fragment); a small min-gap keeps them from touching. */
+.abicsAccessibilityPopover .contrastPresetRow,
+.abicsAccessibilityPopover .contrastSwatchRow {
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+
+/* Inline contrast preview in the main list (compact). */
+.abicsAccessibilityPopover .contrastMiniPreview {
+  min-height: 38px;
   border-radius: 8px;
-  background-color: transparent;
-  color: #1e3a8a;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
+}
+
+.abicsAccessibilityPopover .contrastPreset,
+.abicsAccessibilityPopover .contrastSwatch {
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+/* SET / RESET / CANCEL action row */
+.abicsAccessibilityPopover .contrastActions {
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.abicsAccessibilityPopover .contrastActions .sapMBtn {
+  flex: 1 1 0;
+}
+
+.abicsAccessibilityPopover .contrastSetBtn .sapMBtnInner {
+  background-color: #3b82f6 !important;
+  border: none !important;
+  border-radius: 9px !important;
+  box-shadow: none !important;
+}
+
+.abicsAccessibilityPopover .contrastSetBtn .sapMBtnInner .sapMBtnContent,
+.abicsAccessibilityPopover .contrastSetBtn .sapMBtnInner .sapUiIcon {
+  color: #ffffff !important;
+}
+
+.abicsAccessibilityPopover .contrastActionBtn .sapMBtnInner {
+  background-color: #eaf1fd !important;
+  border: none !important;
+  border-radius: 9px !important;
+  box-shadow: none !important;
+}
+
+.abicsAccessibilityPopover .contrastActionBtn .sapMBtnInner .sapMBtnContent,
+.abicsAccessibilityPopover .contrastActionBtn .sapMBtnInner .sapUiIcon {
+  color: #1e3a8a !important;
+}
+
+/* SET/RESET/CANCEL: NO focus ring/outline/border in ANY state — unconditional
+   on both the outer button and the inner (beats the theme ring). */
+.abicsAccessibilityPopover .contrastActions .sapMBtn,
+.abicsAccessibilityPopover .contrastActions .sapMBtn:focus,
+.abicsAccessibilityPopover .contrastActions .sapMBtn:focus-visible,
+.abicsAccessibilityPopover .contrastActions .sapMBtn:active,
+.abicsAccessibilityPopover .contrastActions .sapMBtnInner,
+.abicsAccessibilityPopover .contrastActions .sapMBtnInner:focus,
+.abicsAccessibilityPopover .contrastActions .sapMBtnInner:focus-visible,
+.abicsAccessibilityPopover .contrastActions .sapMBtnInner:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.abicsAccessibilityPopover .contrastActions .sapMBtnInner::before,
+.abicsAccessibilityPopover .contrastActions .sapMBtnInner::after {
+  display: none !important;
+}
+
+.abicsAccessibilityPopover .contrastPreset:hover,
+.abicsAccessibilityPopover .contrastSwatch:hover {
+  opacity: 0.8;
+}
+
+/* No focus ring on the colour/preset chips (matches the app standard). */
+.abicsAccessibilityPopover .contrastSection .sapMImg:focus,
+.abicsAccessibilityPopover .contrastSection .sapMImg:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.abicsAccessibilityPopover .contrastPreviewBox {
+  min-height: 46px;
+  border-radius: 8px;
+  margin-top: 4px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
+}
+
+.abicsAccessibilityPopover .contrastPreviewText {
+  font-weight: 600 !important;
+}
+
+.abicsAccessibilityPopover .contrastLinksRow {
+  margin-top: 12px;
+}
+
+/* Font panel: simple stepper (value box + − / reset / + buttons), no slider —
+   matches the Eye-Able reference. */
+.abicsAccessibilityPopover .fontQuick {
+  padding: 8px 0 10px 0;
+  gap: 12px;
+}
+
+.abicsAccessibilityPopover .fontValueBox {
+  border: none;
+  border-radius: 10px;
+  background-color: #eaf1fd;
+  min-width: 96px;
+  height: 40px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.abicsAccessibilityPopover .fontValueText {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #1e3a8a !important;
+}
+
+.abicsAccessibilityPopover .fontStepRow {
+  gap: 18px;
+}
+
+/* "Advanced settings" opener: a plain text link — no bg, left-aligned, small,
+   underline on hover (user request). */
+.abicsAccessibilityPopover .advancedSettingsBtn {
+  margin-top: 6px;
+}
+
+.abicsAccessibilityPopover .advancedSettingsBtn {
+  width: 100%;
+}
+
+.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner {
+  width: 100% !important;
+  min-width: 100% !important;
+  border: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 4px;
+  padding: 0 !important;
+  height: auto !important;
+}
+
+.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner:hover {
+  background-color: transparent !important;
+}
+
+.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner:hover .sapMBtnContent {
+  text-decoration: underline !important;
+}
+
+.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnContent {
+  color: #3b82f6 !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+}
+
+.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner .sapUiIcon {
+  color: #3b82f6 !important;
+  font-size: 12px !important;
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+/* No focus ring/outline/border on the opener in ANY state — unconditional on
+   both the outer button and inner (beats the theme ring whatever form). */
+.abicsAccessibilityPopover .advancedSettingsBtn,
+.abicsAccessibilityPopover .advancedSettingsBtn:hover,
+.abicsAccessibilityPopover .advancedSettingsBtn:focus,
+.abicsAccessibilityPopover .advancedSettingsBtn:focus-visible,
+.abicsAccessibilityPopover .advancedSettingsBtn:active,
+.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner,
+.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner:focus,
+.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner:focus-visible,
+.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner::before,
+.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner::after {
+  display: none !important;
+}
+
+/* −/reset/+ icon buttons: never show a focus ring/outline/border in any state
+   (user request — the solid button already signals the affordance). */
+.abicsAccessibilityPopover .cbIntBtn:focus-visible,
+.abicsAccessibilityPopover .cbIntBtn .sapMBtnInner:focus,
+.abicsAccessibilityPopover .cbIntBtn .sapMBtnInner:focus-visible,
+.abicsAccessibilityPopover .cbIntBtn .sapMBtnInner:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.abicsAccessibilityPopover .cbIntBtn .sapMBtnInner::before,
+.abicsAccessibilityPopover .cbIntBtn .sapMBtnInner::after {
+  display: none !important;
+}
+
+/* TTS action buttons (Vorlesen / Stopp): same solid light-blue look as the
+   −/+ buttons, no border/outline. Space them apart. */
+.abicsAccessibilityPopover .flyoutTtsButtons {
+  gap: 16px;
+}
+
+.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner {
+  border: none !important;
+  background-color: #eaf1fd !important;
+  border-radius: 9px !important;
+  box-shadow: none !important;
+  padding: 0 14px !important;
+}
+
+/* TTS section labels (Geschwindigkeit / Lautstärke / Hover-Lesen): match the
+   Vorlesen/Stopp button text EXACTLY. The button's weight comes from the SAP
+   "72-SemiboldDuplex" font variant (not font-weight); the plain label uses "72"
+   (regular) which looked thin, and font-weight:600 mapped to "72-Bold" (heading
+   look). So match the button's font-family + colour, weight stays 400. */
+.abicsAccessibilityPopover .ttsContent .typoRow .sapMLabel,
+.abicsAccessibilityPopover .ttsHoverRow .sapMLabel {
+  font-family: "72-SemiboldDuplex", "72", "72full", Arial, sans-serif !important;
+  font-weight: 400 !important;
+  color: #1e3a8a !important;
+}
+
+.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner:hover {
+  background-color: #d5e3fa !important;
+}
+
+.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnContent,
+.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner .sapUiIcon {
+  color: #1e3a8a !important;
+}
+
+.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner:focus,
+.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner:focus-visible,
+.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner::before,
+.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner::after {
+  display: none !important;
+}
+
+/* ── Flyout content padding ── */
+/* The flyout's VBox sections had no inset, so content hugged the popover
+   edges. Give every flyout section comfortable side padding. */
+.abicsAccessibilityFlyout .flyoutSection {
+  padding: 8px 16px 14px 16px;
+  box-sizing: border-box;
+}
+
+/* ── Font (typography) flyout rows ── */
+.abicsAccessibilityPopover .typoRow {
+  padding: 6px 0;
+  width: 100%;
+}
+
+.abicsAccessibilityPopover .typoSliderRow {
+  gap: 12px;
+}
+
+.abicsAccessibilityPopover .typoAlignRow {
+  margin-top: 4px;
 }
 
 /* ── Slider ── */
@@ -160,12 +909,77 @@
   background-color: transparent;
 }
 
+/* Blue-light filter slider: a blue→warm gradient track that visualises the
+   filter's effect (the progress fill is transparent so the gradient shows). */
+.abicsAccessibilityPopover .blueFilterSlider .sapMSliderInner {
+  background: linear-gradient(to right, #60a5fa, #fbbf24) !important;
+}
+
+.abicsAccessibilityPopover .blueFilterSlider .sapMSliderProgress {
+  background: transparent !important;
+}
+
+/* Remove the Horizon theme's slider end-cap dots (start dot on the inner
+   track, end dot on the slider) — user wants clean track ends. */
+.abicsAccessibilityPopover .sapMSliderInner::before,
+.abicsAccessibilityPopover .sapMSlider::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Keep the track inset from the slider box edges so the handle, at its 0%/100%
+   extremes, keeps clear space from the flanking −/+ buttons. */
+.abicsAccessibilityPopover .typoSliderRow .sapMSlider {
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
+/* Slider handle: keep the theme's default knob (with its grip icon), just a
+   touch smaller, and with NO focus/active ring (user request). */
+.abicsAccessibilityPopover .sapMSliderHandle {
+  transform: scale(0.85);
+}
+
+.abicsAccessibilityPopover .sapMSliderHandle:hover,
+.abicsAccessibilityPopover .sapMSliderHandle:focus,
+.abicsAccessibilityPopover .sapMSliderHandle:focus-visible,
+.abicsAccessibilityPopover .sapMSliderHandle:active,
+.abicsAccessibilityPopover .sapMSlider:focus .sapMSliderHandle {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* No outline on the slider container / track when clicked either. */
+.abicsAccessibilityPopover .sapMSlider:focus,
+.abicsAccessibilityPopover .sapMSlider:focus-visible,
+.abicsAccessibilityPopover .sapMSliderInner:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* ── Switch ── */
 .abicsAccessibilityPopover .sapMSwt {
   border-radius: 12px;
   border: 0;
   background-color: transparent;
   height: 1.75rem;
+  /* Consistent, slightly smaller size everywhere (matches the app standard). */
+  transform: scale(0.85);
+}
+
+/* No focus ring/outline on switches (matches the app-wide "no outline" rule). */
+.abicsAccessibilityPopover .sapMSwt:focus-visible,
+.abicsAccessibilityPopover .sapMSwtInner:focus-visible,
+.abicsAccessibilityPopover .sapMSwtCont:focus-visible,
+.abicsAccessibilityPopover .sapMSwt:focus,
+.abicsAccessibilityPopover .sapMSwtInner:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Hover-Lesen: label + switch centred, close together. */
+.abicsAccessibilityPopover .ttsHoverRow {
+  gap: 12px;
 }
 
 .abicsAccessibilityPopover .sapMSwtLabel {
@@ -190,40 +1004,96 @@
   background-color: #94a3b8;
 }
 
-/* ── Reset All footer toolbar ── */
+/* ── Reset All footer ──
+   The WHOLE footer is one soft-red band; the button is transparent so it
+   blends into it. Hovering anywhere in the footer darkens the entire band
+   uniformly (never blue). */
+.abicsAccessibilityPopover .sapMPopoverFooter,
 .abicsAccessibilityPopover .resetAllToolbar {
-  background: transparent !important;
-  padding: 4px 6px 6px 6px !important;
+  background-color: #fdecec !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
-/* ── Reset All button ── */
+.abicsAccessibilityPopover .resetAllToolbar {
+  padding: 6px 8px !important;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+}
+
+.abicsAccessibilityPopover .sapMPopoverFooter:hover,
+.abicsAccessibilityPopover .resetAllToolbar:hover {
+  background-color: #fbd5d5 !important;
+}
+
 .abicsAccessibilityPopover .resetAllButton {
   margin: 0;
 }
 
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner {
-  border: 1px solid #ef4444 !important;
-  border-radius: 8px !important;
+/* Button blends into the red footer band (transparent fill, red label in all
+   states) so the footer reads as a single colour, hover included. */
+.abicsAccessibilityPopover .resetAllButton .sapMBtnInner,
+.abicsAccessibilityPopover .resetAllButton:hover .sapMBtnInner,
+.abicsAccessibilityPopover .resetAllButton .sapMBtnInner:hover,
+.abicsAccessibilityPopover .resetAllButton .sapMBtnInner:active {
+  border: none !important;
+  border-radius: 9px !important;
   color: #ef4444 !important;
   background-color: transparent !important;
+  box-shadow: none !important;
 }
 
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner .sapUiIcon {
+.abicsAccessibilityPopover .resetAllButton .sapMBtnInner .sapUiIcon,
+.abicsAccessibilityPopover .resetAllButton .sapMBtnInner .sapMBtnContent {
   color: #ef4444 !important;
 }
 
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner:hover {
-  background-color: rgba(239, 68, 68, 0.08) !important;
+/* UI5's default button hover flips the label to --sapButton_Hover_TextColor
+   (#0064d9, blue). Pin the label and icon to red in every interactive state
+   so the footer band always reads as a single colour. */
+.abicsAccessibilityPopover .resetAllButton:hover .sapMBtnContent,
+.abicsAccessibilityPopover .resetAllButton:active .sapMBtnContent,
+.abicsAccessibilityPopover .resetAllButton:focus .sapMBtnContent,
+.abicsAccessibilityPopover .resetAllButton:hover .sapUiIcon,
+.abicsAccessibilityPopover .resetAllButton:active .sapUiIcon,
+.abicsAccessibilityPopover .resetAllButton:focus .sapUiIcon {
+  color: #ef4444 !important;
 }
 
-/* ── Keyboard focus indicators ── */
-.abicsAccessibilityPopover .sapMBtnInner:focus-visible,
-.abicsAccessibilityPopover .sapMSltArrow:focus-visible,
-.abicsAccessibilityPopover .sapMSwtInner:focus-visible,
-.abicsAccessibilityPopover .sapMSliderHandle:focus-visible,
+/* ── No focus ring on mouse/click (UI5's default ring); keyboard focus still
+      shown via the :focus-visible rules below ── */
+.abicsAccessibilityPopover .sapMBtnInner:focus::after,
+.abicsAccessibilityPopover .resetAllButton .sapMBtnInner::after {
+  display: none !important;
+}
+
+.abicsAccessibilityPopover .sapMBtn:focus:not(:focus-visible) .sapMBtnInner,
+.abicsAccessibilityPopover .sapMBtnInner:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* ── Keyboard focus indicator ──
+   Kept only on the list rows so the popover stays keyboard-navigable; the
+   individual controls (buttons/select/switch/slider) show no ring, matching
+   the app-wide "no border/outline" standard. */
 .abicsAccessibilityPopover .sapMTB:focus-visible {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
+}
+
+/* Reset button: never show any focus ring/outline (mouse or keyboard) —
+   more specific than the :focus-visible rule above so it always wins. */
+.abicsAccessibilityPopover .resetAllButton:focus-visible,
+.abicsAccessibilityPopover .resetAllButton .sapMBtnInner:focus,
+.abicsAccessibilityPopover .resetAllButton .sapMBtnInner:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.abicsAccessibilityPopover .resetAllButton .sapMBtnInner::before,
+.abicsAccessibilityPopover .resetAllButton .sapMBtnInner::after {
+  display: none !important;
 }
 
 /* ── High contrast mode support ── */
