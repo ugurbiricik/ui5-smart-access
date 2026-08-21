@@ -1,6 +1,6 @@
 {
   "name": "ui5-smart-access",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "type": "module",
   "description": "A custom accessibility popover for SAP UI5 applications.",
   "main": "index.js",
@@ -21,6 +21,7 @@
     "fragments",
     "i18n",
     "js",
+    "docs",
     "Readme.md"
   ],
   "scripts": {
