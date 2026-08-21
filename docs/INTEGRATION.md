@@ -85,10 +85,23 @@ builder:
   customTasks:
     - name: ui5-tooling-modules-task
       afterTask: replaceVersion
+      configuration:
+        # REQUIRED. The popover loads its css, i18n and fragments at runtime via
+        # sap.ui.require.toUrl / Fragment.load. The task bundles only JS by
+        # default, so without includeAssets these files are missing from the
+        # build and the popover 404s in the deployed app — even though dev works
+        # (there the middleware serves them live from node_modules).
+        includeAssets:
+          ui5-smart-access:
+            - "*.fragment.xml"
+            - "fragments/**"
+            - "css/**"
+            - "i18n/**"
 ```
 
-`ui5 build --clean-dest` now bundles `ui5-smart-access` into `dist/`. Deploy
-`dist/` as usual (static hosting, ABAP repo, HTML5 app repo, …).
+`ui5 build --clean-dest` now bundles `ui5-smart-access` (JS **and** its raw
+assets) into `dist/`. Deploy `dist/` as usual (static hosting, ABAP repo, HTML5
+app repo, …).
 
 ---
 
@@ -105,17 +118,26 @@ builder:
     - name: ui5-tooling-transpile-task
       afterTask: replaceVersion
     - name: ui5-tooling-modules-task
-      afterTask: replaceVersion
+      afterTask: ui5-tooling-transpile-task   # MUST run after transpile (see notes)
+      configuration:
+        includeAssets:
+          ui5-smart-access:
+            - "*.fragment.xml"
+            - "fragments/**"
+            - "css/**"
+            - "i18n/**"
 server:
   customMiddleware:
     - name: ui5-tooling-transpile-middleware
       afterMiddleware: compression
     - name: ui5-tooling-modules-middleware
-      afterMiddleware: compression
+      afterMiddleware: ui5-tooling-transpile-middleware
 ```
 
 Notes:
 
+- **Task order matters**: `ui5-tooling-modules-task` must run **after** `ui5-tooling-transpile-task` (`afterTask: ui5-tooling-transpile-task`). Otherwise the `import "ui5-smart-access"` in a transpiled controller isn't rewritten and the app fails with `failed to load ui5-smart-access.js` once deployed.
+- **Fiori Launchpad / Work Zone deployments** also need `resourceRoots: { "ui5-smart-access": "./thirdparty/ui5-smart-access" }` in the app's `manifest.json` (`sap.ui5`). `ui5-tooling-modules` rewrites the JS import and `toUrl(...)` calls but NOT `Fragment.load({ name: "..." })` names, so without this mapping the popover's fragments 404 against the UI5 CDN. (A pure-logic package with no fragments/assets — e.g. a date library — needs neither `includeAssets` nor `resourceRoots`.)
 - Types ship with the package (`index.d.ts`), so `import { openAccessPopover, initAccessibility } from "ui5-smart-access"` is fully typed.
 - `openAccessPopover` is `async`; if your ESLint has `@typescript-eslint/no-floating-promises`, call it as `void openAccessPopover(this, oEvent);`.
 - If your `tsconfig.json` uses `"moduleResolution": "Node"`/`"Bundler"`, no path alias is needed. With stricter setups add `"paths": { "ui5-smart-access": ["./node_modules/ui5-smart-access/index.d.ts"] }`.
@@ -192,6 +214,10 @@ Add the middleware + task to `app/<appName>/ui5.yaml` exactly as in §2/§3.
 - **Popover opens but is unstyled / icons missing** → the raw assets couldn't be
   resolved; confirm the app is served/built through UI5 tooling (not a bypassing
   static server) and that `ui5-tooling-modules` is configured.
+- **Popover works in dev but is unstyled / panels or fragments 404 in the
+  deployed (built) app** → the production build bundled only the JS. Add the
+  `includeAssets` block (§2) to `ui5-tooling-modules-task` so the css/i18n/
+  fragments ship in `dist/`.
 - **Deleted/changed a version and CSS looks stale** → the stylesheet cache-bust is
   version-based; a hard refresh (Ctrl+Shift+R) picks up local edits during dev.
 - **Saved settings don't apply until the popover is opened** → call

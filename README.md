@@ -61,6 +61,7 @@ ui5-smart-access/
 |---|---|
 | [docs/INTEGRATION.md](./docs/INTEGRATION.md) | How to integrate into plain UI5, TypeScript UI5, and CAP — dev + prod |
 | [docs/FILES.md](./docs/FILES.md) | One-line description of every source file |
+| [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md) | Local development, testing the latest code without publishing, and publishing to npm |
 
 ## Development
 
