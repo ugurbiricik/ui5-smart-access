@@ -149,6 +149,12 @@ function speakNext(token) {
 // it is spoken. The assistant popover/flyout is excluded.
 export const startReading = () => {
     if (!isTTSSupported()) return;
+    // Full-page reading and hover-reading are mutually exclusive: starting a
+    // read turns hover off (its switch follows the model).
+    if (hoverActive) {
+        disableHoverRead();
+        settingsModel?.setProperty("/ttsHover", false);
+    }
     stopReading();
     segments = collectSegments();
     segIndex = 0;
@@ -214,22 +220,50 @@ export const skipPrev = () => {
 export const isReadingActive = () => isReading;
 export const isReadingPaused = () => isPaused;
 
+// SpeechSynthesis can't change the rate/volume of an utterance already being
+// spoken, so to apply a change immediately we restart the CURRENT block with
+// the new value (only while actively reading, not paused).
+const reapplyLiveSettings = () => {
+    if (isReading && !isPaused) jumpTo(segIndex);
+};
+
 export const setTTSRate = (rate) => {
     settingsModel?.setProperty("/ttsRate", rate);
+    reapplyLiveSettings();
 };
 
 export const setTTSVolume = (volume) => {
     settingsModel?.setProperty("/ttsVolume", volume);
+    reapplyLiveSettings();
 };
 
 let hoverActive = false;
 let hoverDebounceTimer = null;
 
+// True only if the element carries its OWN (direct) text — used to skip big
+// wrappers/empty areas. Without this, hovering blank space targets a container
+// whose innerText is the whole app, so it would read everything from the top.
+function hasOwnText(el) {
+    if (!el || !el.childNodes) return false;
+    for (const n of el.childNodes) {
+        if (n.nodeType === Node.TEXT_NODE && n.nodeValue && n.nodeValue.trim()) return true;
+    }
+    return false;
+}
+
 // Hover reading: speak the hovered element's text and box it in a DISTINCT
 // colour (`.sa-tts-hover-reading`, different from the green full-page one).
 // Works everywhere, including inside the popover.
 function hoverHandler(e) {
-    if (!e.target || !e.target.innerText || !isTTSSupported()) return;
+    if (!e.target || !isTTSSupported()) return;
+    if (!hasOwnText(e.target)) {
+        // Moved onto empty space / a wrapper → stop the current hover read
+        // immediately (and cancel any pending one) instead of finishing it.
+        clearTimeout(hoverDebounceTimer);
+        if (synth.speaking || synth.pending) synth.cancel();
+        clearHoverHighlight();
+        return;
+    }
 
     const target = e.target;
     clearTimeout(hoverDebounceTimer);
@@ -261,6 +295,8 @@ function hoverHandler(e) {
 }
 
 export const enableHoverRead = () => {
+    // Mutually exclusive with a full-page read — turning hover on stops it.
+    stopReading();
     if (!hoverActive) {
         document.body.addEventListener("mouseover", hoverHandler);
         hoverActive = true;
