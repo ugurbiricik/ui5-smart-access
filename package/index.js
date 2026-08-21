@@ -74,10 +74,17 @@ export const openAccessPopover = async (controller, oEvent) => {
             if (!oPopover) {
                 throw new Error("Popover Fragment could not be loaded!");
             }
-            oView.addDependent(oPopover);
-
+            // Apply our own models BEFORE adding the popover to the view.
+            // addDependent makes the popover inherit the host app's models,
+            // including its own "i18n" ResourceModel. If we add first, the
+            // fragment's {i18n>...} bindings propagate against the host bundle
+            // (which lacks our keys) and flood the console with "text not
+            // found" assertions until our model is set. Setting first means the
+            // first propagation already resolves against our bundle.
             oPopover.setModel(oSettingsModel, "settings");
             oPopover.setModel(i18nModel, "i18n");
+
+            oView.addDependent(oPopover);
 
             popoverInternalController._oPopover = oPopover;
             popoverInternalController._sFragmentId = sFragmentId;
@@ -121,9 +128,11 @@ export const openAccessPopover = async (controller, oEvent) => {
                 name: "ui5-smart-access.Flyout",
                 controller: popoverInternalController
             }).then((oFlyout) => {
-                oView.addDependent(oFlyout);
+                // Same ordering as the popover: set our models first so the
+                // flyout's bindings never resolve against the host "i18n" model.
                 oFlyout.setModel(oSettingsModel, "settings");
                 oFlyout.setModel(i18nModel, "i18n");
+                oView.addDependent(oFlyout);
                 popoverInternalController._oFlyout = oFlyout;
                 popoverInternalController._sFlyoutId = sFlyoutId;
             });
