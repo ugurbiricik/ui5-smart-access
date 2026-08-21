@@ -41,6 +41,30 @@ Two more requirements make the bundled package resolve at runtime in Work Zone:
   The task rewrites the JS import and `toUrl(...)` calls but NOT `Fragment.load({name:"..."})`
   names, so this mapping is what makes the fragments resolve locally instead of 404-ing on the CDN.
 
+## Dev vs prod config (`ui5.yaml` vs `ui5-dist.yaml`)
+
+The two configs are split by environment on purpose:
+
+- **`ui5.yaml` — dev only** (`ui5 serve`): only `server.customMiddleware`.
+  Everything is resolved live from `node_modules`, so nothing is bundled.
+- **`ui5-dist.yaml` — prod only** (`ui5 build --config ui5-dist.yaml`): only
+  `builder.customTasks`. This is what `npm run build`, `npm run build:mta` and
+  `mbt build` all use.
+
+| Need | Dev (`ui5 serve`) | Prod (`ui5 build`) |
+|---|---|---|
+| TS → JS | `ui5-tooling-transpile-middleware` (in-memory) | `ui5-tooling-transpile-task` (baked in) |
+| `ui5-smart-access` import | `ui5-tooling-modules-middleware` (live from `node_modules`) | `ui5-tooling-modules-task` (baked in) |
+| Package assets (css/i18n/fragments) | served live by the middleware → **no `includeAssets`** | `node_modules` is gone → **`includeAssets` required** (else the popover 404s) |
+| Live reload | `ui5-middleware-livereload` | — |
+| html5-repo zip | — | `ui5-task-zipper` |
+| `resourceRoots` (manifest) | not needed (resolved live) | required for FLP / Work Zone (`Fragment.load` names) |
+
+In short: dev streams everything from `node_modules` through middleware; prod has
+no `node_modules`, so transpilation, the import **and the package's raw assets**
+must be baked into the bundle — that is exactly what `includeAssets` +
+`ui5-task-zipper` add on top of the dev setup.
+
 ## Prerequisites
 
 - `cf` CLI logged in to the target subaccount, e.g. trial:
