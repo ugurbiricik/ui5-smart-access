@@ -50,18 +50,15 @@ and configuration instructions (requires `ui5-tooling-modules`).
 
 ```
 ui5-smart-access/
-├── package/   The npm package (ships to npm as ui5-smart-access, including its docs/)
+├── package/   The npm package (ships to npm as ui5-smart-access)
 └── test/      A full UI5 test application that consumes the package
 ```
 
 ## Documentation
 
-| Document | Topic |
-|---|---|
-| [package/docs/INTEGRATION.md](./package/docs/INTEGRATION.md) | How to integrate into plain UI5, TypeScript UI5, and CAP — dev, production and deployment |
-| [package/docs/FILES.md](./package/docs/FILES.md) | One-line description of every source file |
-| [package/docs/DEVELOPMENT.md](./package/docs/DEVELOPMENT.md) | Local development, testing the latest code without publishing, and publishing to npm |
-| [test/DEPLOYMENT.md](./test/DEPLOYMENT.md) | Worked BTP / Work Zone deployment of the demo app, end to end |
+Everything — install, dev/prod config, deployment, API and publishing — is in a
+single document: **[package/Readme.md](./package/Readme.md)** (also the page shown
+on npm).
 
 ## Development
 

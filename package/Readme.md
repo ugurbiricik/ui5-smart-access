@@ -1,12 +1,12 @@
 # ui5-smart-access
 
-An accessibility popover for SAP UI5 applications. Plug in one button, get
-a ready-made panel with font & typography controls, text-to-speech,
-colour-blindness correction modes (with intensity), a blue-light filter,
-universal night mode (darkens UI5 controls **and** the host page's own
-markup), page-wide contrast mode, a reading aid (guide/mask), a big
-cursor, link & focus highlighting, stop-animations, an image hider, global
-keyboard shortcuts (`Alt+Shift+<key>`) and a reset-all action.
+An accessibility popover for SAP UI5 applications. Plug in one button, get a
+ready-made panel: font & typography, text-to-speech, colour-blindness modes,
+blue-light filter, universal night mode (darkens UI5 controls **and** the host
+page), page-wide contrast, reading guide/mask, big cursor, link & focus highlight,
+stop-animations, image hider, global keyboard shortcuts (`Alt+Shift+<key>`) and
+reset-all. Pure client-side — no backend, preferences saved in `localStorage`,
+German i18n by default with English alternate.
 
 ## Install
 
@@ -15,19 +15,18 @@ npm install ui5-smart-access
 npm install --save-dev ui5-tooling-modules
 ```
 
-The consumer app resolves the package with
-[`ui5-tooling-modules`](https://www.npmjs.com/package/ui5-tooling-modules). The
-popover also loads its CSS, i18n and fragments at runtime, so the **build** has to
-copy those raw assets as well (`includeAssets`) — without it the popover works in
-`ui5 serve` but 404s once the app is built and deployed.
+`ui5-smart-access` is a plain-ESM package; a UI5 app resolves the bare import with
+[`ui5-tooling-modules`](https://www.npmjs.com/package/ui5-tooling-modules). It also
+loads its css/i18n/fragments at runtime, so the **build** must copy those raw assets
+(`includeAssets`) — otherwise it works in `ui5 serve` but 404s once deployed.
 
-`ui5.yaml`:
+### `ui5.yaml`
 
 ```yaml
 builder:
   customTasks:
     - name: ui5-tooling-modules-task
-      afterTask: replaceVersion
+      afterTask: replaceVersion            # TypeScript apps: afterTask: ui5-tooling-transpile-task
       configuration:
         includeAssets:
           ui5-smart-access:
@@ -41,124 +40,83 @@ server:
       afterMiddleware: compression
 ```
 
-> **TypeScript app?** The modules task must run **after** the transpile task —
-> use `afterTask: ui5-tooling-transpile-task` instead of `replaceVersion`.
->
-> **Deploying to Fiori Launchpad / SAP Build Work Zone?** Also map the package in
-> your `manifest.json` (`sap.ui5`):
-> `"resourceRoots": { "ui5-smart-access": "./thirdparty/ui5-smart-access" }`.
->
-> The complete dev + production + deployment config for plain UI5, TypeScript and
-> CAP is bundled with this package in `docs/INTEGRATION.md` and `docs/DEPLOYMENT.md`
-> (see [Documentation](#documentation) below).
+- **Dev** (`ui5 serve`): only the middleware is needed — it serves the package and
+  its assets live from `node_modules`, so dev needs no `includeAssets`.
+- **Prod** (`ui5 build`): the task bakes the JS **and** the raw assets into the bundle.
+  **TypeScript apps** must run the task `afterTask: ui5-tooling-transpile-task`, or the
+  transpiled import isn't rewritten (`failed to load ui5-smart-access.js`).
+- **CAP**: integrate in the UI5 module under `app/<name>/` exactly as above; a CAP UI is
+  usually classic AMD JS, which needs no transpile step.
 
 ## Usage
 
-TypeScript:
+In the controller of the view that hosts the launcher button:
 
-```ts
-import BaseController from "./BaseController";
-import { openAccessPopover, initAccessibility } from "ui5-smart-access";
-import UIEvent from "sap/ui/base/Event";
-
-/**
- * @namespace myapp.controller
- */
-export default class Main extends BaseController {
-    public onInit(): void {
-        // Re-apply saved preferences on page load and enable the global
-        // Alt+Shift keyboard shortcuts. Pass the control the popover anchors to.
-        initAccessibility(this, this.byId("accessButton"));
+```js
+sap.ui.define([
+  "sap/ui/core/mvc/Controller",
+  "ui5-smart-access"
+], function (Controller, SmartAccess) {
+  "use strict";
+  return Controller.extend("my.app.controller.Main", {
+    onInit: function () {
+      // Re-apply saved prefs + enable Alt+Shift shortcuts; pass the launcher control.
+      SmartAccess.initAccessibility(this, this.byId("accessBtn"));
+    },
+    onOpenAccessibility: function (oEvent) {
+      SmartAccess.openAccessPopover(this, oEvent);
     }
-
-    public openAccessibilityPopover(oEvent: UIEvent): void {
-        void openAccessPopover(this, oEvent);
-    }
-}
+  });
+});
 ```
-
-View:
 
 ```xml
-<Button
-    id="accessButton"
-    icon="sap-icon://accessibility"
-    press=".openAccessibilityPopover"
-    type="Emphasized"/>
+<Button id="accessBtn" icon="sap-icon://accessibility" press=".onOpenAccessibility" />
 ```
 
-That's it. The popover opens anchored to the event source, injects its
-own CSS and i18n, and remembers user preferences in `localStorage`.
-`initAccessibility` is optional but recommended: without it, saved
-preferences are only re-applied the first time the popover is opened, and
-the keyboard shortcuts aren't active until then either.
-
-The i18n bundle is German by default with English as the alternate; the
-active language is picked from the browser (`navigator.languages`).
+TypeScript is identical — `import { openAccessPopover, initAccessibility } from "ui5-smart-access"`;
+types ship via `index.d.ts`. `openAccessPopover` is `async`, so call it as
+`void openAccessPopover(this, oEvent)` if ESLint flags floating promises.
+`initAccessibility` is optional but recommended: without it, saved preferences
+re-apply and the keyboard shortcuts activate only after the first open.
 
 ## Deployment (BTP / SAP Build Work Zone)
 
-Deploying an app that uses this package is a standard html5-apps-repo / managed
-approuter deployment. Only **three** package-specific things matter:
+A standard html5-apps-repo / managed-approuter deployment. Only three
+package-specific things matter:
 
-1. **`includeAssets`** on `ui5-tooling-modules-task` (shown in [Install](#install))
-   — bundles the popover's css/i18n/fragments into the build; without it they 404
-   once deployed.
-2. **Task order (TypeScript apps only):** the modules task must run
-   `afterTask: ui5-tooling-transpile-task`, otherwise the transpiled import is not
-   rewritten (`failed to load ui5-smart-access.js`). Classic AMD JS apps don't need this.
+1. **`includeAssets`** (see above) — bundles the popover's css/i18n/fragments, else they 404.
+2. **Task order (TypeScript only):** the modules task must run `afterTask: ui5-tooling-transpile-task`.
 3. **`resourceRoots`** in `manifest.json` (`sap.ui5`):
-   `"ui5-smart-access": "./thirdparty/ui5-smart-access"` — makes the popover's
-   fragments resolve locally instead of 404-ing against the UI5 CDN.
+   `"ui5-smart-access": "./thirdparty/ui5-smart-access"` — makes `Fragment.load` names
+   resolve to the bundled copy instead of 404-ing against the UI5 CDN.
 
 Then build and deploy as usual:
 
 ```bash
 npm install
-mbt build                                  # -> mta_archives/<app>_<version>.mtar
+mbt build                                   # -> mta_archives/<app>_<version>.mtar
 cf deploy mta_archives/<app>_<version>.mtar -f
 ```
 
-The full walkthrough (MTA files, XSUAA, dev-vs-prod, CAP) is in `docs/DEPLOYMENT.md`,
-bundled with this package.
-
-## Documentation
-
-Full guides ship inside this package under `docs/`. On npm, open them from the
-package's **Code** tab; after install they're in `node_modules/ui5-smart-access/docs/`:
-
-- `docs/INTEGRATION.md` — integrate into plain UI5, TypeScript UI5, and CAP (dev + production)
-- `docs/DEPLOYMENT.md` — deploy an app that uses the package to BTP / SAP Build Work Zone
-- `docs/DEVELOPMENT.md` — local development, testing without publishing, and publishing to npm
-- `docs/FILES.md` — one-line description of every source file
-
-## TypeScript
-
-The package ships typings via `index.d.ts`:
+## API
 
 ```ts
-import Controller from "sap/ui/core/mvc/Controller";
-import Event from "sap/ui/base/Event";
-import Control from "sap/ui/core/Control";
-
-// Opens the assistant. Resolves to the created sap.m.Popover control.
-export function openAccessPopover(
-    controller: Controller,
-    oEvent: Event
-): Promise<unknown>;
-
-// Recommended onInit entry point: re-applies saved prefs + registers shortcuts.
-export function initAccessibility(
-    controller: Controller,
-    oTrigger: Control
-): void;
-
-// Deprecated alias for initAccessibility.
-export function initAccessibilityShortcuts(
-    controller: Controller,
-    oTrigger: Control
-): void;
+// Opens the assistant, anchored to the event source. Resolves to the sap.m.Popover.
+openAccessPopover(controller: Controller, oEvent: Event): Promise<unknown>;
+// Recommended onInit entry point: re-applies saved prefs + registers Alt+Shift shortcuts.
+initAccessibility(controller: Controller, oTrigger: Control): void;
 ```
+
+## Develop & publish
+
+- **Link into an app:** `cd package && npm link`, then `cd ../<app> && npm link ui5-smart-access`.
+  `npm link` covers `ui5 serve`; a production build runs a fresh `npm install` that does
+  not follow the link, so to test current code through a build use
+  `npm pack` + a `"ui5-smart-access": "file:...tgz"` dependency.
+- **Publish:** bump `version` in `package.json`, then from `package/` run `npm publish`
+  (authenticate once with `npm login` or an access token). `files` limits the tarball to
+  the runtime files + this README — verify with `npm pack --dry-run`.
 
 ## License
 
