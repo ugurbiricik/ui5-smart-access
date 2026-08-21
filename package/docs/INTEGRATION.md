@@ -240,6 +240,10 @@ was validated end-to-end on SAP Build Work Zone.
   approuter. No runtime dependency on the package remains — it's baked into the
   built app.
 
+For the full production deployment story (BTP / SAP Build Work Zone, the MTA
+setup, and the three package-specific requirements), see
+**[DEPLOYMENT.md](./DEPLOYMENT.md)**.
+
 ---
 
 ## 5. Dev vs prod at a glance

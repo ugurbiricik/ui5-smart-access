@@ -48,9 +48,11 @@ server:
 > your `manifest.json` (`sap.ui5`):
 > `"resourceRoots": { "ui5-smart-access": "./thirdparty/ui5-smart-access" }`.
 >
-> Complete dev + production + deployment config for plain UI5, TypeScript and CAP
-> is in the **[Integration guide](https://github.com/ugurbiricik/ui5-smart-access/blob/main/package/docs/INTEGRATION.md)**
-> (bundled with this package under `docs/`).
+> The dev + production config for plain UI5, TypeScript and CAP is in the
+> **[Integration guide](https://github.com/ugurbiricik/ui5-smart-access/blob/main/package/docs/INTEGRATION.md)**,
+> and the full BTP / Work Zone deployment walkthrough is in the
+> **[Deployment guide](https://github.com/ugurbiricik/ui5-smart-access/blob/main/package/docs/DEPLOYMENT.md)**
+> (both bundled with this package under `docs/`).
 
 ## Usage
 
@@ -100,7 +102,8 @@ active language is picked from the browser (`navigator.languages`).
 
 These guides ship inside the package (under `docs/`) and are also on GitHub:
 
-- [INTEGRATION.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/package/docs/INTEGRATION.md) — integrate into plain UI5, TypeScript UI5, and CAP (dev, production **and deployment**)
+- [INTEGRATION.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/package/docs/INTEGRATION.md) — integrate into plain UI5, TypeScript UI5, and CAP (dev + production)
+- [DEPLOYMENT.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/package/docs/DEPLOYMENT.md) — deploy an app that uses the package to BTP / SAP Build Work Zone
 - [DEVELOPMENT.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/package/docs/DEVELOPMENT.md) — local development, testing without publishing, and publishing to npm
 - [FILES.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/package/docs/FILES.md) — one-line description of every source file
 - [test/DEPLOYMENT.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/test/DEPLOYMENT.md) — a complete, worked BTP / Work Zone deployment of the demo app, end to end
