@@ -108,23 +108,46 @@
                 </HBox>
             </VBox>
 
-            <!-- Text to speech -->
-            <VBox visible="{= ${settings>/activeFlyout} === 'tts'}" class="flyoutSection" alignItems="Center" width="100%">
-                <HBox alignItems="Center" width="100%" justifyContent="Center" class="flyoutTtsButtons">
-                    <Button text="{i18n>tts.start}" icon="sap-icon://begin" press=".onTTSStart" />
-                    <Button text="{i18n>tts.stop}" icon="sap-icon://stop" press=".onTTSStop" />
+            <!-- Text to speech (player bar + speed / volume + hover reading) -->
+            <VBox visible="{= ${settings>/activeFlyout} === 'tts'}" class="flyoutSection ttsFlyoutSection" width="100%">
+                <HBox alignItems="Center" width="100%" justifyContent="Center" class="ttsPlayerBar">
+                    <Button icon="sap-icon://media-rewind" press=".onTTSPrev" tooltip="{i18n>tts.prev}" class="cbIntBtn" />
+                    <Button icon="{= ${settings>/ttsPlaying} ? 'sap-icon://media-pause' : 'sap-icon://media-play' }" press=".onTTSPlayPause" tooltip="{i18n>tts.playPause}" class="cbIntBtn ttsPlayBtn" />
+                    <Button icon="sap-icon://stop" press=".onTTSStop" tooltip="{i18n>tts.stop}" class="cbIntBtn" />
+                    <Button icon="sap-icon://media-forward" press=".onTTSNext" tooltip="{i18n>tts.next}" class="cbIntBtn" />
                 </HBox>
-                <VBox alignItems="Center" width="100%">
-                    <Label text="{i18n>tts.speed}" />
-                    <Slider min="0.5" max="2" step="0.1" value="{settings>/ttsRate}" width="100%" change=".onTTSRateChange" />
+
+                <VBox class="typoRow" width="100%">
+                    <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
+                        <Label text="{i18n>tts.speed}" />
+                        <Text text="{path: 'settings>/ttsRate', formatter: '.formatTtsRate'}" class="cbPercent" />
+                    </HBox>
+                    <HBox alignItems="Center" width="100%" class="typoSliderRow">
+                        <Button icon="sap-icon://less" press=".onTtsStep" class="cbIntBtn" custom:tts="rate" custom:dir="-1" />
+                        <Slider min="0.5" max="2" step="0.1" value="{settings>/ttsRate}" change=".onTTSRateChange">
+                            <layoutData><FlexItemData growFactor="1" /></layoutData>
+                        </Slider>
+                        <Button icon="sap-icon://add" press=".onTtsStep" class="cbIntBtn" custom:tts="rate" custom:dir="1" />
+                    </HBox>
                 </VBox>
-                <VBox alignItems="Center" width="100%">
-                    <Label text="{i18n>tts.volume}" />
-                    <Slider min="0" max="1" step="0.1" value="{settings>/ttsVolume}" width="100%" change=".onTTSVolumeChange" />
+
+                <VBox class="typoRow" width="100%">
+                    <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
+                        <Label text="{i18n>tts.volume}" />
+                        <Text text="{path: 'settings>/ttsVolume', formatter: '.formatTtsVolume'}" class="cbPercent" />
+                    </HBox>
+                    <HBox alignItems="Center" width="100%" class="typoSliderRow">
+                        <Button icon="sap-icon://less" press=".onTtsStep" class="cbIntBtn" custom:tts="volume" custom:dir="-1" />
+                        <Slider min="0" max="1" step="0.1" value="{settings>/ttsVolume}" change=".onTTSVolumeChange">
+                            <layoutData><FlexItemData growFactor="1" /></layoutData>
+                        </Slider>
+                        <Button icon="sap-icon://add" press=".onTtsStep" class="cbIntBtn" custom:tts="volume" custom:dir="1" />
+                    </HBox>
                 </VBox>
-                <HBox alignItems="Center" width="100%" justifyContent="SpaceBetween">
-                    <Label text="{i18n>tts.hover}" />
-                    <Switch state="{settings>/ttsHover}" change=".onTTSHoverChange" />
+
+                <HBox alignItems="Center" width="100%" justifyContent="Center" class="ttsHoverRow">
+                    <Label text="{i18n>tts.hover}" labelFor="ttsHoverFlyoutSwitch" />
+                    <Switch id="ttsHoverFlyoutSwitch" state="{settings>/ttsHover}" change=".onTTSHoverChange" />
                 </HBox>
             </VBox>
 

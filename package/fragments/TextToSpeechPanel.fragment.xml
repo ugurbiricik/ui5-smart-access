@@ -1,55 +1,10 @@
-<core:FragmentDefinition
-   xmlns="sap.m"
-   xmlns:core="sap.ui.core"
-   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
->
-   <Panel id="ttsPanel" expandable="true" expanded="{settings>/ttsExpanded}" width="auto" class="ttsPanel">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+   <Panel id="ttsPanel" expandable="false" width="auto" class="ttsPanel">
       <headerToolbar>
-         <OverflowToolbar active="true" press=".onTTSToolbarPress">
+         <OverflowToolbar active="true" press=".onTTSOpenFlyout">
             <core:Icon src="sap-icon://sound-loud" size="20px" />
             <Title text="{i18n>tts.title}" />
          </OverflowToolbar>
       </headerToolbar>
-      <content>
-         <VBox width="100%" class="ttsContent">
-            <HBox alignItems="Center" width="100%" justifyContent="Center" class="flyoutTtsButtons">
-               <Button id="ttsStartButton" text="{i18n>tts.start}" icon="sap-icon://begin" press=".onTTSStart"/>
-               <Button id="ttsStopButton" text="{i18n>tts.stop}" icon="sap-icon://stop" press=".onTTSStop"/>
-            </HBox>
-
-            <VBox class="typoRow" width="100%">
-               <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
-                  <Label text="{i18n>tts.speed}" />
-                  <Text text="{path: 'settings>/ttsRate', formatter: '.formatTtsRate'}" class="cbPercent" />
-               </HBox>
-               <HBox alignItems="Center" width="100%" class="typoSliderRow">
-                  <Button icon="sap-icon://less" press=".onTtsStep" class="cbIntBtn" custom:tts="rate" custom:dir="-1" />
-                  <Slider id="ttsRateSlider" min="0.5" max="2" step="0.1" value="{settings>/ttsRate}" change=".onTTSRateChange">
-                     <layoutData><FlexItemData growFactor="1" /></layoutData>
-                  </Slider>
-                  <Button icon="sap-icon://add" press=".onTtsStep" class="cbIntBtn" custom:tts="rate" custom:dir="1" />
-               </HBox>
-            </VBox>
-
-            <VBox class="typoRow" width="100%">
-               <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
-                  <Label text="{i18n>tts.volume}" />
-                  <Text text="{path: 'settings>/ttsVolume', formatter: '.formatTtsVolume'}" class="cbPercent" />
-               </HBox>
-               <HBox alignItems="Center" width="100%" class="typoSliderRow">
-                  <Button icon="sap-icon://less" press=".onTtsStep" class="cbIntBtn" custom:tts="volume" custom:dir="-1" />
-                  <Slider id="ttsVolumeSlider" min="0" max="1" step="0.1" value="{settings>/ttsVolume}" change=".onTTSVolumeChange">
-                     <layoutData><FlexItemData growFactor="1" /></layoutData>
-                  </Slider>
-                  <Button icon="sap-icon://add" press=".onTtsStep" class="cbIntBtn" custom:tts="volume" custom:dir="1" />
-               </HBox>
-            </VBox>
-
-            <HBox alignItems="Center" width="100%" justifyContent="Center" class="ttsHoverRow">
-               <Label text="{i18n>tts.hover}" labelFor="ttsHoverSwitch"/>
-               <Switch id="ttsHoverSwitch" state="{settings>/ttsHover}" change=".onTTSHoverChange"/>
-            </HBox>
-         </VBox>
-      </content>
    </Panel>
 </core:FragmentDefinition>

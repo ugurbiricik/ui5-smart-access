@@ -1,3 +1,27 @@
+/* ── Read-aloud highlight (GLOBAL — applied to host-page blocks while the
+   full-page reader speaks them, NOT scoped to the popover). Outline (no layout
+   shift) + soft green box, matching the reference. ── */
+.sa-tts-reading {
+  outline: 3px solid #7cc00a !important;
+  outline-offset: 3px !important;
+  border-radius: 4px !important;
+  background-color: rgba(124, 192, 10, 0.12) !important;
+  box-shadow: 0 0 0 3px rgba(124, 192, 10, 0.18) !important;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease !important;
+  scroll-margin: 120px !important;
+}
+
+/* Hover read-aloud highlight — a DISTINCT colour (amber) from the green
+   full-page reader, so the two modes are easy to tell apart. */
+.sa-tts-hover-reading {
+  outline: 3px solid #ff9500 !important;
+  outline-offset: 3px !important;
+  border-radius: 4px !important;
+  background-color: rgba(255, 149, 0, 0.12) !important;
+  box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.18) !important;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
 /* ── Popover shell ── */
 .abicsAccessibilityPopover {
   border-radius: 14px !important;
@@ -22,10 +46,55 @@
   border-radius: 14px !important;
 }
 
+/* Keep a small gap from the viewport edge. UI5 anchors the main popover flush
+   to the right edge (inline `right:1px`) when it opens below a top-right
+   trigger, and `offsetX` loses to that edge-clamping — so nudge it inward with
+   a transform (safe: the open popover carries no transform of its own). The
+   flyout is excluded (it keeps its own offset). */
+.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) {
+  transform: translateX(-12px) !important;
+}
+
 .abicsAccessibilityPopover .sapMPopoverScroll,
 .abicsAccessibilityPopover .sapMPopoverCont {
   background-color: #ffffff !important;
   overflow-x: hidden !important;
+  /* Firefox (no ::-webkit-scrollbar support): thin bar + subtle blue thumb.
+     UI5's Horizon theme sets `scrollbar-color` here, so we override it. */
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(30, 58, 138, 0.35) transparent !important;
+}
+
+/* Chromium & Safari support the legacy pseudo-elements, which give a slimmer
+   6px rounded overlay bar than `scrollbar-width: thin` allows. Reset the
+   standard props to `auto` THERE so the pseudo-elements are honoured — a
+   non-auto `scrollbar-color` makes those browsers ignore ::-webkit-scrollbar. */
+@supports selector(::-webkit-scrollbar) {
+  .abicsAccessibilityPopover .sapMPopoverScroll,
+  .abicsAccessibilityPopover .sapMPopoverCont {
+    scrollbar-width: auto !important;
+    scrollbar-color: auto !important;
+  }
+}
+/* Slim, elegant scrollbar (scoped to our popover + flyout; host app untouched). */
+.abicsAccessibilityPopover .sapMPopoverScroll::-webkit-scrollbar,
+.abicsAccessibilityPopover .sapMPopoverCont::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+.abicsAccessibilityPopover .sapMPopoverScroll::-webkit-scrollbar-track,
+.abicsAccessibilityPopover .sapMPopoverCont::-webkit-scrollbar-track {
+  background: transparent !important;
+  margin: 6px 0 !important;
+}
+.abicsAccessibilityPopover .sapMPopoverScroll::-webkit-scrollbar-thumb,
+.abicsAccessibilityPopover .sapMPopoverCont::-webkit-scrollbar-thumb {
+  background-color: rgba(30, 58, 138, 0.28) !important;
+  border-radius: 8px !important;
+}
+.abicsAccessibilityPopover .sapMPopoverScroll::-webkit-scrollbar-thumb:hover,
+.abicsAccessibilityPopover .sapMPopoverCont::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(30, 58, 138, 0.45) !important;
 }
 
 /* ── Header gradient ── */
@@ -149,18 +218,20 @@
   border: none !important;
 }
 
-/* ── Switch-only panels (no content, non-expandable) ── */
+/* ── Header-only panels (opener rows / switches, no inline content) ── */
 .abicsAccessibilityPopover .nightModePanel,
 .abicsAccessibilityPopover .toggleImagesPanel,
 .abicsAccessibilityPopover .highlightLinksPanel,
-.abicsAccessibilityPopover .stopAnimationsPanel {
+.abicsAccessibilityPopover .stopAnimationsPanel,
+.abicsAccessibilityPopover .ttsPanel {
   padding: 0 !important;
 }
 
 .abicsAccessibilityPopover .nightModePanel > .sapMPanelContent,
 .abicsAccessibilityPopover .toggleImagesPanel > .sapMPanelContent,
 .abicsAccessibilityPopover .highlightLinksPanel > .sapMPanelContent,
-.abicsAccessibilityPopover .stopAnimationsPanel > .sapMPanelContent {
+.abicsAccessibilityPopover .stopAnimationsPanel > .sapMPanelContent,
+.abicsAccessibilityPopover .ttsPanel > .sapMPanelContent {
   display: none !important;
 }
 
@@ -843,10 +914,30 @@
    (regular) which looked thin, and font-weight:600 mapped to "72-Bold" (heading
    look). So match the button's font-family + colour, weight stays 400. */
 .abicsAccessibilityPopover .ttsContent .typoRow .sapMLabel,
+.abicsAccessibilityPopover .ttsFlyoutSection .typoRow .sapMLabel,
 .abicsAccessibilityPopover .ttsHoverRow .sapMLabel {
   font-family: "72-SemiboldDuplex", "72", "72full", Arial, sans-serif !important;
   font-weight: 400 !important;
   color: #1e3a8a !important;
+}
+
+/* TTS player bar (⏪ ▶/⏸ ⏹ ⏩): round icon buttons; the centre play/pause is a
+   larger accent-filled circle. */
+.abicsAccessibilityPopover .ttsPlayerBar {
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.abicsAccessibilityPopover .ttsPlayerBar .cbIntBtn .sapMBtnInner {
+  border-radius: 50% !important;
+}
+.abicsAccessibilityPopover .ttsPlayBtn .sapMBtnInner {
+  background-color: #3b82f6 !important;
+}
+.abicsAccessibilityPopover .ttsPlayBtn .sapMBtnInner:hover {
+  background-color: #2f6fe0 !important;
+}
+.abicsAccessibilityPopover .ttsPlayBtn .sapMBtnInner .sapUiIcon {
+  color: #ffffff !important;
 }
 
 .abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner:hover {

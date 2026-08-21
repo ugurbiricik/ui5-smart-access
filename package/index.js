@@ -17,6 +17,34 @@ import { prefetchDarkTheme } from "./js/nightMode.js";
 import { attachHoverHints, hideHint } from "./js/hoverHints.js";
 import { buildColorBlindnessModes } from "./js/cbSwatches.js";
 import { buildBigCursorColors } from "./js/bigCursor.js";
+import { registerShortcuts, setShortcutContext } from "./js/keyboardShortcuts.js";
+
+// Opens the popover using the given controller, anchored to `trigger`. Shared
+// by the public entry point and the keyboard shortcut handler.
+const openByTrigger = (controller, trigger) =>
+    openAccessPopover(controller, { getSource: () => trigger });
+
+// One-time setup: init feature modules and RE-APPLY saved preferences. Runs on
+// page load (via initAccessibility) so persisted filters take effect
+// immediately — NOT only after the popover is first opened. Idempotent.
+let _initialized = false;
+const ensureInitialized = () => {
+    if (_initialized) return;
+    _initialized = true;
+    // Create the i18n model first so the localized labels below (and any
+    // restored feature text) resolve instead of falling back to raw keys.
+    createI18nModel();
+    loadCustomStyleOnce();
+    initFontSizer(oSettingsModel);
+    initTextToSpeech(oSettingsModel);
+    initImageHider();
+    restoreSavedState();
+    // Warm up the dark theme stylesheet cache so toggling night mode later is
+    // near-instant (avoids a visible delay on panel chevrons etc.).
+    prefetchDarkTheme();
+    oSettingsModel.setProperty("/colorBlindnessModes", buildColorBlindnessModes());
+    oSettingsModel.setProperty("/bigCursorColors", buildBigCursorColors());
+};
 
 // Public entry point. Wires the popover to the consumer's controller and
 // opens it anchored to the event source.
@@ -28,22 +56,17 @@ export const openAccessPopover = async (controller, oEvent) => {
         throw new Error("The oEvent parameter must be a UI5 Event!");
     }
 
+    // Enable the global Alt+Shift+<key> shortcuts (idempotent) and remember the
+    // controller + trigger so they can re-open the assistant later.
+    setShortcutContext(openByTrigger, controller, oEvent.getSource());
+    registerShortcuts();
+    ensureInitialized();
+
     const oView = controller.getView();
     const sFragmentId = oView.getId();
 
     if (!controller._pPopover) {
-        loadCustomStyleOnce();
-        initFontSizer(oSettingsModel);
-        initTextToSpeech(oSettingsModel);
-        initImageHider();
-        restoreSavedState();
-        // Warm up the dark theme stylesheet cache so toggling night mode later
-        // is near-instant (avoids a visible delay on panel chevrons etc.).
-        prefetchDarkTheme();
-
         const i18nModel = createI18nModel();
-        oSettingsModel.setProperty("/colorBlindnessModes", buildColorBlindnessModes());
-        oSettingsModel.setProperty("/bigCursorColors", buildBigCursorColors());
 
         controller._pPopover = Fragment.load({
             id: sFragmentId,
@@ -62,6 +85,9 @@ export const openAccessPopover = async (controller, oEvent) => {
             popoverInternalController._sFragmentId = sFragmentId;
 
             restoreActiveFeatureClasses(sFragmentId);
+            // Sync the toggle labels/icons with the current state so features
+            // switched on via keyboard before the first open read correctly.
+            popoverInternalController.syncFeatureLabels();
 
             // The Select's dropdown renders outside the popover DOM, so its
             // items can't be reached by our `.abicsAccessibilityPopover` rules.
@@ -116,4 +142,21 @@ export const openAccessPopover = async (controller, oEvent) => {
 
     oPopover.setModel(new JSONModel({ items: getPopoverModules() }), "modules");
     oPopover.openBy(oEvent.getSource());
+    return oPopover;
 };
+
+// Call once from the consumer's onInit. Does two things without opening the
+// popover: (1) re-applies saved preferences immediately on page load (so a
+// persisted night mode / contrast / colour filter is visible right away, not
+// only after the assistant is first opened); (2) enables the global
+// Alt+Shift+<key> shortcuts (so keyboard-only users can open it with
+// Alt+Shift+A). `oTrigger` is the control the popover anchors to — the launcher.
+export const initAccessibility = (controller, oTrigger) => {
+    ensureInitialized();
+    setShortcutContext(openByTrigger, controller, oTrigger);
+    registerShortcuts();
+};
+
+// Backwards-compatible alias. `initAccessibility` is the preferred name.
+export const initAccessibilityShortcuts = (controller, oTrigger) =>
+    initAccessibility(controller, oTrigger);

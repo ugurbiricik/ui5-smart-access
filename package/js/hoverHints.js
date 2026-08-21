@@ -6,19 +6,19 @@ import { getText } from "./i18nModel.js";
 // shortcut. Implemented as a single pointer-events:none DOM overlay so it can
 // never steal focus or close the main popover.
 
+// The `shortcut` strings MUST match the bindings in keyboardShortcuts.js.
 const HINTS = [
-    { panelId: "fontSizePanel", titleKey: "fontSize.title", descKey: "hint.fontSize", shortcut: "ALT + 1" },
-    { panelId: "textSpacingPanel", titleKey: "textSpacing.title", descKey: "hint.textSpacing", shortcut: "ALT + 2" },
-    { panelId: "readingGuidePanel", titleKey: "readingGuide.title", descKey: "hint.readingGuide", shortcut: "ALT + 4" },
-    { panelId: "bigCursorPanel", titleKey: "bigCursor.title", descKey: "hint.bigCursor", shortcut: "ALT + 5" },
-    { panelId: "highlightLinksPanel", titleKey: "highlightLinks.title", descKey: "hint.highlightLinks", shortcut: "ALT + 6" },
-    { panelId: "ttsPanel", titleKey: "tts.title", descKey: "hint.tts", shortcut: "ALT + S" },
-    { panelId: "colorBlindnessPanel", titleKey: "colorBlindness.title", descKey: "hint.colorBlindness", shortcut: "ALT + 7" },
-    { panelId: "blueLightFilterPanel", titleKey: "blueFilter.activate", descKey: "hint.blueLightFilter", shortcut: "ALT + 8" },
-    { panelId: "nightModePanel", titleKey: "nightMode.activate", descKey: "hint.nightMode", shortcut: "ALT + 9" },
-    { panelId: "contrastModePanel", titleKey: "contrastMode.activate", descKey: "hint.contrastMode", shortcut: "ALT + 0" },
-    { panelId: "stopAnimationsPanel", titleKey: "stopAnimations.title", descKey: "hint.stopAnimations", shortcut: "ALT + M" },
-    { panelId: "toggleImagesPanel", titleKey: "toggleImages.hide", descKey: "hint.toggleImages", shortcut: "ALT + B" }
+    { panelId: "fontSizePanel", titleKey: "fontSize.title", descKey: "hint.fontSize", shortcut: "Alt + Shift + F" },
+    { panelId: "readingGuidePanel", titleKey: "readingGuide.title", descKey: "hint.readingGuide", shortcut: "Alt + Shift + R" },
+    { panelId: "bigCursorPanel", titleKey: "bigCursor.title", descKey: "hint.bigCursor", shortcut: "Alt + Shift + G" },
+    { panelId: "highlightLinksPanel", titleKey: "highlightLinks.title", descKey: "hint.highlightLinks", shortcut: "Alt + Shift + L" },
+    { panelId: "ttsPanel", titleKey: "tts.title", descKey: "hint.tts", shortcut: "Alt + Shift + V" },
+    { panelId: "colorBlindnessPanel", titleKey: "colorBlindness.title", descKey: "hint.colorBlindness", shortcut: "Alt + Shift + S" },
+    { panelId: "blueLightFilterPanel", titleKey: "blueFilter.activate", descKey: "hint.blueLightFilter", shortcut: "Alt + Shift + B" },
+    { panelId: "nightModePanel", titleKey: "nightMode.activate", descKey: "hint.nightMode", shortcut: "Alt + Shift + N" },
+    { panelId: "contrastModePanel", titleKey: "contrastMode.activate", descKey: "hint.contrastMode", shortcut: "Alt + Shift + K" },
+    { panelId: "stopAnimationsPanel", titleKey: "stopAnimations.title", descKey: "hint.stopAnimations", shortcut: "Alt + Shift + M" },
+    { panelId: "toggleImagesPanel", titleKey: "toggleImages.hide", descKey: "hint.toggleImages", shortcut: "Alt + Shift + I" }
 ];
 
 const attachedFragments = new Set();

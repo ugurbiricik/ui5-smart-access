@@ -187,6 +187,25 @@ const applyPopoverDarkMode = () => {
         .abicsAccessibilityPopover .sapMPopoverWrapper {
             background-color: #1e1e1e !important;
         }
+
+        /* Slim scrollbar — lighter accent thumb on the dark background.
+           Firefox uses the standard prop; Chromium/Safari use the webkit thumb
+           (their standard props are reset to auto in style.css, so setting
+           scrollbar-color here would re-disable the pseudo-elements). */
+        @supports not selector(::-webkit-scrollbar) {
+            .abicsAccessibilityPopover .sapMPopoverScroll,
+            .abicsAccessibilityPopover .sapMPopoverCont {
+                scrollbar-color: rgba(107, 158, 255, 0.5) transparent !important;
+            }
+        }
+        .abicsAccessibilityPopover .sapMPopoverScroll::-webkit-scrollbar-thumb,
+        .abicsAccessibilityPopover .sapMPopoverCont::-webkit-scrollbar-thumb {
+            background-color: rgba(107, 158, 255, 0.45) !important;
+        }
+        .abicsAccessibilityPopover .sapMPopoverScroll::-webkit-scrollbar-thumb:hover,
+        .abicsAccessibilityPopover .sapMPopoverCont::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(107, 158, 255, 0.6) !important;
+        }
     `;
     document.head.appendChild(style);
 };
@@ -196,6 +215,56 @@ const removePopoverDarkMode = () => {
     if (existingStyle) {
         existingStyle.remove();
     }
+};
+
+// The UI5 sap_horizon_dark theme only darkens UI5 controls. To also cover
+// non-UI5 / custom-HTML content (raw text, plain elements, images, form
+// fields) — like an Eye-Able-style universal dark mode — we inject a
+// supplementary host-page stylesheet and tag <html> with `saNightMode` so
+// consumers can dark-theme their own custom markup via that hook too.
+// Conservative on backgrounds: we do NOT blanket-override element backgrounds
+// (that would wipe intentional colours, e.g. a colour-swatch demo). We darken
+// the page base + text + inputs, and give images a light backing so
+// transparent dark logos don't vanish on the dark page.
+const HOST_DARK_CSS = `
+    html.saNightMode body {
+        background-color: #121212 !important;
+        color: #e4e4e4 !important;
+    }
+    html.saNightMode :where(p,span,li,dd,dt,td,th,caption,label,figcaption,
+        blockquote,small,strong,em,b,i,h1,h2,h3,h4,h5,h6,legend,summary,cite,
+        address,time):not([class*="sap"]) {
+        color: #e4e4e4 !important;
+    }
+    html.saNightMode a:not([class*="sap"]) {
+        color: #6b9eff !important;
+    }
+    html.saNightMode :where(input,textarea,select):not([class*="sap"]) {
+        background-color: #1c1c1c !important;
+        color: #e4e4e4 !important;
+        border-color: #444 !important;
+    }
+    /* Light backing so transparent dark logos stay visible; opaque photos hide
+       it and just get slightly rounded corners. Popover images are excluded. */
+    html.saNightMode img:not(#sap-ui-static *) {
+        background-color: #f3f3f3 !important;
+        border-radius: 6px !important;
+    }
+`;
+
+const applyHostDarkMode = () => {
+    removeHostDarkMode();
+    document.documentElement.classList.add('saNightMode');
+    const style = document.createElement('style');
+    style.id = 'host-dark-mode-styles';
+    style.textContent = HOST_DARK_CSS;
+    document.head.appendChild(style);
+};
+
+const removeHostDarkMode = () => {
+    document.documentElement.classList.remove('saNightMode');
+    const existing = document.getElementById('host-dark-mode-styles');
+    if (existing) existing.remove();
 };
 
 const ensureThemeAppliedHandler = () => {
@@ -220,9 +289,11 @@ export const toggleNightMode = () => {
         preloadDarkTheme();
         ensureThemeAppliedHandler();
         applyPopoverDarkMode();
+        applyHostDarkMode();
         Theming.setTheme("sap_horizon_dark");
     } else {
         removePopoverDarkMode();
+        removeHostDarkMode();
         Theming.setTheme(originalTheme || "sap_horizon");
     }
     return isDarkMode;
@@ -231,6 +302,7 @@ export const toggleNightMode = () => {
 export const disableNightMode = () => {
     if (isDarkMode) {
         removePopoverDarkMode();
+        removeHostDarkMode();
         Theming.setTheme(originalTheme || "sap_horizon");
         isDarkMode = false;
     }

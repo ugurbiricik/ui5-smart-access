@@ -13,6 +13,12 @@ import {
 import {
     startReading,
     stopReading,
+    pauseReading,
+    resumeReading,
+    skipNext,
+    skipPrev,
+    isReadingActive,
+    isReadingPaused,
     setTTSRate,
     setTTSVolume,
     enableHoverRead,
@@ -101,11 +107,16 @@ export const popoverInternalController = {
     onFontSizeToolbarPress() {
         togglePanelExpanded("/fontSizeExpanded");
     },
-    onTTSToolbarPress() {
-        togglePanelExpanded("/ttsExpanded");
-    },
     onColorBlindnessToolbarPress() {
         togglePanelExpanded("/colorBlindnessExpanded");
+    },
+
+    // Read-aloud opens in the left flyout (grows with player + settings).
+    onTTSOpenFlyout(oEvent) {
+        oSettingsModel.setProperty("/activeFlyout", "tts");
+        oSettingsModel.setProperty("/activeFlyoutTitle", getText("tts.title"));
+        oSettingsModel.setProperty("/activeFlyoutIcon", "sap-icon://sound-loud");
+        this._openFlyout(oEvent.getSource());
     },
 
     // ---- Blue light filter ----
@@ -250,7 +261,8 @@ export const popoverInternalController = {
         if (!bg || !text) { this.onCloseFlyout(); return; }
         applyCustomContrast(bg, text, oSettingsModel.getProperty("/contrastUnderlineLinks"));
         oSettingsModel.setProperty("/contrastModeActive", true);
-        updateTitleText.call(this, "contrastModeTitle", "contrastMode.deactivate");
+        // Title stays fixed ("Kontrastmodus") — the row opens a config flyout, it
+        // is not a plain on/off toggle, so no activate/deactivate flip.
         toggleActiveFeatureClass.call(this, "contrastModePanel", true);
         saveCurrentSettings();
         this.onCloseFlyout();
@@ -273,7 +285,6 @@ export const popoverInternalController = {
         oSettingsModel.setProperty("/contrastBgColor", "#ffffff");
         oSettingsModel.setProperty("/contrastTextColor", "#000000");
         oSettingsModel.setProperty("/contrastUnderlineLinks", true);
-        updateTitleText.call(this, "contrastModeTitle", "contrastMode.activate");
         toggleActiveFeatureClass.call(this, "contrastModePanel", false);
         updateContrastPreview();
         saveCurrentSettings();
@@ -300,6 +311,26 @@ export const popoverInternalController = {
     onTTSStart() {
         startReading();
         toggleActiveFeatureClass.call(this, "ttsPanel", true);
+    },
+    // Play/pause toggle: start when stopped, pause when playing, resume when
+    // paused (resumes from where it left off, not from the start).
+    onTTSPlayPause() {
+        if (isReadingActive() && !isReadingPaused()) {
+            pauseReading();
+        } else if (isReadingActive() && isReadingPaused()) {
+            resumeReading();
+        } else {
+            startReading();
+        }
+        toggleActiveFeatureClass.call(this, "ttsPanel", isReadingActive());
+    },
+    onTTSPrev() {
+        skipPrev();
+        toggleActiveFeatureClass.call(this, "ttsPanel", isReadingActive());
+    },
+    onTTSNext() {
+        skipNext();
+        toggleActiveFeatureClass.call(this, "ttsPanel", isReadingActive());
     },
     onTTSStop() {
         stopReading();
@@ -597,6 +628,24 @@ export const popoverInternalController = {
         this._afterTypoChange();
     },
 
+    // Re-syncs the toggle rows' labels/icons with the current settings. Called
+    // once when the popover first opens so features switched on via keyboard
+    // shortcut (while the panel was closed) show the correct state.
+    syncFeatureLabels() {
+        updateTitleText.call(this, "nightModeTitle",
+            oSettingsModel.getProperty("/nightModeActive") ? "nightMode.deactivate" : "nightMode.activate");
+        updateTitleText.call(this, "blueLightFilterTitle",
+            oSettingsModel.getProperty("/blueLightFilterActive") ? "blueFilter.deactivate" : "blueFilter.activate");
+        updateTitleText.call(this, "toggleImagesTitle",
+            oSettingsModel.getProperty("/toggleImagesActive") ? "toggleImages.show" : "toggleImages.hide");
+        // Contrast title stays fixed (config-flyout row, not an on/off toggle).
+        const stopped = oSettingsModel.getProperty("/stopAnimationsActive");
+        updateTitleText.call(this, "stopAnimationsTitle",
+            stopped ? "stopAnimations.start" : "stopAnimations.title");
+        updateIconSrc.call(this, "stopAnimationsIcon",
+            stopped ? "sap-icon://media-play" : "sap-icon://media-pause");
+    },
+
     // ---- Reset all ----
     onResetAllToolbarPress() {
         resetAll();
@@ -634,7 +683,6 @@ export const popoverInternalController = {
         updateTitleText.call(this, "nightModeTitle", "nightMode.activate");
         updateTitleText.call(this, "blueLightFilterTitle", "blueFilter.activate");
         updateTitleText.call(this, "toggleImagesTitle", "toggleImages.hide");
-        updateTitleText.call(this, "contrastModeTitle", "contrastMode.activate");
         updateTitleText.call(this, "stopAnimationsTitle", "stopAnimations.title");
         updateIconSrc.call(this, "stopAnimationsIcon", "sap-icon://media-pause");
         toggleActiveFeatureClass.call(this, "nightModePanel", false);

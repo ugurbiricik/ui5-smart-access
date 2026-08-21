@@ -5,16 +5,23 @@ let imagesHidden = false;
 let observer = null;
 let debounceTimer = null;
 
-function isInsidePopover(el) {
-    return el.closest(".abicsAccessibilityPopover");
+// Whether to leave an image-type element alone. Inside our popover/flyout we
+// still hide the decorative feature icons + swatch images (like hays.de: the
+// icons go, the text labels stay and the panel header stays clickable), but we
+// KEEP the icons of control buttons (steppers −/+, player ⏪▶⏹⏩, close, reset)
+// visible — those buttons are icon-only, so hiding their icon would leave a
+// blank, unusable button.
+function shouldSkip(el) {
+    if (!el.closest(".abicsAccessibilityPopover")) return false; // page element → hide
+    return !!el.closest(".sapMBtn");                             // popover: skip button icons only
 }
 
 function setVisibilityAll(value) {
     document.querySelectorAll(IMAGE_SELECTORS).forEach(el => {
-        if (!isInsidePopover(el)) el.style.visibility = value;
+        if (!shouldSkip(el)) el.style.visibility = value;
     });
     document.querySelectorAll('[style*="background-image"]').forEach(el => {
-        if (!isInsidePopover(el)) el.style.visibility = value;
+        if (!shouldSkip(el)) el.style.visibility = value;
     });
     setVisibilityInShadowRoots(value);
 }

@@ -68,6 +68,8 @@ export const oSettingsModel = new JSONModel({
     ttsRate: savedSettings.ttsRate ?? 1,
     ttsVolume: savedSettings.ttsVolume ?? 1,
     ttsHover: false,
+    // Whether the read-aloud is actively speaking (drives the play/pause icon).
+    ttsPlaying: false,
     colorBlindnessType: migrateCbType(savedSettings.colorBlindnessType) ?? 'none',
     colorBlindnessIntensity: savedSettings.colorBlindnessIntensity ?? 100,
     colorBlindnessModes: [],

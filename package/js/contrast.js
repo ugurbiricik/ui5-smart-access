@@ -27,13 +27,20 @@ export const applyCustomContrast = (bg, text, underlineLinks) => {
     contrastActive = true;
     document.body.style.filter = '';
     const underline = underlineLinks ? 'text-decoration: underline !important;' : '';
+    // Recolour the whole app: background, text, borders AND svg fills, covering
+    // form fields too (they were excluded before, leaving un-themed white boxes
+    // — a coverage gap vs a proper high-contrast mode). Images stay as-is (the
+    // bg-colour sits harmlessly behind opaque photos). #sap-ui-static (our
+    // popover + flyout) is excluded so the assistant keeps its own styling.
     injectStyle(
         STYLE_ID,
-        `html, body { background-color: ${bg} !important; }\n` +
-        `body > *:not(#sap-ui-static) { background-color: ${bg} !important; color: ${text} !important; }\n` +
-        `body > *:not(#sap-ui-static) *:not(input):not(textarea):not(select) {` +
-        ` background-color: ${bg} !important; color: ${text} !important; border-color: ${text} !important; }\n` +
-        `body > *:not(#sap-ui-static) a { color: ${text} !important; ${underline} }`
+        `html, body { background-color: ${bg} !important; color: ${text} !important; }\n` +
+        `body > *:not(#sap-ui-static),\n` +
+        `body > *:not(#sap-ui-static) * {` +
+        ` background-color: ${bg} !important; color: ${text} !important;` +
+        ` border-color: ${text} !important; fill: ${text} !important; }\n` +
+        `body > *:not(#sap-ui-static) a { color: ${text} !important; ${underline} }\n` +
+        `body > *:not(#sap-ui-static) ::placeholder { color: ${text} !important; opacity: 0.7 !important; }`
     );
 };
 
