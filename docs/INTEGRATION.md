@@ -103,6 +103,49 @@ builder:
 assets) into `dist/`. Deploy `dist/` as usual (static hosting, ABAP repo, HTML5
 app repo, …).
 
+For a **Fiori Launchpad / SAP Build Work Zone** deployment (html5-apps-repo +
+managed approuter), also add a `resourceRoots` mapping to the app's
+`manifest.json` (`sap.ui5`):
+
+```json
+"resourceRoots": {
+  "ui5-smart-access": "./thirdparty/ui5-smart-access"
+}
+```
+
+`ui5-tooling-modules` rewrites the module reference **and** `sap.ui.require.toUrl(...)`
+calls, but not `Fragment.load({ name: "..." })` names — the mapping makes those
+resolve to the bundled copy instead of 404-ing against the UI5 CDN. (A pure-logic
+package with no fragments/assets needs neither `includeAssets` nor `resourceRoots`.)
+
+### Wiring (AMD / JavaScript)
+
+`ui5-tooling-modules` rewrites the reference inside `sap.ui.define([...])`
+directly, so **no transpile step is needed** for classic AMD apps — the
+`ui5-tooling-modules-task` stays on `afterTask: replaceVersion`:
+
+```js
+sap.ui.define([
+  "sap/ui/core/mvc/Controller",
+  "ui5-smart-access"
+], function (Controller, SmartAccess) {
+  "use strict";
+  return Controller.extend("my.app.controller.App", {
+    onInit: function () {
+      // Re-apply saved prefs, enable Alt+Shift shortcuts, warm the popover.
+      SmartAccess.initAccessibility(this, this.byId("accessBtn"));
+    },
+    onOpenAccessibility: function (oEvent) {
+      SmartAccess.openAccessPopover(this, oEvent);
+    }
+  });
+});
+```
+
+```xml
+<Button id="accessBtn" icon="sap-icon://accessibility" press=".onOpenAccessibility" />
+```
+
 ---
 
 ## 3. TypeScript UI5
@@ -174,7 +217,10 @@ npm install ui5-smart-access
 npm install --save-dev ui5-tooling-modules
 ```
 
-Add the middleware + task to `app/<appName>/ui5.yaml` exactly as in §2/§3.
+Add the middleware + task to `app/<appName>/ui5.yaml` exactly as in §2/§3. A CAP
+UI is usually a classic **AMD JavaScript** app, so follow §2 (no transpile step
+needed) and include the `resourceRoots` mapping — that is exactly how the sample
+was validated end-to-end on SAP Build Work Zone.
 
 ### Dev
 
