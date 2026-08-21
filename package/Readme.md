@@ -85,11 +85,21 @@ re-apply and the keyboard shortcuts activate only after the first open.
 A standard html5-apps-repo / managed-approuter deployment. Only three
 package-specific things matter:
 
-1. **`includeAssets`** (see above) — bundles the popover's css/i18n/fragments, else they 404.
+1. **`includeAssets`** on `ui5-tooling-modules-task` (the `ui5.yaml` snippet above)
+   — bundles the popover's css/i18n/fragments, otherwise they 404.
 2. **Task order (TypeScript only):** the modules task must run `afterTask: ui5-tooling-transpile-task`.
-3. **`resourceRoots`** in `manifest.json` (`sap.ui5`):
-   `"ui5-smart-access": "./thirdparty/ui5-smart-access"` — makes `Fragment.load` names
-   resolve to the bundled copy instead of 404-ing against the UI5 CDN.
+3. **`resourceRoots`** in your app's `manifest.json` — makes `Fragment.load` names
+   resolve to the bundled copy instead of 404-ing against the UI5 CDN:
+
+```json
+{
+  "sap.ui5": {
+    "resourceRoots": {
+      "ui5-smart-access": "./thirdparty/ui5-smart-access"
+    }
+  }
+}
+```
 
 Then build and deploy as usual:
 
