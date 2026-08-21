@@ -12,5 +12,25 @@
     "popover"
   ],
   "author": "ABICS",
-  "license": "ISC"
+  "license": "ISC",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "*.fragment.xml",
+    "css",
+    "fragments",
+    "i18n",
+    "js",
+    "Readme.md"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.11",
+    "jsdom": "^29.1.1",
+    "vitest": "^4.1.11"
+  }
 }
