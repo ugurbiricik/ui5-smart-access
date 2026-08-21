@@ -268,12 +268,42 @@
 }
 
 /* ============ Feature cards ============ */
+/* Equal-height cards: replace UI5 Grid's float layout with a real CSS grid so
+   every card in a row is the same height regardless of text length (the float
+   layout left ragged, uneven cards). */
+.demoPage .featureGrid {
+	display: grid !important;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 16px;
+}
+
+.demoPage .featureGrid > * {
+	width: auto !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	float: none !important;
+}
+
+@media (max-width: 1023px) {
+	.demoPage .featureGrid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 599px) {
+	.demoPage .featureGrid {
+		grid-template-columns: 1fr;
+	}
+}
+
 .featureCard {
+	height: 100%;
+	min-height: 180px;
+	box-sizing: border-box;
 	background: #ffffff;
 	border: 1px solid #eef1f5;
 	border-radius: 12px;
 	padding: 1.25rem;
-	min-height: 172px;
 	box-shadow: 0 4px 14px rgba(15, 42, 74, 0.06);
 	transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -290,4 +320,52 @@
 .featureCardDesc {
 	color: #64748b;
 	line-height: 1.5;
+}
+
+/* ============ Night mode (custom content) ============
+   The package tags <html> with `saNightMode` when night mode is on. Our
+   presentation page uses custom light backgrounds (hero, cards) that the UI5
+   dark theme can't reach, so darken them here via that hook. */
+html.saNightMode .demoPage .demoSection {
+	border-bottom-color: #2b2c31;
+}
+
+html.saNightMode .saHero {
+	background: #1b1c20;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+html.saNightMode .saHeroTitle,
+html.saNightMode .saHeroTitle .sapMTitleInner,
+html.saNightMode .saHeroTitle span {
+	color: #8ab4ff !important;
+}
+
+html.saNightMode .saHeroTagline {
+	color: #34d3c6;
+}
+
+html.saNightMode .saHeroIntro {
+	color: #c7ccd3;
+}
+
+html.saNightMode .saBadge {
+	background: #23314f;
+	color: #cdd9ff;
+}
+
+html.saNightMode .featureCard {
+	background: #1e1f24;
+	border-color: #33343a;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+html.saNightMode .featureCardDesc {
+	color: #aab3c0;
+}
+
+/* Section headings / body text (UI5 controls) on the now-dark page */
+html.saNightMode .demoPage .sapMTitle,
+html.saNightMode .demoPage .sapMText {
+	color: #e6e8ec !important;
 }

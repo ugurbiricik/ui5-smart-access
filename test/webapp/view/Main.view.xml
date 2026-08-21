@@ -7,7 +7,7 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:core="sap.ui.core">
 
-	<Page title="{i18n>appTitle}" id="page" showNavButton="false" class="sapUiResponsiveContentPadding">
+	<Page id="page" showHeader="false" showNavButton="false" class="sapUiResponsiveContentPadding">
 		<content>
 			<VBox class="demoPage" width="100%">
 
@@ -50,7 +50,7 @@
 					<Title text="{i18n>featuresTitle}" level="H2" titleStyle="H2" />
 					<Text text="{i18n>featuresIntro}" class="sapUiSmallMarginTop" />
 
-					<l:Grid content="{/features}" defaultSpan="XL3 L3 M6 S12" hSpacing="1" vSpacing="1" class="sapUiMediumMarginTop">
+					<l:Grid content="{/features}" defaultSpan="XL3 L3 M6 S12" hSpacing="1" vSpacing="1" class="featureGrid sapUiMediumMarginTop">
 						<VBox class="featureCard">
 							<core:Icon src="{icon}" size="1.75rem" class="featureCardIcon" />
 							<Title text="{name}" level="H4" titleStyle="H4" wrapping="true" class="sapUiTinyMarginTop" />
@@ -108,53 +108,13 @@
 					<core:HTML content='&lt;div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"&gt;&lt;div style="padding:16px;background:#fafafa;color:#7a7a7a;border-radius:6px;min-width:180px"&gt;Niedriger Kontrast: Grau auf Hellgrau&lt;/div&gt;&lt;div style="padding:16px;background:#ffffff;color:#000;border:1px solid #ddd;border-radius:6px;min-width:180px"&gt;Hoher Kontrast: Schwarz auf Weiß&lt;/div&gt;&lt;div style="padding:16px;background:#ffe066;color:#664d00;border-radius:6px;min-width:180px"&gt;Gelb auf Dunkelgelb&lt;/div&gt;&lt;/div&gt;' />
 				</VBox>
 
-				<!-- ============ Compatibility ============ -->
-				<VBox class="demoSection">
-					<Title text="{i18n>compatTitle}" level="H2" titleStyle="H2" />
-					<Text text="{i18n>compatHint}" class="sapUiSmallMarginTop" />
-
-					<Table items="{/compat}" class="sapUiMediumMarginTop">
-						<columns>
-							<Column><Text text="{i18n>colComponent}" /></Column>
-							<Column hAlign="Center"><Text text="{i18n>colVersion}" /></Column>
-							<Column hAlign="End"><Text text="{i18n>colStatus}" /></Column>
-						</columns>
-						<items>
-							<ColumnListItem>
-								<cells>
-									<ObjectIdentifier title="{name}" />
-									<Text text="{detail}" />
-									<ObjectStatus text="{note}" state="{statusState}" icon="sap-icon://accept" />
-								</cells>
-							</ColumnListItem>
-						</items>
-					</Table>
-				</VBox>
-
-				<!-- ============ Use cases ============ -->
-				<VBox class="demoSection">
-					<Title text="{i18n>useCasesTitle}" level="H2" titleStyle="H2" />
-					<Panel expandable="false" class="sapUiSmallMarginTop">
-						<List items="{/useCases}">
-							<ObjectListItem title="{name}" intro="{intro}">
-								<attributes>
-									<ObjectAttribute text="{benefit1}" />
-									<ObjectAttribute text="{benefit2}" />
-								</attributes>
-								<firstStatus>
-									<ObjectStatus text="{status}" state="{statusState}" />
-								</firstStatus>
-							</ObjectListItem>
-						</List>
-					</Panel>
-				</VBox>
-
 			</VBox>
 		</content>
 	</Page>
 
 	<!-- Floating accessibility launcher (fixed top-right, always visible) -->
 	<Button
+		id="accessFab"
 		icon="sap-icon://accessibility"
 		class="accessFab"
 		press=".openAbicsAccessibilityPopover"
