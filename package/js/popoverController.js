@@ -664,7 +664,6 @@ export const popoverInternalController = {
         oSettingsModel.setProperty("/blueLightFilterLevel", 50);
         oSettingsModel.setProperty("/blueLightFilterActive", false);
         oSettingsModel.setProperty("/fontSizeExpanded", false);
-        oSettingsModel.setProperty("/ttsExpanded", false);
         oSettingsModel.setProperty("/colorBlindnessExpanded", false);
         oSettingsModel.setProperty("/blueLightFilterExpanded", false);
         oSettingsModel.setProperty("/nightModeActive", false);

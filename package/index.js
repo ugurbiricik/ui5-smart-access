@@ -1,7 +1,5 @@
-import JSONModel from "sap/ui/model/json/JSONModel";
 import Fragment from "sap/ui/core/Fragment";
 
-import getPopoverModules from "./popoverModules.js";
 import { loadCustomStyleOnce } from "./js/cssLoader.js";
 import { createI18nModel } from "./js/i18nModel.js";
 import {
@@ -140,7 +138,6 @@ export const openAccessPopover = async (controller, oEvent) => {
 
     const oPopover = await controller._pPopover;
 
-    oPopover.setModel(new JSONModel({ items: getPopoverModules() }), "modules");
     oPopover.openBy(oEvent.getSource());
     return oPopover;
 };

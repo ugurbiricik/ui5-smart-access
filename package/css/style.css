@@ -498,15 +498,18 @@
   border: none !important;
 }
 
-/* ── Colour picker (Simplified) polish — applies to all 3 of our pickers ── */
-/* Remove the old|new comparison swatch entirely (the ugly strip left of "Hex";
-   the colour is already visible in the big picker box). */
-.sapUiCPComparisonWrapper {
+/* ── Colour picker (Simplified) polish — our 3 pickers only ──
+   ALL rules are scoped to a popover that contains the unified colour picker
+   (`.sapMPopover:has(.sapUnifiedColorPicker)`) so this styling can never leak
+   into a host app's own sap.ui.unified ColorPicker. */
+
+/* Remove the old|new comparison swatch (ugly strip left of "Hex"; the colour is
+   already visible in the big picker box). */
+.sapMPopover:has(.sapUnifiedColorPicker) .sapUiCPComparisonWrapper {
   display: none !important;
 }
 
-/* No scrollbar — the picker content fits; scoped to the picker's own popover
-   via :has() so the main popover is unaffected. */
+/* No scrollbar — the picker content fits. */
 .sapMPopover:has(.sapUnifiedColorPicker) .sapMPopoverScroll,
 .sapMPopover:has(.sapUnifiedColorPicker) .sapMPopoverCont {
   overflow: hidden !important;
@@ -515,11 +518,11 @@
 /* Cleaner Hex row. The label (.sapUiCPHexWrapper) and the input
    (.sapUiColorPicker-ColorPickerHexField) are SIBLINGS in the matrix, so we
    centre them together as inline-blocks on one line. */
-.sapUiColorPicker-ColorPickerMatrix {
+.sapMPopover:has(.sapUnifiedColorPicker) .sapUiColorPicker-ColorPickerMatrix {
   text-align: center !important;
 }
 
-.sapUiCPHexWrapper {
+.sapMPopover:has(.sapUnifiedColorPicker) .sapUiCPHexWrapper {
   display: inline-block !important;
   width: auto !important;
   margin: 0 8px 0 0 !important;
@@ -527,13 +530,13 @@
   vertical-align: middle !important;
 }
 
-.sapUiCPHexWrapper .sapUiColorPicker-ColorPickerHexText,
-.sapUiCPHexWrapper label {
+.sapMPopover:has(.sapUnifiedColorPicker) .sapUiCPHexWrapper .sapUiColorPicker-ColorPickerHexText,
+.sapMPopover:has(.sapUnifiedColorPicker) .sapUiCPHexWrapper label {
   font-weight: 600 !important;
   color: #1e3a8a !important;
 }
 
-.sapUiColorPicker-ColorPickerHexField.sapMInputBase {
+.sapMPopover:has(.sapUnifiedColorPicker) .sapUiColorPicker-ColorPickerHexField.sapMInputBase {
   display: inline-block !important;
   width: 110px !important;
   vertical-align: middle !important;
@@ -541,7 +544,7 @@
   margin: 0 !important;
 }
 
-.sapUiColorPicker-ColorPickerHexField .sapMInputBaseInner {
+.sapMPopover:has(.sapUnifiedColorPicker) .sapUiColorPicker-ColorPickerHexField .sapMInputBaseInner {
   border: 1px solid #cbd5e1 !important;
   border-radius: 8px !important;
   background: #ffffff !important;
@@ -600,11 +603,6 @@
 .abicsAccessibilityPopover .cbSub {
   color: #64748b !important;
   font-size: 12px !important;
-}
-
-.abicsAccessibilityPopover .cbCheck {
-  color: #3b82f6 !important;
-  flex-shrink: 0;
 }
 
 .abicsAccessibilityPopover .cbIntensity {
@@ -687,14 +685,6 @@
   flex-wrap: nowrap;
 }
 
-/* Inline contrast preview in the main list (compact). */
-.abicsAccessibilityPopover .contrastMiniPreview {
-  min-height: 38px;
-  border-radius: 8px;
-  padding: 6px 12px;
-  box-sizing: border-box;
-  border: 1px solid #e2e8f0;
-}
 
 .abicsAccessibilityPopover .contrastPreset,
 .abicsAccessibilityPopover .contrastSwatch {
@@ -779,10 +769,6 @@
 
 .abicsAccessibilityPopover .contrastPreviewText {
   font-weight: 600 !important;
-}
-
-.abicsAccessibilityPopover .contrastLinksRow {
-  margin-top: 12px;
 }
 
 /* Font panel: simple stepper (value box + − / reset / + buttons), no slider —
@@ -894,26 +880,9 @@
   display: none !important;
 }
 
-/* TTS action buttons (Vorlesen / Stopp): same solid light-blue look as the
-   −/+ buttons, no border/outline. Space them apart. */
-.abicsAccessibilityPopover .flyoutTtsButtons {
-  gap: 16px;
-}
-
-.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner {
-  border: none !important;
-  background-color: #eaf1fd !important;
-  border-radius: 9px !important;
-  box-shadow: none !important;
-  padding: 0 14px !important;
-}
-
-/* TTS section labels (Geschwindigkeit / Lautstärke / Hover-Lesen): match the
-   Vorlesen/Stopp button text EXACTLY. The button's weight comes from the SAP
-   "72-SemiboldDuplex" font variant (not font-weight); the plain label uses "72"
-   (regular) which looked thin, and font-weight:600 mapped to "72-Bold" (heading
-   look). So match the button's font-family + colour, weight stays 400. */
-.abicsAccessibilityPopover .ttsContent .typoRow .sapMLabel,
+/* TTS section labels (Geschwindigkeit / Lautstärke / Hover-Lesen): the semibold
+   look comes from the SAP "72-SemiboldDuplex" font variant (not font-weight —
+   the plain "72" looked thin and font-weight:600 mapped to the heading "72-Bold"). */
 .abicsAccessibilityPopover .ttsFlyoutSection .typoRow .sapMLabel,
 .abicsAccessibilityPopover .ttsHoverRow .sapMLabel {
   font-family: "72-SemiboldDuplex", "72", "72full", Arial, sans-serif !important;
@@ -938,28 +907,6 @@
 }
 .abicsAccessibilityPopover .ttsPlayBtn .sapMBtnInner .sapUiIcon {
   color: #ffffff !important;
-}
-
-.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner:hover {
-  background-color: #d5e3fa !important;
-}
-
-.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnContent,
-.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner .sapUiIcon {
-  color: #1e3a8a !important;
-}
-
-.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner:focus,
-.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner:focus-visible,
-.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner:active {
-  outline: none !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-
-.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner::before,
-.abicsAccessibilityPopover .flyoutTtsButtons .sapMBtnInner::after {
-  display: none !important;
 }
 
 /* ── Flyout content padding ── */

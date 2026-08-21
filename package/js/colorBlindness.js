@@ -12,13 +12,16 @@ const MATRICES = {
     tritanomaly: [0.95, 0.05, 0, 0, 0, 0, 0.433, 0.567, 0, 0, 0, 0.475, 0.525, 0, 0, 0, 0, 0, 1, 0]
 };
 
-let svgInjected = false;
+const SVG_ID = 'ui5-smart-access-cb-filters';
 
 function ensureSvg() {
-    if (svgInjected) return;
+    // Check the DOM, not a cached flag — if the SVG is ever removed, we must
+    // re-inject it, otherwise updateMatrix() silently no-ops and the applied
+    // url(#sa-cb-...) filter points at a missing element.
+    if (document.getElementById(SVG_ID)) return;
     const svgNS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(svgNS, 'svg');
-    svg.setAttribute('id', 'ui5-smart-access-cb-filters');
+    svg.setAttribute('id', SVG_ID);
     svg.setAttribute('style', 'position:absolute;width:0;height:0;');
     Object.keys(MATRICES).forEach((id) => {
         const filter = document.createElementNS(svgNS, 'filter');
@@ -31,7 +34,6 @@ function ensureSvg() {
         svg.appendChild(filter);
     });
     document.body.appendChild(svg);
-    svgInjected = true;
 }
 
 // Interpolates full-strength matrix toward identity by (1 - t).

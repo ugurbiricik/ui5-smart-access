@@ -19,7 +19,8 @@ export function toggleActiveFeatureClass(panelId, active) {
 export function updateTitleText(controlId, i18nKey) {
     const control = Fragment.byId(this._sFragmentId, controlId);
     if (!control || !this._oPopover) return;
-    const bundle = this._oPopover.getModel("i18n").getResourceBundle();
+    const i18n = this._oPopover.getModel("i18n");
+    const bundle = i18n && i18n.getResourceBundle();
     if (bundle) {
         control.setText(bundle.getText(i18nKey));
     }

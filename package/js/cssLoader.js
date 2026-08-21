@@ -1,5 +1,10 @@
 let isCustomStyleLoaded = false;
 
+// Bump on every stylesheet change; keep in sync with package.json version. Used
+// as the cache-bust token so the browser CAN cache the sheet and only re-fetches
+// it on an upgrade (a Date.now() token would re-download it on every page load).
+const CSS_VERSION = "1.2.0";
+
 export function loadCustomStyleOnce() {
   if (isCustomStyleLoaded) {
     return;
@@ -12,9 +17,8 @@ export function loadCustomStyleOnce() {
     link.id = "ui5-smart-access-styles";
     link.rel = "stylesheet";
     link.type = "text/css";
-    // Cache-bust so an updated stylesheet is always picked up (browsers
-    // otherwise keep serving a cached copy from the same URL).
-    link.href = sCorrectPath + "?v=" + Date.now();
+    // Version-based cache-bust: refreshes on upgrade, cacheable in between.
+    link.href = sCorrectPath + "?v=" + CSS_VERSION;
     document.head.appendChild(link);
 
     isCustomStyleLoaded = true;

@@ -5,6 +5,24 @@ let imagesHidden = false;
 let observer = null;
 let debounceTimer = null;
 
+// localStorage can throw (private mode, disabled storage, quota) — this runs at
+// page load via initImageHider(), so guard it or the host app crashes on boot.
+function readHiddenPref() {
+    try {
+        return localStorage.getItem(STORAGE_KEY) === "true";
+    } catch (e) {
+        return false;
+    }
+}
+
+function writeHiddenPref(value) {
+    try {
+        localStorage.setItem(STORAGE_KEY, value);
+    } catch (e) {
+        /* storage unavailable — feature still works for this session */
+    }
+}
+
 // Whether to leave an image-type element alone. Inside our popover/flyout we
 // still hide the decorative feature icons + swatch images (like hays.de: the
 // icons go, the text labels stay and the panel header stays clickable), but we
@@ -44,12 +62,12 @@ export const toggleImages = () => {
         setVisibilityAll('');
         stopImageObserver();
     }
-    localStorage.setItem(STORAGE_KEY, imagesHidden);
+    writeHiddenPref(imagesHidden);
     return imagesHidden;
 };
 
 export const initImageHider = () => {
-    const shouldHide = localStorage.getItem(STORAGE_KEY) === "true";
+    const shouldHide = readHiddenPref();
     if (shouldHide) {
         imagesHidden = true;
         setVisibilityAll('hidden');
@@ -61,7 +79,7 @@ export const showImages = () => {
     setVisibilityAll('');
     imagesHidden = false;
     stopImageObserver();
-    localStorage.setItem(STORAGE_KEY, false);
+    writeHiddenPref(false);
 };
 
 export const areImagesHidden = () => imagesHidden;

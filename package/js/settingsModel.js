@@ -81,15 +81,12 @@ export const oSettingsModel = new JSONModel({
     blueLightFilterLevel: savedSettings.blueLightFilterLevel ?? 50,
     blueLightFilterActive: savedSettings.blueLightFilterActive ?? false,
     fontSizeExpanded: false,
-    ttsExpanded: false,
     // Open the inline panel on load if a colour-correction mode is already active.
     colorBlindnessExpanded: (migrateCbType(savedSettings.colorBlindnessType) ?? "none") !== "none",
     blueLightFilterExpanded: false,
     nightModeActive: false,
     toggleImagesActive: false,
     contrastModeActive: savedSettings.contrastModeActive ?? false,
-    // Open the inline panel on load if contrast mode is already active.
-    contrastModeExpanded: savedSettings.contrastModeActive ?? false,
     // Default to a normal (non-jarring) high-contrast pair: white bg / black
     // text. This also lets the user change just ONE colour (the other keeps its
     // sensible default). NOTE: use || (not ??) so a persisted empty string ""
