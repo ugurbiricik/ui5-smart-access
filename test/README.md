@@ -1,12 +1,13 @@
-# UI5 Application test
+# ui5-smart-access — test app
 
-Insert the purpose of this project and some interesting info here...
+A TypeScript UI5 application that consumes the `ui5-smart-access` package
+and serves as its live demo/presentation page. Use it to try the
+accessibility assistant end-to-end during development.
 
-## Description
-
-This app demonstrates a TypeScript setup for developing UI5 applications. The central entry point for all information about using TypeScript with UI5 is at [https://sap.github.io/ui5-typescript](https://sap.github.io/ui5-typescript).
-
-**The template is inspired by the [`SAP-samples/ui5-typescript-helloworld`](https://github.com/SAP-samples/ui5-typescript-helloworld) project which also contains [a detailed step-by-step guide](https://github.com/SAP-samples/ui5-typescript-helloworld/blob/main/step-by-step.md). It explains how this setup is created and how all the bits and pieces fit together.**
+It wires the package the same way a real consumer does — see
+[`../docs/INTEGRATION.md`](../docs/INTEGRATION.md) (the "TypeScript UI5"
+section) for the pattern, and [`../docs/FILES.md`](../docs/FILES.md) for the
+package internals.
 
 ## Requirements
 

@@ -5,13 +5,18 @@
 An accessibility popover for SAP UI5 applications. Plug in one button,
 get a ready-made panel with:
 
-- Font-size scaling
-- Text-to-speech (full read + hover read)
-- Color-blindness filters (protanopia, deuteranopia, tritanopia, achromatopsia)
+- Font & typography (zoom, font size, line height, word/letter spacing, alignment)
+- Text-to-speech (full read + hover read, speed/volume)
+- Color-blindness correction modes with adjustable intensity
 - Blue-light filter (tunable 0–100 %)
-- Night mode (swaps the UI5 theme + targeted popover dark styles)
+- Night mode (universal: swaps the UI5 theme + darkens the popover **and** the host page's own markup)
+- Contrast mode (page-wide custom bg/text colours with live WCAG ratio, chosen in a flyout)
+- Reading aid (guide line / dimming mask)
+- Big cursor (selectable colours + custom)
+- Highlight links & focus
+- Stop animations (WCAG 2.2.2)
 - Image hider
-- Contrast mode (toggle + custom bg/text colors with live WCAG ratio)
+- Keyboard shortcuts (global `Alt+Shift+<key>`)
 - Reset all
 
 ## Quick start
@@ -21,7 +26,13 @@ npm install ui5-smart-access
 ```
 
 ```ts
-import { openAccessPopover } from "ui5-smart-access";
+import { openAccessPopover, initAccessibility } from "ui5-smart-access";
+
+// In your controller's onInit: re-apply saved prefs on page load and
+// enable the Alt+Shift keyboard shortcuts. Pass the launcher control.
+public onInit(): void {
+    initAccessibility(this, this.byId("accessButton"));
+}
 
 public openAccessibilityPopover(oEvent: UIEvent): void {
     void openAccessPopover(this, oEvent);
@@ -29,7 +40,7 @@ public openAccessibilityPopover(oEvent: UIEvent): void {
 ```
 
 ```xml
-<Button icon="sap-icon://accessibility" press=".openAccessibilityPopover"/>
+<Button id="accessButton" icon="sap-icon://accessibility" press=".openAccessibilityPopover"/>
 ```
 
 See [`package/Readme.md`](./package/Readme.md) for the full install
@@ -48,13 +59,8 @@ ui5-smart-access/
 
 | Document | Topic |
 |---|---|
-| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | High-level architecture and data flow |
-| [docs/PACKAGE_STRUCTURE.md](./docs/PACKAGE_STRUCTURE.md) | File-by-file breakdown of `package/` |
-| [docs/FEATURES.md](./docs/FEATURES.md) | Each accessibility feature explained |
-| [docs/STYLING.md](./docs/STYLING.md) | CSS strategy, popover isolation, night-mode prefetch |
-| [docs/PUBLIC_API.md](./docs/PUBLIC_API.md) | `openAccessPopover` reference |
-| [docs/TEST_APP.md](./docs/TEST_APP.md) | The bundled test UI5 app |
-| [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md) | Local setup, `npm link`, release |
+| [docs/INTEGRATION.md](./docs/INTEGRATION.md) | How to integrate into plain UI5, TypeScript UI5, and CAP — dev + prod |
+| [docs/FILES.md](./docs/FILES.md) | One-line description of every source file |
 
 ## Development
 
@@ -65,9 +71,10 @@ cd ../test && npm link ui5-smart-access && npm install
 
 # Run the test app
 npx ui5 serve --port 8080
-```
 
-See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md) for the full workflow.
+# Run the package unit tests
+cd package && npm test
+```
 
 ## License
 
