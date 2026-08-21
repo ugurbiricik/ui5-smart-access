@@ -1,5 +1,10 @@
 # build results
 dist
+mta_archives
+resources
+.ui5-tooling-modules
+*.mtar
+*.tgz
 coverage
 report
 .nyc_output

@@ -13,6 +13,21 @@
 		"sourceTemplate": {
 			"id": "generator-ui5-ts-app",
 			"version": "1.1.0"
+		},
+		"crossNavigation": {
+			"inbounds": {
+				"ui5smartaccess-display": {
+					"semanticObject": "SmartAccess",
+					"action": "display",
+					"title": "{{appTitle}}",
+					"subTitle": "{{appDescription}}",
+					"icon": "sap-icon://accessibility",
+					"signature": {
+						"parameters": {},
+						"additionalParameters": "allowed"
+					}
+				}
+			}
 		}
 	},
 
@@ -31,6 +46,10 @@
 			"viewName": "test.view.App",
 			"type": "XML",
 			"id": "app"
+		},
+
+		"resourceRoots": {
+			"ui5-smart-access": "./thirdparty/ui5-smart-access"
 		},
 
 		"dependencies": {
@@ -88,5 +107,10 @@
 				}
 			}
 		}
+	},
+
+	"sap.cloud": {
+		"public": true,
+		"service": "ui5smartaccess.service"
 	}
 }

@@ -17,7 +17,7 @@
 					     so the assistant's "Animationen stoppen" feature freezes it. -->
 					<core:HTML content='&lt;div class=&quot;saHeroAnim&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;saHeroAnimRing&quot;&gt;&lt;/span&gt;&lt;span class=&quot;saHeroAnimCore&quot;&gt;&lt;/span&gt;&lt;span class=&quot;saHeroAnimOrbit saHeroAnimOrbit1&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/span&gt;&lt;span class=&quot;saHeroAnimOrbit saHeroAnimOrbit2&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/span&gt;&lt;/div&gt;' />
 
-					<Image src="img/abics-logo.png" densityAware="false" decorative="false" alt="abics" class="saHeroLogo" />
+					<Image src="{/logoUrl}" densityAware="false" decorative="false" alt="abics" class="saHeroLogo" />
 
 					<Title text="{i18n>appTitle}" level="H1" titleStyle="H1" class="saHeroTitle sapUiMediumMarginTop" />
 					<Text text="{i18n>heroTagline}" class="saHeroTagline sapUiSmallMarginTop" />

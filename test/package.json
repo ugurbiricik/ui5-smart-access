@@ -7,6 +7,7 @@
 	"scripts": {
 		"clean": "rimraf dist coverage",
 		"build": "ui5 build --clean-dest",
+		"build:mta": "ui5 build --config ui5-dist.yaml",
 		"build:opt": "ui5 build self-contained --clean-dest --all",
 		"start": "ui5 serve --port 8080 -o index.html",
 		"start-cdn": "ui5 serve --port 8080 -o index-cdn.html",
@@ -41,12 +42,12 @@
 		"typescript-eslint": "^8.8.1",
 		"ui5-middleware-livereload": "^3.1.0",
 		"ui5-test-runner": "^5.4.3",
+		"ui5-task-zipper": "^3.6.1",
 		"ui5-tooling-modules": "^3.27.6",
 		"ui5-tooling-transpile": "^3.5.0",
 		"wdio-ui5-service": "^2.1.1"
 	},
 	"dependencies": {
-		"abics_ui5-smart-access": "^1.0.7",
-		"ui5-smart-access": "^1.0.1"
+		"ui5-smart-access": "^1.2.2"
 	}
 }

@@ -21,7 +21,11 @@ export default class Main extends BaseController {
 				{ name: "Bilder ausblenden", category: "Anzeige", icon: "sap-icon://hide", desc: "Blendet alle Bilder aus, um Ablenkungen und kognitive Last zu reduzieren.", status: "Verfügbar", statusState: "Success" },
 				{ name: "Kontrastmodus", category: "Farbe", icon: "sap-icon://color-fill", desc: "Setzt frei wählbare Hinter- und Vordergrundfarben für maximale Lesbarkeit.", status: "Verfügbar", statusState: "Success" },
 				{ name: "Großer Mauszeiger", category: "Navigation", icon: "sap-icon://cursor-arrow", desc: "Vergrößert und färbt den Mauszeiger für bessere Sichtbarkeit und Orientierung.", status: "Verfügbar", statusState: "Success" }
-			]
+			],
+			// Resolve the app-local logo against the app's own resource root. A bare
+			// relative "img/..." resolves against the FLP shell in a Work Zone iframe
+			// (→ /cp.portal/img/... → 404), so toUrl keeps it app-relative everywhere.
+			logoUrl: sap.ui.require.toUrl("test/img/abics-logo.png")
 		};
 		const oModel = new JSONModel(oData);
 		this.getView()?.setModel(oModel);

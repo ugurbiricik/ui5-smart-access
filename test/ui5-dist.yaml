@@ -2,10 +2,6 @@ specVersion: "4.0"
 metadata:
   name: test
 type: application
-resources:
-  configuration:
-    paths:
-      webapp: dist
 framework:
   name: SAPUI5
   version: "1.136.2"
@@ -13,3 +9,30 @@ framework:
     - name: sap.m
     - name: sap.ui.core
     - name: themelib_sap_horizon
+builder:
+  resources:
+    excludes:
+      - "test/e2e/**"
+  customTasks:
+    # Transpile the TypeScript controller to JS for the production bundle.
+    - name: ui5-tooling-transpile-task
+      afterTask: replaceVersion
+    # Bundle the bare "ui5-smart-access" import into the build output. By default
+    # only the JS is bundled; the package also loads css/i18n/fragments at runtime
+    # via toUrl/Fragment.load, so includeAssets copies those raw files too — without
+    # them the popover 404s in the deployed (html5-repo) app even though dev works.
+    - name: ui5-tooling-modules-task
+      afterTask: ui5-tooling-transpile-task
+      configuration:
+        includeAssets:
+          ui5-smart-access:
+            - "*.fragment.xml"
+            - "fragments/**"
+            - "css/**"
+            - "i18n/**"
+    # Zip the built app into the html5-repo artifact; archiveName must equal the
+    # mta html5 module name + artifact name.
+    - name: ui5-task-zipper
+      afterTask: generateComponentPreload
+      configuration:
+        archiveName: ui5smartaccess

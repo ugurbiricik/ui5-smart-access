@@ -1,0 +1,102 @@
+_schema-version: "3.3.0"
+ID: ui5-smart-access-test
+version: 1.0.0
+description: "UI5 demo app consuming ui5-smart-access, deployed to BTP Work Zone to validate the package in production."
+parameters:
+  enable-parallel-deployments: true
+  deploy_mode: html5-repo
+
+modules:
+  - name: ui5smartaccess               # UI (html5 module); name = ui5-task-zipper archiveName = artifact name (dotless)
+    type: html5
+    path: .
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:mta
+      supported-platforms: []          # an html5 module is NOT deployed as a CF app
+
+  - name: ui5sa-app-deployer           # uploads the built UI zip into the HTML5 apps repo
+    type: com.sap.application.content
+    path: .
+    build-parameters:
+      build-result: resources/
+      requires:
+        - name: ui5smartaccess
+          artifacts:
+            - ui5smartaccess.zip
+          target-path: resources/
+    requires:
+      - name: ui5sa-auth
+      - name: ui5sa-html5-repo-host
+        parameters:
+          content-target: true
+          config:
+            HTML5Runtime_enabled: true
+    parameters:
+      config:
+        destinations:
+          - Name: ui5                  # index.html loads UI5 from /resources/* → routed to the CDN
+            URL: https://ui5.sap.com
+            Type: HTTP
+            Authentication: NoAuthentication
+            ProxyType: Internet
+
+  - name: ui5sa-destinations           # subaccount destinations that Work Zone reads (app content + identity)
+    type: com.sap.application.content
+    requires:
+      - name: ui5sa-auth
+        parameters:
+          service-key:
+            name: ui5sa-auth-key
+      - name: ui5sa-html5-repo-host
+        parameters:
+          service-key:
+            name: ui5sa-html5-repo-host-key
+      - name: ui5sa-destination
+        parameters:
+          content-target: true
+    build-parameters:
+      no-source: true
+    parameters:
+      content:
+        subaccount:
+          existing_destinations_policy: update
+          destinations:
+            - Name: ui5sa-html5-repository
+              ServiceInstanceName: ui5sa-html5-repo-host
+              ServiceKeyName: ui5sa-html5-repo-host-key
+              sap.cloud.service: ui5smartaccess.service
+            - Name: ui5sa-auth
+              Authentication: OAuth2UserTokenExchange
+              ServiceInstanceName: ui5sa-auth
+              ServiceKeyName: ui5sa-auth-key
+              sap.cloud.service: ui5smartaccess.service
+
+resources:
+  - name: ui5sa-auth                    # XSUAA (Work Zone requires authentication)
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: ui5-smart-access-test
+        tenant-mode: dedicated
+  - name: ui5sa-destination             # Destination service instance (bound by the destinations content module)
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+  - name: ui5sa-html5-repo-host         # HTML5 apps repository (app-host)
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
+  - name: ui5sa-html5-runtime           # HTML5 apps repository (app-runtime)
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-runtime
