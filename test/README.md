@@ -5,8 +5,8 @@ and serves as its live demo/presentation page. Use it to try the
 accessibility assistant end-to-end during development.
 
 It wires the package the same way a real consumer does — see
-[`../docs/INTEGRATION.md`](../docs/INTEGRATION.md) (the "TypeScript UI5"
-section) for the pattern, and [`../docs/FILES.md`](../docs/FILES.md) for the
+[`../package/docs/INTEGRATION.md`](../package/docs/INTEGRATION.md) (the "TypeScript UI5"
+section) for the pattern, and [`../package/docs/FILES.md`](../package/docs/FILES.md) for the
 package internals.
 
 ## Requirements

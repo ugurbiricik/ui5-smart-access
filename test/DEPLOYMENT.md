@@ -77,7 +77,7 @@ must be baked into the bundle — that is exactly what `includeAssets` +
 - **`ui5-smart-access` published to npm** at the version referenced in
   `package.json` — the production build runs a fresh `npm install`, which pulls
   the package from the registry (it does not follow `npm link`). See
-  [../docs/DEVELOPMENT.md](../docs/DEVELOPMENT.md).
+  [../package/docs/DEVELOPMENT.md](../package/docs/DEVELOPMENT.md).
 
 ## Build & deploy
 
