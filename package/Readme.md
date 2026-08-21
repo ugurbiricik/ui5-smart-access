@@ -48,10 +48,9 @@ server:
 > your `manifest.json` (`sap.ui5`):
 > `"resourceRoots": { "ui5-smart-access": "./thirdparty/ui5-smart-access" }`.
 >
-> The dev + production config for plain UI5, TypeScript and CAP is in the bundled
-> **[Integration guide](./docs/INTEGRATION.md)**, and the full BTP / Work Zone
-> deployment walkthrough is in the bundled **[Deployment guide](./docs/DEPLOYMENT.md)**
-> (`docs/` in this package — i.e. `node_modules/ui5-smart-access/docs/`).
+> The complete dev + production + deployment config for plain UI5, TypeScript and
+> CAP is bundled with this package in `docs/INTEGRATION.md` and `docs/DEPLOYMENT.md`
+> (see [Documentation](#documentation) below).
 
 ## Usage
 
@@ -97,15 +96,41 @@ the keyboard shortcuts aren't active until then either.
 The i18n bundle is German by default with English as the alternate; the
 active language is picked from the browser (`navigator.languages`).
 
+## Deployment (BTP / SAP Build Work Zone)
+
+Deploying an app that uses this package is a standard html5-apps-repo / managed
+approuter deployment. Only **three** package-specific things matter:
+
+1. **`includeAssets`** on `ui5-tooling-modules-task` (shown in [Install](#install))
+   — bundles the popover's css/i18n/fragments into the build; without it they 404
+   once deployed.
+2. **Task order (TypeScript apps only):** the modules task must run
+   `afterTask: ui5-tooling-transpile-task`, otherwise the transpiled import is not
+   rewritten (`failed to load ui5-smart-access.js`). Classic AMD JS apps don't need this.
+3. **`resourceRoots`** in `manifest.json` (`sap.ui5`):
+   `"ui5-smart-access": "./thirdparty/ui5-smart-access"` — makes the popover's
+   fragments resolve locally instead of 404-ing against the UI5 CDN.
+
+Then build and deploy as usual:
+
+```bash
+npm install
+mbt build                                  # -> mta_archives/<app>_<version>.mtar
+cf deploy mta_archives/<app>_<version>.mtar -f
+```
+
+The full walkthrough (MTA files, XSUAA, dev-vs-prod, CAP) is in `docs/DEPLOYMENT.md`,
+bundled with this package.
+
 ## Documentation
 
-Full guides are bundled with this package under `docs/` (i.e.
-`node_modules/ui5-smart-access/docs/` after install):
+Full guides ship inside this package under `docs/`. On npm, open them from the
+package's **Code** tab; after install they're in `node_modules/ui5-smart-access/docs/`:
 
-- [`docs/INTEGRATION.md`](./docs/INTEGRATION.md) — integrate into plain UI5, TypeScript UI5, and CAP (dev + production)
-- [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) — deploy an app that uses the package to BTP / SAP Build Work Zone
-- [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md) — local development, testing without publishing, and publishing to npm
-- [`docs/FILES.md`](./docs/FILES.md) — one-line description of every source file
+- `docs/INTEGRATION.md` — integrate into plain UI5, TypeScript UI5, and CAP (dev + production)
+- `docs/DEPLOYMENT.md` — deploy an app that uses the package to BTP / SAP Build Work Zone
+- `docs/DEVELOPMENT.md` — local development, testing without publishing, and publishing to npm
+- `docs/FILES.md` — one-line description of every source file
 
 ## TypeScript
 
