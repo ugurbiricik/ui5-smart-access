@@ -77,10 +77,10 @@ In short: in `ui5 serve` the `ui5-tooling-modules` middleware streams the packag
 A deployed app has no `node_modules`, so the build must bake in the JS, the
 (transpiled) import **and** the raw assets.
 
-## 5. A complete worked example
+## 5. Validated live
 
-The demo/test app in this repository is deployed exactly this way. See
-[test/DEPLOYMENT.md](https://github.com/ugurbiricik/ui5-smart-access/blob/main/test/DEPLOYMENT.md)
-for a real, end-to-end frontend-only MTA — with the actual `mta.yaml`,
-`xs-security.json`, `xs-app.json` and `ui5-dist.yaml` — that validated the package
-live on SAP Build Work Zone.
+This exact setup — a frontend-only MTA with `mta.yaml`, `xs-security.json`,
+`xs-app.json` and a production `ui5-dist.yaml` (transpile → `ui5-tooling-modules`
+with `includeAssets` → `ui5-task-zipper`) — has been deployed end-to-end and
+confirmed working on SAP Build Work Zone, for both a TypeScript UI5 app and a
+classic AMD JavaScript app inside a CAP project.

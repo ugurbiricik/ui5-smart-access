@@ -51,16 +51,15 @@ real build, use one of:
 - **Directory dependency:** `"ui5-smart-access": "file:../package"` — installs a
   copy of the package directory on each `npm install`.
 
-A Git dependency (`github:ugurbiricik/ui5-smart-access`) does **not** work here:
-the package lives in the `package/` subfolder and npm cannot install a
-subdirectory of a Git repo.
+A Git dependency does **not** work here: the package lives in the `package/`
+subfolder of the repository and npm cannot install a subdirectory of a Git repo.
 
 ## Publish a new version to npm
 
 1. Bump the version in `package/package.json` (e.g. `1.2.0`). The `files`
-   whitelist already limits the tarball to the runtime files (`index.js`,
-   `index.d.ts`, `*.fragment.xml`, `css`, `fragments`, `i18n`, `js`, `Readme.md`)
-   — check with `npm pack --dry-run`.
+   whitelist already limits the tarball to the runtime files and docs (`index.js`,
+   `index.d.ts`, `*.fragment.xml`, `css`, `fragments`, `i18n`, `js`, `docs`,
+   `Readme.md`) — check with `npm pack --dry-run`.
 2. Authenticate (one-time) with an npm access token or `npm login`:
    ```bash
    # granular access token (with 2FA-bypass enabled):
