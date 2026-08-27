@@ -10,6 +10,7 @@ import { applyColorBlindness } from "./colorBlindness.js";
 import { enableBlueLightFilter } from "./blueLightFilter.js";
 import { toggleNightMode } from "./nightMode.js";
 import { applyCustomContrast, getContrastRatio } from "./contrast.js";
+import { applyHighContrastTheme } from "./highContrastTheme.js";
 import { buildContrastColors, buildContrastPresets } from "./contrastSwatches.js";
 import { applyTextSpacing } from "./textSpacing.js";
 import { setBigCursor, setBigCursorCustom, buildBigCursorColors } from "./bigCursor.js";
@@ -31,7 +32,7 @@ import {
 export const PERSISTED_KEYS = [
     "fontStep", "ttsRate", "ttsVolume", "colorBlindnessType",
     "blueLightFilterLevel", "blueLightFilterActive", "nightModeActive",
-    "contrastModeActive", "contrastBgColor", "contrastTextColor",
+    "contrastModeActive", "contrastTheme", "contrastBgColor", "contrastTextColor",
     "contrastUnderlineLinks", "colorBlindnessIntensity",
     "readingGuideMode",
     "bigCursorColor", "bigCursorCustomColor", "highlightLinksActive", "stopAnimationsActive",
@@ -87,6 +88,9 @@ export const oSettingsModel = new JSONModel({
     nightModeActive: false,
     toggleImagesActive: false,
     contrastModeActive: savedSettings.contrastModeActive ?? false,
+    // Which contrast variant is active: "" = custom colours (CSS override),
+    // "hcb"/"hcw" = SAP's native high-contrast theme.
+    contrastTheme: savedSettings.contrastTheme ?? "",
     // Default to a normal (non-jarring) high-contrast pair: white bg / black
     // text. This also lets the user change just ONE colour (the other keeps its
     // sensible default). NOTE: use || (not ??) so a persisted empty string ""
@@ -162,9 +166,13 @@ export const restoreSavedState = () => {
         oSettingsModel.setProperty("/nightModeActive", true);
     }
 
+    const contrastTheme = oSettingsModel.getProperty("/contrastTheme");
     const cbg = oSettingsModel.getProperty("/contrastBgColor");
     const ctext = oSettingsModel.getProperty("/contrastTextColor");
-    if (oSettingsModel.getProperty("/contrastModeActive") && cbg && ctext) {
+    if (contrastTheme) {
+        // Native SAP high-contrast theme takes precedence over custom colours.
+        applyHighContrastTheme(contrastTheme);
+    } else if (oSettingsModel.getProperty("/contrastModeActive") && cbg && ctext) {
         // Re-apply the saved custom background/text contrast.
         applyCustomContrast(cbg, ctext, oSettingsModel.getProperty("/contrastUnderlineLinks"));
         oSettingsModel.setProperty("/contrastRatio", getContrastRatio(cbg, ctext).ratioText);

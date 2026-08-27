@@ -33,11 +33,11 @@
                         <Text text="{settings>/typoZoom}%" class="cbPercent" />
                     </HBox>
                     <HBox alignItems="Center" width="100%" class="typoSliderRow">
-                        <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" custom:typo="zoom" />
+                        <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" tooltip="{i18n>aria.decrease}" custom:typo="zoom" />
                         <Slider min="50" max="200" step="5" value="{settings>/typoZoom}" change=".onTypoSliderChange" custom:typo="zoom">
                             <layoutData><FlexItemData growFactor="1" /></layoutData>
                         </Slider>
-                        <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" custom:typo="zoom" />
+                        <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" tooltip="{i18n>aria.increase}" custom:typo="zoom" />
                     </HBox>
                 </VBox>
 
@@ -47,11 +47,11 @@
                         <Text text="+{settings>/typoLineHeight}%" class="cbPercent" />
                     </HBox>
                     <HBox alignItems="Center" width="100%" class="typoSliderRow">
-                        <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" custom:typo="lineHeight" />
+                        <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" tooltip="{i18n>aria.decrease}" custom:typo="lineHeight" />
                         <Slider min="0" max="100" step="5" value="{settings>/typoLineHeight}" change=".onTypoSliderChange" custom:typo="lineHeight">
                             <layoutData><FlexItemData growFactor="1" /></layoutData>
                         </Slider>
-                        <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" custom:typo="lineHeight" />
+                        <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" tooltip="{i18n>aria.increase}" custom:typo="lineHeight" />
                     </HBox>
                 </VBox>
 
@@ -61,11 +61,11 @@
                         <Text text="+{settings>/typoWordSpacing}%" class="cbPercent" />
                     </HBox>
                     <HBox alignItems="Center" width="100%" class="typoSliderRow">
-                        <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" custom:typo="wordSpacing" />
+                        <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" tooltip="{i18n>aria.decrease}" custom:typo="wordSpacing" />
                         <Slider min="0" max="100" step="5" value="{settings>/typoWordSpacing}" change=".onTypoSliderChange" custom:typo="wordSpacing">
                             <layoutData><FlexItemData growFactor="1" /></layoutData>
                         </Slider>
-                        <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" custom:typo="wordSpacing" />
+                        <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" tooltip="{i18n>aria.increase}" custom:typo="wordSpacing" />
                     </HBox>
                 </VBox>
 
@@ -75,22 +75,22 @@
                         <Text text="+{settings>/typoLetterSpacing}%" class="cbPercent" />
                     </HBox>
                     <HBox alignItems="Center" width="100%" class="typoSliderRow">
-                        <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" custom:typo="letterSpacing" />
+                        <Button icon="sap-icon://less" press=".onTypoDec" class="cbIntBtn" tooltip="{i18n>aria.decrease}" custom:typo="letterSpacing" />
                         <Slider min="0" max="100" step="5" value="{settings>/typoLetterSpacing}" change=".onTypoSliderChange" custom:typo="letterSpacing">
                             <layoutData><FlexItemData growFactor="1" /></layoutData>
                         </Slider>
-                        <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" custom:typo="letterSpacing" />
+                        <Button icon="sap-icon://add" press=".onTypoInc" class="cbIntBtn" tooltip="{i18n>aria.increase}" custom:typo="letterSpacing" />
                     </HBox>
                 </VBox>
 
                 <VBox class="typoRow" width="100%">
                     <Label text="{i18n>font.alignment}" />
                     <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="typoAlignRow">
-                        <Button icon="sap-icon://decline" press=".onTypoAlign" class="cbIntBtn" custom:align="none" />
-                        <Button icon="sap-icon://text-align-left" press=".onTypoAlign" class="cbIntBtn" custom:align="left" />
-                        <Button icon="sap-icon://text-align-center" press=".onTypoAlign" class="cbIntBtn" custom:align="center" />
-                        <Button icon="sap-icon://text-align-right" press=".onTypoAlign" class="cbIntBtn" custom:align="right" />
-                        <Button icon="sap-icon://text-align-justified" press=".onTypoAlign" class="cbIntBtn" custom:align="justify" />
+                        <Button icon="sap-icon://decline" press=".onTypoAlign" class="cbIntBtn" custom:align="none" tooltip="{i18n>aria.alignNone}" />
+                        <Button icon="sap-icon://text-align-left" press=".onTypoAlign" class="cbIntBtn" custom:align="left" tooltip="{i18n>aria.alignLeft}" />
+                        <Button icon="sap-icon://text-align-center" press=".onTypoAlign" class="cbIntBtn" custom:align="center" tooltip="{i18n>aria.alignCenter}" />
+                        <Button icon="sap-icon://text-align-right" press=".onTypoAlign" class="cbIntBtn" custom:align="right" tooltip="{i18n>aria.alignRight}" />
+                        <Button icon="sap-icon://text-align-justified" press=".onTypoAlign" class="cbIntBtn" custom:align="justify" tooltip="{i18n>aria.alignJustify}" />
                     </HBox>
                 </VBox>
 
@@ -123,11 +123,11 @@
                         <Text text="{path: 'settings>/ttsRate', formatter: '.formatTtsRate'}" class="cbPercent" />
                     </HBox>
                     <HBox alignItems="Center" width="100%" class="typoSliderRow">
-                        <Button icon="sap-icon://less" press=".onTtsStep" class="cbIntBtn" custom:tts="rate" custom:dir="-1" />
+                        <Button icon="sap-icon://less" press=".onTtsStep" class="cbIntBtn" tooltip="{i18n>aria.decrease}" custom:tts="rate" custom:dir="-1" />
                         <Slider min="0.5" max="2" step="0.1" value="{settings>/ttsRate}" change=".onTTSRateChange">
                             <layoutData><FlexItemData growFactor="1" /></layoutData>
                         </Slider>
-                        <Button icon="sap-icon://add" press=".onTtsStep" class="cbIntBtn" custom:tts="rate" custom:dir="1" />
+                        <Button icon="sap-icon://add" press=".onTtsStep" class="cbIntBtn" tooltip="{i18n>aria.increase}" custom:tts="rate" custom:dir="1" />
                     </HBox>
                 </VBox>
 
@@ -137,11 +137,11 @@
                         <Text text="{path: 'settings>/ttsVolume', formatter: '.formatTtsVolume'}" class="cbPercent" />
                     </HBox>
                     <HBox alignItems="Center" width="100%" class="typoSliderRow">
-                        <Button icon="sap-icon://less" press=".onTtsStep" class="cbIntBtn" custom:tts="volume" custom:dir="-1" />
+                        <Button icon="sap-icon://less" press=".onTtsStep" class="cbIntBtn" tooltip="{i18n>aria.decrease}" custom:tts="volume" custom:dir="-1" />
                         <Slider min="0" max="1" step="0.1" value="{settings>/ttsVolume}" change=".onTTSVolumeChange">
                             <layoutData><FlexItemData growFactor="1" /></layoutData>
                         </Slider>
-                        <Button icon="sap-icon://add" press=".onTtsStep" class="cbIntBtn" custom:tts="volume" custom:dir="1" />
+                        <Button icon="sap-icon://add" press=".onTtsStep" class="cbIntBtn" tooltip="{i18n>aria.increase}" custom:tts="volume" custom:dir="1" />
                     </HBox>
                 </VBox>
 
@@ -193,6 +193,16 @@
 
             <!-- Contrast mode (presets + background/text colour + live preview) -->
             <VBox visible="{= ${settings>/activeFlyout} === 'contrast'}" class="flyoutSection contrastSection" width="100%">
+                <Label text="{i18n>contrast.sapThemes}" class="contrastLabel" />
+                <HBox class="contrastThemeRow" alignItems="Center" width="100%">
+                    <Button text="{i18n>contrast.hcw}" press=".onContrastHighContrast" custom:variant="hcw" tooltip="{i18n>contrast.hcwTooltip}" class="contrastThemeBtn contrastThemeHcw">
+                        <layoutData><FlexItemData growFactor="1" /></layoutData>
+                    </Button>
+                    <Button text="{i18n>contrast.hcb}" press=".onContrastHighContrast" custom:variant="hcb" tooltip="{i18n>contrast.hcbTooltip}" class="contrastThemeBtn contrastThemeHcb">
+                        <layoutData><FlexItemData growFactor="1" /></layoutData>
+                    </Button>
+                </HBox>
+
                 <Label text="{i18n>contrast.preset}" class="contrastLabel" />
                 <HBox class="contrastPresetRow" items="{settings>/contrastPresets}" alignItems="Center" justifyContent="SpaceBetween" width="100%">
                     <Image src="{settings>preview}" width="40px" height="40px" densityAware="false" press=".onContrastPresetSelect" class="contrastPreset" />

@@ -3,7 +3,7 @@ let isCustomStyleLoaded = false;
 // Bump on every stylesheet change; keep in sync with package.json version. Used
 // as the cache-bust token so the browser CAN cache the sheet and only re-fetches
 // it on an upgrade (a Date.now() token would re-download it on every page load).
-const CSS_VERSION = "1.2.0";
+const CSS_VERSION = "1.3.0";
 
 export function loadCustomStyleOnce() {
   if (isCustomStyleLoaded) {

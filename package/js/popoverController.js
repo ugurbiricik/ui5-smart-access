@@ -26,7 +26,7 @@ import {
 } from "./textToSpeech.js";
 import { applyColorBlindness, resetColorBlindness } from "./colorBlindness.js";
 import { enableBlueLightFilter, disableBlueLightFilter } from "./blueLightFilter.js";
-import { toggleNightMode } from "./nightMode.js";
+import { toggleNightMode, disableNightMode } from "./nightMode.js";
 import { toggleImages } from "./imageHider.js";
 import {
     toggleContrastMode,
@@ -34,6 +34,12 @@ import {
     removeCustomContrast,
     getContrastRatio
 } from "./contrast.js";
+import {
+    applyHighContrastTheme,
+    disableHighContrastTheme,
+    prefetchHighContrastThemes
+} from "./highContrastTheme.js";
+import { announce } from "./announcer.js";
 import { applyTextSpacing, resetTextSpacing } from "./textSpacing.js";
 import { setBigCursor, setBigCursorCustom, disableBigCursor } from "./bigCursor.js";
 import { enableHighlightLinks, disableHighlightLinks } from "./highlightLinks.js";
@@ -133,6 +139,7 @@ export const popoverInternalController = {
         }
         toggleActiveFeatureClass.call(this, "blueLightFilterPanel", nowExpanded);
         saveCurrentSettings();
+        announce(getText(nowExpanded ? "announce.blueFilterOn" : "announce.blueFilterOff"));
     },
     onBlueLightFilterSliderChange(e) {
         const level = e.getParameter("value");
@@ -169,12 +176,29 @@ export const popoverInternalController = {
 
     // ---- Night mode ----
     onNightModeToolbarPress() {
+        // Night mode and the native high-contrast themes both own the UI5 theme,
+        // so they are mutually exclusive: turning night mode on clears any active
+        // HC theme first (and its contrast row state).
+        if (!oSettingsModel.getProperty("/nightModeActive")) {
+            this._clearHighContrastTheme();
+        }
         const active = toggleNightMode();
         oSettingsModel.setProperty("/nightModeActive", active);
         updateTitleText.call(this, "nightModeTitle",
             active ? "nightMode.deactivate" : "nightMode.activate");
         toggleActiveFeatureClass.call(this, "nightModePanel", active);
         saveCurrentSettings();
+        announce(getText(active ? "announce.nightModeOn" : "announce.nightModeOff"));
+    },
+
+    // Turns off a native HC theme (if any) and resets the contrast row's state.
+    // Shared by night mode (mutual exclusivity) and the custom-contrast path.
+    _clearHighContrastTheme() {
+        if (!oSettingsModel.getProperty("/contrastTheme")) return;
+        disableHighContrastTheme();
+        oSettingsModel.setProperty("/contrastTheme", "");
+        oSettingsModel.setProperty("/contrastModeActive", false);
+        toggleActiveFeatureClass.call(this, "contrastModePanel", false);
     },
 
     // ---- Toggle images ----
@@ -184,6 +208,7 @@ export const popoverInternalController = {
         updateTitleText.call(this, "toggleImagesTitle",
             active ? "toggleImages.show" : "toggleImages.hide");
         toggleActiveFeatureClass.call(this, "toggleImagesPanel", active);
+        announce(getText(active ? "announce.imagesHidden" : "announce.imagesShown"));
     },
 
     // ---- Contrast mode ----
@@ -199,14 +224,42 @@ export const popoverInternalController = {
             bg: oSettingsModel.getProperty("/contrastBgColor"),
             text: oSettingsModel.getProperty("/contrastTextColor"),
             underline: oSettingsModel.getProperty("/contrastUnderlineLinks"),
-            active: oSettingsModel.getProperty("/contrastModeActive")
+            active: oSettingsModel.getProperty("/contrastModeActive"),
+            theme: oSettingsModel.getProperty("/contrastTheme")
         };
+        // Warm the HCB/HCW stylesheet caches so tapping a theme button switches
+        // instantly instead of flashing while UI5 downloads the theme.
+        prefetchHighContrastThemes();
         oSettingsModel.setProperty("/activeFlyout", "contrast");
         oSettingsModel.setProperty("/activeFlyoutTitle", getText("contrastMode.activate"));
         oSettingsModel.setProperty("/activeFlyoutIcon", "sap-icon://paint-bucket");
         this._openFlyout(oEvent.getSource());
         // Colour the preview once the flyout DOM exists.
         setTimeout(updateContrastPreview, 60);
+    },
+    // SAP native high-contrast theme (HCB / HCW). Applies immediately (unlike
+    // the custom colours, which wait for SET) because it is a single, fixed,
+    // WCAG-compliant choice with a live preview being pointless. Mutually
+    // exclusive with night mode and with custom-colour contrast.
+    onContrastHighContrast(oEvent) {
+        const variant = oEvent.getSource().data("variant");
+        if (!variant) return;
+        // Night mode owns the theme too — turn it off first.
+        if (oSettingsModel.getProperty("/nightModeActive")) {
+            disableNightMode();
+            oSettingsModel.setProperty("/nightModeActive", false);
+            updateTitleText.call(this, "nightModeTitle", "nightMode.activate");
+            toggleActiveFeatureClass.call(this, "nightModePanel", false);
+        }
+        // Drop any custom-colour CSS contrast so the two don't stack.
+        removeCustomContrast();
+        applyHighContrastTheme(variant);
+        oSettingsModel.setProperty("/contrastTheme", variant);
+        oSettingsModel.setProperty("/contrastModeActive", true);
+        toggleActiveFeatureClass.call(this, "contrastModePanel", true);
+        saveCurrentSettings();
+        announce(getText(variant === "hcb" ? "announce.contrastHcb" : "announce.contrastHcw"));
+        this.onCloseFlyout();
     },
     // Selections update the DRAFT + preview only; the page changes on SET.
     onContrastPresetSelect(oEvent) {
@@ -259,12 +312,16 @@ export const popoverInternalController = {
         const text = oSettingsModel.getProperty("/contrastTextColor");
         // Nothing chosen → just close (don't apply an empty contrast).
         if (!bg || !text) { this.onCloseFlyout(); return; }
+        // Custom colours and a native HC theme are mutually exclusive.
+        disableHighContrastTheme();
+        oSettingsModel.setProperty("/contrastTheme", "");
         applyCustomContrast(bg, text, oSettingsModel.getProperty("/contrastUnderlineLinks"));
         oSettingsModel.setProperty("/contrastModeActive", true);
         // Title stays fixed ("Kontrastmodus") — the row opens a config flyout, it
         // is not a plain on/off toggle, so no activate/deactivate flip.
         toggleActiveFeatureClass.call(this, "contrastModePanel", true);
         saveCurrentSettings();
+        announce(getText("announce.contrastOn"));
         this.onCloseFlyout();
     },
     onContrastCancel() {
@@ -273,7 +330,17 @@ export const popoverInternalController = {
             oSettingsModel.setProperty("/contrastBgColor", s.bg);
             oSettingsModel.setProperty("/contrastTextColor", s.text);
             oSettingsModel.setProperty("/contrastUnderlineLinks", s.underline);
-            if (s.active) applyCustomContrast(s.bg, s.text, s.underline); else removeCustomContrast();
+            oSettingsModel.setProperty("/contrastTheme", s.theme || "");
+            if (s.theme) {
+                removeCustomContrast();
+                applyHighContrastTheme(s.theme);
+            } else if (s.active) {
+                disableHighContrastTheme();
+                applyCustomContrast(s.bg, s.text, s.underline);
+            } else {
+                disableHighContrastTheme();
+                removeCustomContrast();
+            }
             oSettingsModel.setProperty("/contrastModeActive", !!s.active);
         }
         this.onCloseFlyout();
@@ -281,6 +348,8 @@ export const popoverInternalController = {
     onContrastReset() {
         // Turn contrast off and restore the default (normal) white/black pair.
         removeCustomContrast();
+        disableHighContrastTheme();
+        oSettingsModel.setProperty("/contrastTheme", "");
         oSettingsModel.setProperty("/contrastModeActive", false);
         oSettingsModel.setProperty("/contrastBgColor", "#ffffff");
         oSettingsModel.setProperty("/contrastTextColor", "#000000");
@@ -288,6 +357,7 @@ export const popoverInternalController = {
         toggleActiveFeatureClass.call(this, "contrastModePanel", false);
         updateContrastPreview();
         saveCurrentSettings();
+        announce(getText("announce.contrastOff"));
     },
 
     // ---- Font size ----
@@ -295,16 +365,19 @@ export const popoverInternalController = {
         increaseFontSize();
         toggleActiveFeatureClass.call(this, "fontSizePanel", oSettingsModel.getProperty("/fontStep") !== 0);
         saveCurrentSettings();
+        announce(getText("announce.fontIncreased"));
     },
     onDecreaseFontSize() {
         decreaseFontSize();
         toggleActiveFeatureClass.call(this, "fontSizePanel", oSettingsModel.getProperty("/fontStep") !== 0);
         saveCurrentSettings();
+        announce(getText("announce.fontDecreased"));
     },
     onResetFontSize() {
         resetFontSize();
         toggleActiveFeatureClass.call(this, "fontSizePanel", false);
         saveCurrentSettings();
+        announce(getText("announce.fontReset"));
     },
 
     // ---- Text to speech ----
@@ -460,6 +533,7 @@ export const popoverInternalController = {
         if (active) enableHighlightLinks(); else disableHighlightLinks();
         toggleActiveFeatureClass.call(this, "highlightLinksPanel", active);
         saveCurrentSettings();
+        announce(getText(active ? "announce.highlightLinksOn" : "announce.highlightLinksOff"));
     },
 
     // ---- Stop animations (WCAG 2.2.2) ----
@@ -474,6 +548,7 @@ export const popoverInternalController = {
             active ? "sap-icon://media-play" : "sap-icon://media-pause");
         toggleActiveFeatureClass.call(this, "stopAnimationsPanel", active);
         saveCurrentSettings();
+        announce(getText(active ? "announce.animationsStopped" : "announce.animationsStarted"));
     },
 
     // ---- Color blindness (mode cards + intensity) ----
@@ -533,6 +608,8 @@ export const popoverInternalController = {
             toggleActiveFeatureClass.call(this, "colorBlindnessPanel", false);
         }
         saveCurrentSettings();
+        const on = oSettingsModel.getProperty("/colorBlindnessType") !== "none";
+        announce(getText(on ? "announce.colorBlindnessOn" : "announce.colorBlindnessOff"));
     },
 
     // ---- Left flyout (detailed settings) ----
@@ -669,6 +746,7 @@ export const popoverInternalController = {
         oSettingsModel.setProperty("/nightModeActive", false);
         oSettingsModel.setProperty("/toggleImagesActive", false);
         oSettingsModel.setProperty("/contrastModeActive", false);
+        oSettingsModel.setProperty("/contrastTheme", "");
         oSettingsModel.setProperty("/textSpacingLevel", "none");
         oSettingsModel.setProperty("/readingGuideMode", "none");
         oSettingsModel.setProperty("/bigCursorColor", "none");
@@ -701,6 +779,7 @@ export const popoverInternalController = {
             this._oFlyout.close();
         }
         clearAllPrefs();
+        announce(getText("announce.resetAll"), true);
     },
 
     // ---- Close ----

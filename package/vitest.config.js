@@ -22,6 +22,7 @@ export default defineConfig({
             "sap/ui/model/json/JSONModel": mock("JSONModel.js"),
             "sap/ui/core/Fragment": mock("Fragment.js"),
             "sap/ui/core/Theming": mock("Theming.js"),
+            "sap/ui/core/InvisibleMessage": mock("InvisibleMessage.js"),
             "sap/ui/model/resource/ResourceModel": mock("ResourceModel.js")
         }
     }

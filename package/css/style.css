@@ -1156,3 +1156,54 @@
     color: #ffffff !important;
   }
 }
+
+/* ── SAP native high-contrast theme buttons (contrast flyout) ──
+   Each button previews the theme it applies: HCW = black text on white,
+   HCB = white text on black. Tooltips carry the full name. */
+.abicsAccessibilityPopover .contrastThemeRow {
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.abicsAccessibilityPopover .contrastThemeBtn .sapMBtnInner {
+  width: 100%;
+  border-radius: 9px !important;
+  box-shadow: none !important;
+}
+.abicsAccessibilityPopover .contrastThemeHcw .sapMBtnInner {
+  background-color: #ffffff !important;
+  border: 1px solid #1e3a8a !important;
+}
+.abicsAccessibilityPopover .contrastThemeHcw .sapMBtnInner .sapMBtnContent {
+  color: #000000 !important;
+}
+.abicsAccessibilityPopover .contrastThemeHcb .sapMBtnInner {
+  background-color: #000000 !important;
+  border: 1px solid #000000 !important;
+}
+.abicsAccessibilityPopover .contrastThemeHcb .sapMBtnInner .sapMBtnContent {
+  color: #ffffff !important;
+}
+
+/* ══ Keyboard focus indicator (WCAG 2.4.7) ══
+   The inner controls were deliberately made ring-free for a clean look on
+   MOUSE use. These :focus-visible rules restore a subtle keyboard-only ring so
+   a Tab-navigating user can always see where the focus is. :focus-visible never
+   matches a plain mouse click, so the clean mouse aesthetic is preserved. The
+   leading `html` lifts specificity just above the unconditional `outline:none`
+   suppressor rules, so source order alone doesn't have to win. */
+html .abicsAccessibilityPopover .cbIntBtn:focus-visible,
+html .abicsAccessibilityPopover .contrastActions .sapMBtn:focus-visible,
+html .abicsAccessibilityPopover .contrastThemeBtn:focus-visible,
+html .abicsAccessibilityPopover .advancedSettingsBtn:focus-visible,
+html .abicsAccessibilityPopover .contrastSection .sapMImg:focus-visible,
+html .abicsAccessibilityPopover .bigCursorSwatch:focus-visible,
+html .abicsAccessibilityPopover .bigCursorPanel .sapMImg:focus-visible,
+html .abicsAccessibilityPopover .cbList .sapMCLI:focus-visible,
+html .abicsAccessibilityPopover .cbList .sapMLIB:focus-visible,
+html .abicsAccessibilityPopover .sapMSlt:focus-visible,
+html .abicsAccessibilityPopover .sapMSwtCont:focus-visible,
+html .abicsAccessibilityPopover .sapMSwt:focus-visible,
+html .abicsAccessibilityPopover .sapMSliderHandle:focus-visible {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px !important;
+}

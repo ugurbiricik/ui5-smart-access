@@ -140,7 +140,7 @@ describe("settingsModel — PERSISTED_KEYS", () => {
         expect(PERSISTED_KEYS).toEqual([
             "fontStep", "ttsRate", "ttsVolume", "colorBlindnessType",
             "blueLightFilterLevel", "blueLightFilterActive", "nightModeActive",
-            "contrastModeActive", "contrastBgColor", "contrastTextColor",
+            "contrastModeActive", "contrastTheme", "contrastBgColor", "contrastTextColor",
             "contrastUnderlineLinks", "colorBlindnessIntensity",
             "readingGuideMode",
             "bigCursorColor", "bigCursorCustomColor", "highlightLinksActive", "stopAnimationsActive",

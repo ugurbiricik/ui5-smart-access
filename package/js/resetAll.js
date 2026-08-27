@@ -5,6 +5,7 @@ import { disableBlueLightFilter } from './blueLightFilter.js';
 import { disableNightMode } from './nightMode.js';
 import { showImages } from './imageHider.js';
 import { removeCustomContrast, isContrastModeActive, toggleContrastMode } from './contrast.js';
+import { disableHighContrastTheme } from './highContrastTheme.js';
 import { clearAllFilters } from './filterManager.js';
 import { resetTextSpacing } from './textSpacing.js';
 import { disableBigCursor } from './bigCursor.js';
@@ -25,6 +26,7 @@ export const resetAll = () => {
     disableNightMode();
     showImages();
     removeCustomContrast();
+    disableHighContrastTheme();
     if (isContrastModeActive()) toggleContrastMode();
     resetTextSpacing();
     disableBigCursor();
