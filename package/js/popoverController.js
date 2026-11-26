@@ -69,6 +69,7 @@ import { isDetailAtDefault } from "./detailDefaults.js";
 import { resetAll } from "./resetAll.js";
 import { getText } from "./i18nModel.js";
 import { hideHint } from "./hoverHints.js";
+import { shortcutKeys } from "./shortcutList.js";
 import {
     getProfile,
     profileMatches,
@@ -161,6 +162,12 @@ export const DETAIL_PAGES = {
     contrast: { pageId: "saPageContrast", panelId: "contrastModePanel", titleKey: "contrastMode.title" }
 };
 
+export const INFO_PAGES = {
+    shortcuts: { pageId: "saPageShortcuts", titleKey: "shortcuts.title", returnFocusId: "shortcutsButton" }
+};
+
+const navPageFor = (key) => DETAIL_PAGES[key] || INFO_PAGES[key] || null;
+
 const FOCUSABLE = "[tabindex='0'], button:not([disabled]), input:not([disabled]), select:not([disabled])";
 
 const scrollContainerOf = (oPopover) => {
@@ -183,8 +190,17 @@ export const popoverInternalController = {
     onNavToDetail(oEvent) {
         this.navToDetail(oEvent.getSource().data("page"));
     },
+    onShowShortcuts() {
+        this.navToDetail("shortcuts");
+    },
+    fmtShortcutTitle(titleKey) {
+        return titleKey ? getText(titleKey) : "";
+    },
+    fmtShortcutKeys(code) {
+        return code ? shortcutKeys(code) : "";
+    },
     navToDetail(key) {
-        const page = DETAIL_PAGES[key];
+        const page = navPageFor(key);
         const nav = this._byId("saNav");
         const target = page && this._byId(page.pageId);
         if (!nav || !target) return;
@@ -227,10 +243,14 @@ export const popoverInternalController = {
         if (toMain) {
             const scroller = scrollContainerOf(this._oPopover);
             if (scroller) scroller.scrollTop = this._mainScrollTop || 0;
-            const page = this._navOrigin && DETAIL_PAGES[this._navOrigin];
+            const page = this._navOrigin && navPageFor(this._navOrigin);
             this._navOrigin = null;
-            const panel = page && this._byId(page.panelId);
-            target = panel && panel.getHeaderToolbar && panel.getHeaderToolbar();
+            if (page && page.panelId) {
+                const panel = this._byId(page.panelId);
+                target = panel && panel.getHeaderToolbar && panel.getHeaderToolbar();
+            } else if (page && page.returnFocusId) {
+                target = this._byId(page.returnFocusId);
+            }
         } else {
             if (this.getCurrentPageKey() === "contrast") updateContrastPreview();
             if (this.getCurrentPageKey() === "font") updateFontPreview();

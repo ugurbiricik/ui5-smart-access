@@ -28,6 +28,15 @@
                     <Title id="popoverTitle" text="{= ${settings>/navPage} === 'main' ? ${i18n>popover.header.title} : ${settings>/navTitle}}" class="popoverTitle" />
                 </contentLeft>
                 <contentRight>
+                    <Button
+                        id="shortcutsButton"
+                        icon="sap-icon://keyboard-and-mouse"
+                        type="Transparent"
+                        press=".onShowShortcuts"
+                        tooltip="{i18n>shortcuts.title}"
+                        visible="{= ${settings>/navPage} === 'main'}"
+                        class="shortcutsButton"
+                    />
                     <Button id="closePopoverButton" icon="sap-icon://decline" type="Transparent" press=".onPopoverClosePress" tooltip="{i18n>aria.close}" class="closePopoverButton"/>
                 </contentRight>
             </Bar>
@@ -76,6 +85,7 @@
                     <core:Fragment fragmentName="ui5-smart-access.fragments.ColorBlindnessPage" type="XML" />
                     <core:Fragment fragmentName="ui5-smart-access.fragments.BlueLightFilterPage" type="XML" />
                     <core:Fragment fragmentName="ui5-smart-access.fragments.ContrastModePage" type="XML" />
+                    <core:Fragment fragmentName="ui5-smart-access.fragments.ShortcutsHelp" type="XML" />
                 </NavContainer>
             </VBox>
         </content>

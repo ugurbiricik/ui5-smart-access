@@ -168,6 +168,14 @@ The assistant is a single `sap.m.ResponsivePopover` holding a `sap.m.NavContaine
   section with named colour buttons. Schemes and colours are toggle buttons
   (`aria-pressed`); a scheme is a draft until **Apply**, **Cancel** restores the
   state the page was opened with.
+- **Hover hints** — on devices with a real hover pointer (`(hover: hover)`, mouse
+  only, never touch or pen) a short description of a main-list row appears after
+  600 ms beside the popover. It never covers the popover: if there is no room on
+  either side it is not shown, and it disappears on click, key press, scroll and
+  as soon as a detail page opens.
+- **Keyboard shortcuts page** — the ⌨ button in the header of the main list opens
+  a page listing every shortcut. Each row also exposes its shortcut through
+  `aria-keyshortcuts`, so screen readers announce it.
 
 | Shortcut | Action |
 |---|---|

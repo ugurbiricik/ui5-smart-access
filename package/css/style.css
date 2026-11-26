@@ -405,6 +405,7 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   box-sizing: border-box;
   background: var(--sa-bg);
   color: var(--sa-text);
+  border: 1px solid var(--sa-line);
   border-radius: 12px;
   padding: 14px 16px;
   box-shadow: var(--sa-shadow);
@@ -429,19 +430,29 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   border-bottom: 1px solid var(--sa-line);
 }
 
+.abicsHoverHintTitle:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
 .abicsHoverHintDesc {
   font-size: 13px;
   line-height: 1.4;
   color: var(--sa-text-2);
 }
 
-.abicsHoverHintKey {
-  text-align: right;
-  font-size: 12px;
-  font-weight: 600;
-  margin-top: 10px;
-  color: var(--sa-accent);
-  letter-spacing: 0.5px;
+@media (prefers-reduced-motion: reduce) {
+  .abicsHoverHint {
+    transition: none;
+    transform: none;
+  }
+}
+
+@media (hover: none) {
+  .abicsHoverHint {
+    display: none;
+  }
 }
 
 /* Arrow pointing right toward the panel (tooltip sits to the left) */
@@ -1447,4 +1458,53 @@ html .saLauncherBadgeHost > span.saLauncherBadge {
 .abicsAccessibilityPopover .saProfileChips .saProfileChip .sapMBtnInner.sapMToggleBtnPressed .sapMBtnContent,
 .abicsAccessibilityPopover .saProfileChips .saProfileChip .sapMBtnInner.sapMToggleBtnPressed .sapUiIcon {
   color: var(--sa-control-text) !important;
+}
+
+.abicsAccessibilityPopover .saShortcutsIntro {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.abicsAccessibilityPopover .saShortcutsList,
+.abicsAccessibilityPopover .saShortcutsList .sapMListUl,
+.abicsAccessibilityPopover .saShortcutsList .sapMLIB {
+  background: transparent;
+}
+
+.abicsAccessibilityPopover .saShortcutsList {
+  margin: 0 -8px;
+  width: calc(100% + 16px);
+}
+
+.abicsAccessibilityPopover .saShortcutsList .sapMLIB.saShortcutItem {
+  padding: 0 8px;
+  border-radius: 8px;
+  min-height: 44px;
+  border-bottom-color: var(--sa-line);
+}
+
+.abicsAccessibilityPopover .saShortcutRow {
+  gap: 12px;
+  min-height: 44px;
+  padding: 6px 0;
+  box-sizing: border-box;
+}
+
+.abicsAccessibilityPopover .saShortcutLabel.sapMText {
+  font-size: 14px;
+  color: var(--sa-text);
+  min-width: 0;
+}
+
+.abicsAccessibilityPopover .saKbd.sapMText {
+  font-family: "72-SemiboldDuplex", "72", "72full", Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--sa-control-text);
+  background: var(--sa-control-bg);
+  border: 1px solid var(--sa-control-line);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  padding: 2px 8px;
 }

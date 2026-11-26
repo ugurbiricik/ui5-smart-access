@@ -16,7 +16,8 @@ import { prefetchDarkTheme } from "./js/nightMode.js";
 import { attachHoverHints, hideHint } from "./js/hoverHints.js";
 import { buildColorBlindnessModes } from "./js/cbSwatches.js";
 import { buildBigCursorColors } from "./js/bigCursor.js";
-import { registerShortcuts, setShortcutContext } from "./js/keyboardShortcuts.js";
+import { registerShortcuts, setShortcutContext, applyRowKeyShortcuts } from "./js/keyboardShortcuts.js";
+import { SHORTCUT_ROWS } from "./js/shortcutList.js";
 import { attachLauncherBadge } from "./js/launcherBadge.js";
 
 // Opens the popover using the given controller, anchored to `trigger`. Shared
@@ -45,6 +46,7 @@ const ensureInitialized = () => {
     prefetchDarkTheme();
     oSettingsModel.setProperty("/colorBlindnessModes", buildColorBlindnessModes());
     oSettingsModel.setProperty("/bigCursorColors", buildBigCursorColors());
+    oSettingsModel.setProperty("/shortcutRows", SHORTCUT_ROWS);
     popoverInternalController.initProfiles();
 };
 
@@ -97,6 +99,7 @@ const ensurePopoverLoaded = (controller) => {
         // Wire per-feature hover hints once the panels have a DOM ref.
         oPopover.attachAfterOpen(function _hintsOnce() {
             attachHoverHints(sFragmentId);
+            applyRowKeyShortcuts(sFragmentId);
             oPopover.detachAfterOpen(_hintsOnce);
         });
 

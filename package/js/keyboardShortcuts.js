@@ -1,6 +1,7 @@
 import Fragment from "sap/ui/core/Fragment";
 import { oSettingsModel } from "./settingsModel.js";
 import { popoverInternalController, DETAIL_PAGES } from "./popoverController.js";
+import { SHORTCUTS, TOGGLE_SHORTCUT, shortcutAria } from "./shortcutList.js";
 
 // Global keyboard shortcuts for the accessibility assistant. A single keydown
 // listener on the document maps Alt+Shift+<letter> combos to features:
@@ -20,19 +21,7 @@ let _registered = false;
 // Each shortcut maps to a feature panel. Pressing it fires that panel's header
 // row — identical to a mouse click — so every feature behaves consistently
 // (toggle on/off, activate a default value, or open its flyout).
-const FEATURE_PANELS = {
-    KeyF: "fontSizePanel",
-    KeyR: "readingGuidePanel",
-    KeyG: "bigCursorPanel",
-    KeyL: "highlightLinksPanel",
-    KeyV: "ttsPanel",
-    KeyS: "colorBlindnessPanel",
-    KeyB: "blueLightFilterPanel",
-    KeyN: "nightModePanel",
-    KeyK: "contrastModePanel",
-    KeyM: "stopAnimationsPanel",
-    KeyI: "toggleImagesPanel"
-};
+const FEATURE_PANELS = Object.fromEntries(SHORTCUTS.map((s) => [s.code, s.panelId]));
 
 const isOpen = () => {
     const pop = popoverInternalController._oPopover;
@@ -76,7 +65,7 @@ const pressPanel = (panelId) => {
 
 const handleKey = (code) => {
     // Open / close the assistant.
-    if (code === "KeyA") {
+    if (code === TOGGLE_SHORTCUT.code) {
         if (isOpen()) {
             popoverInternalController._oPopover.close();
         } else {
@@ -127,4 +116,35 @@ export const registerShortcuts = () => {
     if (_registered) return;
     document.addEventListener("keydown", onKeyDown, true);
     _registered = true;
+};
+
+const markRow = (dom, value) => {
+    if (dom && dom.getAttribute("aria-keyshortcuts") !== value) {
+        dom.setAttribute("aria-keyshortcuts", value);
+    }
+};
+
+const markedFragments = new Set();
+
+export const applyRowKeyShortcuts = (sFragmentId) => {
+    if (!sFragmentId || markedFragments.has(sFragmentId)) return;
+    let markedAny = false;
+    SHORTCUTS.forEach(({ code, panelId }) => {
+        const panel = Fragment.byId(sFragmentId, panelId);
+        const tb = panel && panel.getHeaderToolbar && panel.getHeaderToolbar();
+        if (!tb) return;
+        const value = shortcutAria(code);
+        if (tb.addEventDelegate) {
+            tb.addEventDelegate({ onAfterRendering: () => markRow(tb.getDomRef(), value) });
+        }
+        markRow(tb.getDomRef && tb.getDomRef(), value);
+        markedAny = true;
+    });
+    const toggle = Fragment.byId(sFragmentId, "closePopoverButton");
+    if (toggle && toggle.addEventDelegate) {
+        const value = shortcutAria(TOGGLE_SHORTCUT.code);
+        toggle.addEventDelegate({ onAfterRendering: () => markRow(toggle.getDomRef(), value) });
+        markRow(toggle.getDomRef && toggle.getDomRef(), value);
+    }
+    if (markedAny) markedFragments.add(sFragmentId);
 };
