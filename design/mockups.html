@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui5-smart-access · Design-Varianten</title>
+<style>
+:root{
+  --sa-brand:#0064d9; --sa-brand-strong:#0a3d8f; --sa-brand-soft:#e8f1fd; --sa-brand-softer:#f4f8fe;
+  --sa-text:#1d2d3e; --sa-text-2:#556b82; --sa-line:#e5e9ef; --sa-bg:#fff; --sa-page:#f5f6f7;
+  --sa-ok:#188918; --sa-ok-soft:#e9f6e9; --sa-danger:#aa0808; --sa-danger-soft:#fdecec;
+  --sa-radius:16px; --sa-radius-s:10px; --sa-shadow:0 12px 40px rgba(29,45,62,.16),0 2px 6px rgba(29,45,62,.08);
+  --sa-font:"72","72full",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sa-font);background:var(--sa-page);color:var(--sa-text)}
+.page{max-width:1880px;margin:0 auto;padding:28px 24px 48px}
+.page>h1{font-size:22px;margin:0 0 4px}
+.page>p{margin:0 0 22px;color:var(--sa-text-2);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:28px;align-items:start}
+.variant>h2{font-size:15px;margin:0 0 4px}
+.variant>.why{font-size:12.5px;color:var(--sa-text-2);margin:0 0 14px;line-height:1.45;min-height:54px}
+.stage{position:relative;padding-top:64px}
+.fab{position:absolute;top:0;right:12px;width:52px;height:52px;border-radius:50%;background:var(--sa-brand);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,100,217,.35)}
+.fab svg{width:28px;height:28px;fill:#fff}
+.fab .badge{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--sa-ok);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;border:2px solid var(--sa-page)}
+.pop{width:min(360px,100%);margin-left:auto;background:var(--sa-bg);border-radius:var(--sa-radius);box-shadow:var(--sa-shadow);overflow:hidden;border:1px solid var(--sa-line)}
+.hd{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--sa-line)}
+.hd .t{font-weight:700;font-size:15px;flex:1;min-width:0}
+.hd .sub{display:block;font-weight:400;font-size:12px;color:var(--sa-text-2);margin-top:2px}
+.ib{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--sa-text-2);font-size:16px;flex:none}
+.ib:hover{background:var(--sa-brand-softer)}
+.sec{padding:6px 8px 8px}
+.sec h3{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--sa-text-2);margin:10px 10px 4px;font-weight:700}
+.row{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:10px;min-height:48px}
+.row:hover{background:var(--sa-brand-softer)}
+.row .ic{width:34px;height:34px;border-radius:9px;background:var(--sa-brand-softer);color:var(--sa-brand);display:grid;place-items:center;font-size:17px;flex:none}
+.row.on .ic{background:var(--sa-brand);color:#fff}
+.row .tx{flex:1;min-width:0}
+.row .l{font-size:14px;font-weight:600;line-height:1.25}
+.row .s{font-size:12px;color:var(--sa-text-2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row.on .s{color:var(--sa-brand-strong);font-weight:600}
+.chev{color:var(--sa-text-2);font-size:14px}
+.sw{width:40px;height:24px;border-radius:12px;background:#c5ced8;position:relative;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.sw.on{background:var(--sa-brand)}
+.sw.on::after{left:19px}
+.ft{display:flex;gap:8px;padding:10px 12px 12px;border-top:1px solid var(--sa-line);background:#fafbfc}
+.btn{flex:1;height:36px;border-radius:9px;border:1px solid var(--sa-line);background:#fff;font:600 13px var(--sa-font);color:var(--sa-text);display:flex;align-items:center;justify-content:center;gap:6px}
+.btn.pri{background:var(--sa-brand);border-color:var(--sa-brand);color:#fff}
+.btn.danger{color:var(--sa-danger)}
+.btn.ghost{border-color:transparent;background:transparent}
+.chips{display:flex;gap:6px;flex-wrap:wrap;padding:12px 16px 4px}
+.chip{padding:6px 11px;border-radius:999px;border:1px solid var(--sa-line);font-size:12.5px;font-weight:600;background:#fff;display:flex;align-items:center;gap:6px}
+.chip.on{background:var(--sa-brand-soft);border-color:var(--sa-brand);color:var(--sa-brand-strong)}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px 14px}
+.tile{border:1px solid var(--sa-line);border-radius:12px;padding:12px 6px 10px;text-align:center;min-height:86px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative}
+.tile .ti{font-size:20px;color:var(--sa-brand)}
+.tile .tl{font-size:12px;font-weight:600;line-height:1.2}
+.tile .tv{font-size:11px;color:var(--sa-text-2)}
+.tile.on{background:var(--sa-brand);border-color:var(--sa-brand);color:#fff}
+.tile.on .ti,.tile.on .tv{color:#fff}
+.tile.on::after{content:"✓";position:absolute;top:6px;right:8px;font-size:11px;font-weight:700}
+.tile.open{outline:2px solid var(--sa-brand);outline-offset:2px}
+.inline{margin:0 14px 12px;border-radius:12px;background:var(--sa-brand-softer);padding:12px}
+.seg{display:flex;background:#eef1f5;border-radius:10px;padding:3px;gap:3px}
+.seg span{flex:1;text-align:center;font-size:12.5px;font-weight:600;padding:7px 0;border-radius:8px;color:var(--sa-text-2)}
+.seg span.on{background:#fff;color:var(--sa-brand-strong);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.lbl{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin:12px 0 6px}
+.lbl b{color:var(--sa-brand-strong)}
+.sl{height:6px;border-radius:3px;background:#dfe4ea;position:relative;margin:4px 6px 8px}
+.sl i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--sa-brand)}
+.sl em{position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff;border:2px solid var(--sa-brand)}
+.ticks{display:flex;justify-content:space-between;font-size:10.5px;color:var(--sa-text-2);margin:0 2px}
+.preview{border:1px dashed #b8c4d2;border-radius:10px;padding:12px;background:#fff;font-size:13px;line-height:1.5;margin-top:12px}
+.preview strong{display:block;font-size:12px;color:var(--sa-text-2);font-weight:600;margin-bottom:4px}
+.back{display:flex;align-items:center;gap:6px}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.swatch{width:44px;height:44px;border-radius:10px;border:1px solid var(--sa-line);display:grid;place-items:center;font-weight:700;font-size:16px;position:relative}
+.swatch.on{outline:2px solid var(--sa-brand);outline-offset:2px}
+.legend{font-size:11px;color:var(--sa-text-2);text-align:center;margin-top:4px}
+.phone{width:min(390px,100%);height:844px;margin-left:auto;border-radius:36px;border:10px solid #1d2d3e;background:#e9edf2;position:relative;overflow:hidden}
+.phone .app{padding:18px;font-size:13px;color:#8796a8}
+.phone .app .bar{height:14px;background:#d4dbe3;border-radius:7px;margin:10px 0}
+.scrim{position:absolute;inset:0;background:rgba(29,45,62,.38)}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:86%;background:#fff;border-radius:22px 22px 0 0;display:flex;flex-direction:column;box-shadow:0 -8px 30px rgba(0,0,0,.2)}
+.grab{width:40px;height:5px;border-radius:3px;background:#c5ced8;margin:8px auto 0}
+.sheet .body{overflow:auto;flex:1}
+.sheet .row{min-height:56px}
+.note{font-size:12px;color:var(--sa-text-2);margin-top:12px;line-height:1.45}
+.kbd{font:600 11px var(--sa-font);color:var(--sa-text-2);border:1px solid var(--sa-line);border-radius:5px;padding:1px 5px;background:#fff}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>ui5-smart-access — Design-Varianten für den Assistenten</h1>
+<p>Statische Mockups (keine UI5-Controls), um Informationsarchitektur, Zustandsanzeige und Detailnavigation zu vergleichen. Farben sind Horizon-Tokens; im Produkt kommen sie aus den SAP-Theme-Parametern.</p>
+
+<div class="grid">
+
+<!-- ================= A ================= -->
+<section class="variant" id="varA">
+<h2>A · Gruppierte Liste mit Status</h2>
+<p class="why">Nächste Evolution der heutigen Liste: Gruppen (Sehen · Lesen · Bewegung), jede Zeile zeigt ihren Zustand als Untertitel. Ein-Klick-Funktionen haben einen Schalter, Funktionen mit Einstellungen einen Pfeil. Kein Klick löst mehr eine unerwartete Aktion aus.</p>
+<div class="stage">
+  <div class="fab"><svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm8 6.5-5.5 1V22h-2v-6h-1v6h-2V9.5L4 8.5l.4-2 7.6 1.3 7.6-1.3.4 2Z"/></svg><span class="badge">3</span></div>
+  <div class="pop">
+    <div class="hd"><span class="t">Barrierefreiheit<span class="sub">3 Funktionen aktiv</span></span><span class="ib">⌨</span><span class="ib">✕</span></div>
+    <div class="sec">
+      <h3>Sehen</h3>
+      <div class="row on"><span class="ic">T</span><span class="tx"><div class="l">Schrift &amp; Abstände</div><div class="s">125 % · Zeilenhöhe +20 %</div></span><span class="chev">›</span></div>
+      <div class="row"><span class="ic">◐</span><span class="tx"><div class="l">Kontrast</div><div class="s">Standard</div></span><span class="chev">›</span></div>
+      <div class="row on"><span class="ic">☾</span><span class="tx"><div class="l">Nachtmodus</div><div class="s">Ein</div></span><span class="sw on"></span></div>
+      <div class="row"><span class="ic">◍</span><span class="tx"><div class="l">Farbsehschwäche</div><div class="s">Aus</div></span><span class="chev">›</span></div>
+      <div class="row"><span class="ic">☼</span><span class="tx"><div class="l">Blaulichtfilter</div><div class="s">Aus</div></span><span class="chev">›</span></div>
+      <h3>Lesen &amp; Orientierung</h3>
+      <div class="row on"><span class="ic">🔊</span><span class="tx"><div class="l">Vorlesen</div><div class="s">Beim Überfahren · 1,2×</div></span><span class="chev">›</span></div>
+      <div class="row"><span class="ic">≡</span><span class="tx"><div class="l">Lesehilfe</div><div class="s">Aus</div></span><span class="chev">›</span></div>
+      <div class="row"><span class="ic">🔗</span><span class="tx"><div class="l">Links hervorheben</div><div class="s">Aus</div></span><span class="sw"></span></div>
+      <h3>Bewegung &amp; Ablenkung</h3>
+      <div class="row"><span class="ic">⏸</span><span class="tx"><div class="l">Animationen stoppen</div><div class="s">Aus</div></span><span class="sw"></span></div>
+      <div class="row"><span class="ic">🖼</span><span class="tx"><div class="l">Bilder ausblenden</div><div class="s">Aus</div></span><span class="sw"></span></div>
+      <div class="row"><span class="ic">➚</span><span class="tx"><div class="l">Großer Mauszeiger</div><div class="s">Aus</div></span><span class="chev">›</span></div>
+    </div>
+    <div class="ft"><span class="btn danger">↺ Alles zurücksetzen</span></div>
+  </div>
+</div>
+</section>
+
+<!-- ================= B ================= -->
+<section class="variant" id="varB">
+<h2>B · Profile + Kachelraster</h2>
+<p class="why">Ein-Tipp-Profile oben (kombinieren mehrere Funktionen). Darunter 3×4-Kacheln; aktive Kacheln sind gefüllt und zeigen ihren Wert. Einstellungen öffnen sich direkt unter der Kachel – kein Seiten-Flyout. Kompakteste Höhe, gut für Touch.</p>
+<div class="stage">
+  <div class="fab"><svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm8 6.5-5.5 1V22h-2v-6h-1v6h-2V9.5L4 8.5l.4-2 7.6 1.3 7.6-1.3.4 2Z"/></svg><span class="badge">2</span></div>
+  <div class="pop">
+    <div class="hd"><span class="t">Barrierefreiheit<span class="sub">Profil: Sehschwäche</span></span><span class="ib">✕</span></div>
+    <div class="chips"><span class="chip on">👁 Sehschwäche</span><span class="chip">Aa Legasthenie</span><span class="chip">⚡ Epilepsie-sicher</span><span class="chip">◎ Konzentration</span></div>
+    <div class="tiles">
+      <div class="tile on open"><span class="ti">T</span><span class="tl">Schrift</span><span class="tv">150 %</span></div>
+      <div class="tile on"><span class="ti">◐</span><span class="tl">Kontrast</span><span class="tv">Schwarz</span></div>
+      <div class="tile"><span class="ti">☾</span><span class="tl">Nachtmodus</span><span class="tv">Aus</span></div>
+    </div>
+    <div class="inline">
+      <div class="seg"><span>100 %</span><span>125 %</span><span class="on">150 %</span><span>200 %</span></div>
+      <div class="lbl">Zeilenhöhe <b>+20 %</b></div>
+      <div class="sl"><i style="width:20%"></i><em style="left:20%"></em></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:6px"><span class="chip" style="padding:5px 10px">Alle Typografie-Optionen ›</span></div>
+    </div>
+    <div class="tiles" style="padding-top:0">
+      <div class="tile"><span class="ti">◍</span><span class="tl">Farbsehen</span><span class="tv">Aus</span></div>
+      <div class="tile"><span class="ti">☼</span><span class="tl">Blaulicht</span><span class="tv">Aus</span></div>
+      <div class="tile"><span class="ti">🔊</span><span class="tl">Vorlesen</span><span class="tv">Aus</span></div>
+      <div class="tile"><span class="ti">≡</span><span class="tl">Lesehilfe</span><span class="tv">Aus</span></div>
+      <div class="tile"><span class="ti">🔗</span><span class="tl">Links</span><span class="tv">Aus</span></div>
+      <div class="tile"><span class="ti">➚</span><span class="tl">Mauszeiger</span><span class="tv">Aus</span></div>
+      <div class="tile"><span class="ti">⏸</span><span class="tl">Animationen</span><span class="tv">Laufen</span></div>
+      <div class="tile"><span class="ti">🖼</span><span class="tl">Bilder</span><span class="tv">Sichtbar</span></div>
+      <div class="tile" style="border-style:dashed"><span class="ti">⌨</span><span class="tl">Tastatur</span><span class="tv">Alt+Shift</span></div>
+    </div>
+    <div class="ft"><span class="btn danger">↺ Zurücksetzen</span></div>
+  </div>
+</div>
+</section>
+
+<!-- ================= C ================= -->
+<section class="variant" id="varC">
+<h2>C · Drill-down im selben Panel (empfohlen)</h2>
+<p class="why">Liste wie A; ein Pfeil öffnet die Detailseite <em>im selben Popover</em> (NavContainer, Zurück-Pfeil). Kein zweites Popover, keine Überlappung, identisch auf Desktop und Mobil. Jede Detailseite: Vorschau · Presets · Feinregler · „Auf Standard“.</p>
+<div class="stage">
+  <div class="fab"><svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm8 6.5-5.5 1V22h-2v-6h-1v6h-2V9.5L4 8.5l.4-2 7.6 1.3 7.6-1.3.4 2Z"/></svg><span class="badge">1</span></div>
+  <div class="pop">
+    <div class="hd"><span class="ib back">‹</span><span class="t">Schrift &amp; Abstände<span class="sub">Barrierefreiheit</span></span><span class="ib">✕</span></div>
+    <div style="padding:14px 16px 6px">
+      <div class="preview"><strong>Vorschau</strong>Die Bestellung 4711 wurde am 26.11. freigegeben.</div>
+      <div class="lbl">Schriftgröße <b>125 %</b></div>
+      <div class="seg"><span>100 %</span><span class="on">125 %</span><span>150 %</span><span>175 %</span><span>200 %</span></div>
+      <div class="lbl">Zeilenhöhe <b>+20 %</b></div>
+      <div class="sl"><i style="width:20%"></i><em style="left:20%"></em></div>
+      <div class="ticks"><span>0</span><span>+50 %</span><span>+100 %</span></div>
+      <div class="lbl">Wortabstand <b>+0 %</b></div>
+      <div class="sl"><i style="width:0"></i><em style="left:0"></em></div>
+      <div class="lbl">Zeichenabstand <b>+0 %</b></div>
+      <div class="sl"><i style="width:0"></i><em style="left:0"></em></div>
+      <div class="lbl">Ausrichtung</div>
+      <div class="seg"><span class="on">Original</span><span>Links</span><span>Block</span></div>
+    </div>
+    <div class="ft"><span class="btn ghost">↺ Auf Standard</span><span class="btn pri">Fertig</span></div>
+  </div>
+</div>
+</section>
+
+<!-- ================= C2 Kontrast detail ================= -->
+<section class="variant" id="varC2">
+<h2>C · Detailseite „Kontrast“</h2>
+<p class="why">Heute: 4 unbeschriftete „A“-Bilder, zwei Farbreihen und Icon-only ✓ ↺ ✕. Vorschlag: beschriftete Presets mit WCAG-Kennzahl, eigene Farben eingeklappt, Text-Buttons.</p>
+<div class="stage">
+  <div class="fab"><svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm8 6.5-5.5 1V22h-2v-6h-1v6h-2V9.5L4 8.5l.4-2 7.6 1.3 7.6-1.3.4 2Z"/></svg></div>
+  <div class="pop">
+    <div class="hd"><span class="ib back">‹</span><span class="t">Kontrast<span class="sub">Barrierefreiheit</span></span><span class="ib">✕</span></div>
+    <div style="padding:14px 16px 6px">
+      <div class="lbl" style="margin-top:0">SAP-Theme</div>
+      <div class="seg"><span class="on">Standard</span><span>HC hell</span><span>HC dunkel</span></div>
+      <div class="lbl">Farbschema</div>
+      <div class="swatches">
+        <div><div class="swatch" style="background:#fff;color:#1d2d3e">Aa</div><div class="legend">Aus</div></div>
+        <div><div class="swatch on" style="background:#000;color:#ffeb3b">Aa</div><div class="legend">19,6 : 1</div></div>
+        <div><div class="swatch" style="background:#000;color:#fff">Aa</div><div class="legend">21 : 1</div></div>
+        <div><div class="swatch" style="background:#fdf6e3;color:#1d2d3e">Aa</div><div class="legend">13,4 : 1</div></div>
+        <div><div class="swatch" style="background:#0a3d8f;color:#fff">Aa</div><div class="legend">10,8 : 1</div></div>
+        <div><div class="swatch" style="border-style:dashed;color:var(--sa-text-2)">＋</div><div class="legend">Eigene</div></div>
+      </div>
+      <div class="preview" style="background:#000;color:#ffeb3b;border-color:#000"><strong style="color:#ffeb3b">Vorschau · AAA ✓</strong>Die Bestellung 4711 wurde am 26.11. freigegeben.</div>
+    </div>
+    <div class="ft"><span class="btn ghost">Abbrechen</span><span class="btn pri">Übernehmen</span></div>
+  </div>
+</div>
+</section>
+
+<!-- ================= D Mobile ================= -->
+<section class="variant" id="varD">
+<h2>D · Mobil: Bottom-Sheet</h2>
+<p class="why">Unter 600 px wird das Popover zum Bottom-Sheet (sap.m.Dialog stretch / ResponsivePopover). Detailseiten wie in C, 56-px-Zeilen, keine Hover-Hinweise auf Touch.</p>
+<div class="stage" style="padding-top:0">
+  <div class="phone">
+    <div class="app"><div class="bar" style="width:60%"></div><div class="bar"></div><div class="bar" style="width:80%"></div><div class="bar"></div><div class="bar" style="width:70%"></div></div>
+    <div class="scrim"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <div class="hd" style="border-bottom:1px solid var(--sa-line)"><span class="t">Barrierefreiheit<span class="sub">2 Funktionen aktiv</span></span><span class="ib">✕</span></div>
+      <div class="chips" style="padding-bottom:8px"><span class="chip">👁 Sehschwäche</span><span class="chip">Aa Legasthenie</span><span class="chip">⚡ Epilepsie-sicher</span></div>
+      <div class="body sec">
+        <div class="row on"><span class="ic">T</span><span class="tx"><div class="l">Schrift &amp; Abstände</div><div class="s">150 %</div></span><span class="chev">›</span></div>
+        <div class="row"><span class="ic">◐</span><span class="tx"><div class="l">Kontrast</div><div class="s">Standard</div></span><span class="chev">›</span></div>
+        <div class="row on"><span class="ic">☾</span><span class="tx"><div class="l">Nachtmodus</div><div class="s">Ein</div></span><span class="sw on"></span></div>
+        <div class="row"><span class="ic">◍</span><span class="tx"><div class="l">Farbsehschwäche</div><div class="s">Aus</div></span><span class="chev">›</span></div>
+        <div class="row"><span class="ic">🔊</span><span class="tx"><div class="l">Vorlesen</div><div class="s">Aus</div></span><span class="chev">›</span></div>
+        <div class="row"><span class="ic">≡</span><span class="tx"><div class="l">Lesehilfe</div><div class="s">Aus</div></span><span class="chev">›</span></div>
+        <div class="row"><span class="ic">🔗</span><span class="tx"><div class="l">Links hervorheben</div><div class="s">Aus</div></span><span class="sw"></span></div>
+        <div class="row"><span class="ic">⏸</span><span class="tx"><div class="l">Animationen stoppen</div><div class="s">Aus</div></span><span class="sw"></span></div>
+      </div>
+      <div class="ft"><span class="btn danger">↺ Alles zurücksetzen</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+</div>
+</div>
+</body>
+</html>
