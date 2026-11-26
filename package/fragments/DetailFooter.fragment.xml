@@ -1,0 +1,14 @@
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+>
+   <HBox class="saDetailFooter" justifyContent="SpaceBetween" alignItems="Center" renderType="Bare">
+      <Button
+         text="{i18n>detail.reset}"
+         icon="sap-icon://reset"
+         press=".onDetailReset"
+         enabled="{parts: ['settings>/navPage', 'settings>/typoFontSize', 'settings>/typoZoom', 'settings>/typoLineHeight', 'settings>/typoWordSpacing', 'settings>/typoLetterSpacing', 'settings>/typoAlign', 'settings>/readingGuideMode', 'settings>/bigCursorColor', 'settings>/ttsRate', 'settings>/ttsVolume', 'settings>/ttsHover', 'settings>/ttsPlaying', 'settings>/colorBlindnessType', 'settings>/colorBlindnessIntensity', 'settings>/blueLightFilterActive', 'settings>/blueLightFilterLevel'], formatter: '.fmtDetailCanReset'}"
+         class="saFooterBtn saFooterReset" />
+      <Button text="{i18n>detail.done}" type="Emphasized" press=".onDetailDone" class="saFooterBtn saFooterDone" />
+   </HBox>
+</core:FragmentDefinition>

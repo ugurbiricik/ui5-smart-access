@@ -2,17 +2,31 @@
    xmlns="sap.m"
    xmlns:core="sap.ui.core"
 >
-   <VBox id="saPageReadingGuide" class="saPage saDetailPage" width="100%">
-      <HBox alignItems="Center" width="100%" justifyContent="SpaceBetween" class="saDetailRow">
-         <Select id="readingGuideSelect" selectedKey="{settings>/readingGuideMode}" type="Default" change=".onReadingGuideChange" width="100%" ariaLabelledBy="popoverTitle">
-            <layoutData><FlexItemData growFactor="1" /></layoutData>
+   <VBox id="saPageReadingGuide" class="saPage saDetailPage saTpl" width="100%">
+      <VBox class="saPreview saPreviewReading" width="100%" renderType="Bare">
+         <customData>
+            <core:CustomData key="samode" value="{settings>/readingGuideMode}" writeToDom="true" />
+         </customData>
+         <Text text="{i18n>detail.preview}" class="saPreviewLabel" />
+         <VBox class="saPreviewLines" width="100%" renderType="Bare">
+            <Text text="{i18n>detail.sample}" class="saPreviewSample saPreviewLineDim" />
+            <Text text="{i18n>detail.sample2}" class="saPreviewSample saPreviewLineFocus" />
+            <Text text="{i18n>detail.sample3}" class="saPreviewSample saPreviewLineDim" />
+         </VBox>
+      </VBox>
+
+      <VBox class="saTplField" width="100%" renderType="Bare">
+         <Label id="readingGuideModeLabel" text="{i18n>readingGuide.mode}" class="saTplLabelRow" />
+         <SegmentedButton id="readingGuideSeg" selectedKey="{settings>/readingGuideMode}" selectionChange=".onReadingGuideSelect" width="100%" ariaLabelledBy="readingGuideModeLabel" class="saSegControl">
             <items>
-               <core:Item key="none" text="{i18n>readingGuide.none}" />
-               <core:Item key="guide" text="{i18n>readingGuide.guide}" />
-               <core:Item key="mask" text="{i18n>readingGuide.mask}" />
+               <SegmentedButtonItem key="none" text="{i18n>readingGuide.none}" />
+               <SegmentedButtonItem key="guide" text="{i18n>readingGuide.guide}" />
+               <SegmentedButtonItem key="mask" text="{i18n>readingGuide.mask}" />
             </items>
-         </Select>
-         <Button id="readingGuideResetButton" icon="sap-icon://refresh" press=".onReadingGuideReset" tooltip="{i18n>aria.resetReadingGuide}" class="cbIntBtn"/>
-      </HBox>
+         </SegmentedButton>
+         <Text text="{i18n>readingGuide.hint}" class="saTplHint" />
+      </VBox>
+
+      <core:Fragment fragmentName="ui5-smart-access.fragments.DetailFooter" type="XML" />
    </VBox>
 </core:FragmentDefinition>

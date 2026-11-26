@@ -4,9 +4,9 @@ const pct = (n) => getText("status.percent", [Math.round(Number(n) || 0)]);
 const join = (parts) => parts.filter(Boolean).join(" · ");
 const onOff = (on) => getText(on ? "status.on" : "status.off");
 
-export const fontStatus = (fontPct, zoom, lineHeight, wordSpacing, letterSpacing, align) => {
+export const fontStatus = (fontSize, zoom, lineHeight, wordSpacing, letterSpacing, align) => {
     const parts = [];
-    if ((fontPct || 0) !== 0) parts.push(getText("status.fontSize", [pct(100 + Number(fontPct))]));
+    if ((fontSize ?? 100) !== 100) parts.push(getText("status.fontSize", [pct(fontSize)]));
     if ((zoom ?? 100) !== 100) parts.push(getText("status.zoom", [pct(zoom)]));
     if ((lineHeight || 0) !== 0 || (wordSpacing || 0) !== 0 || (letterSpacing || 0) !== 0) {
         parts.push(getText("status.spacing"));

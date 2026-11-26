@@ -130,6 +130,31 @@ describe("settingsModel — stopAnimations defaults to OS reduced-motion", () =>
     });
 });
 
+describe("settingsModel — font size (real percentage)", () => {
+    it("defaults to 100 %", async () => {
+        const { oSettingsModel } = await loadModel();
+        expect(oSettingsModel.getProperty("/typoFontSize")).toBe(100);
+    });
+
+    it("keeps a saved typoFontSize", async () => {
+        const { oSettingsModel } = await loadModel({ typoFontSize: 175 });
+        expect(oSettingsModel.getProperty("/typoFontSize")).toBe(175);
+    });
+
+    it("migrates the legacy typoFontPct to the size it really produced", async () => {
+        expect((await loadModel({ typoFontPct: 100 })).oSettingsModel.getProperty("/typoFontSize")).toBe(150);
+        expect((await loadModel({ typoFontPct: 20 })).oSettingsModel.getProperty("/typoFontSize")).toBe(110);
+        expect((await loadModel({ typoFontPct: -50 })).oSettingsModel.getProperty("/typoFontSize")).toBe(75);
+        expect((await loadModel({ typoFontPct: 0 })).oSettingsModel.getProperty("/typoFontSize")).toBe(100);
+    });
+
+    it("prefers typoFontSize over the legacy key and clamps out-of-range values", async () => {
+        expect((await loadModel({ typoFontSize: 125, typoFontPct: 100 })).oSettingsModel.getProperty("/typoFontSize")).toBe(125);
+        expect((await loadModel({ typoFontSize: 900 })).oSettingsModel.getProperty("/typoFontSize")).toBe(200);
+        expect((await loadModel({ typoFontSize: "x" })).oSettingsModel.getProperty("/typoFontSize")).toBe(100);
+    });
+});
+
 describe("settingsModel — PERSISTED_KEYS", () => {
     it("matches the expected key set (guards against accidental drops)", async () => {
         const { PERSISTED_KEYS } = await loadModel();
@@ -140,7 +165,7 @@ describe("settingsModel — PERSISTED_KEYS", () => {
             "contrastUnderlineLinks", "colorBlindnessIntensity",
             "readingGuideMode",
             "bigCursorColor", "bigCursorCustomColor", "highlightLinksActive", "stopAnimationsActive",
-            "typoZoom", "typoFontPct", "typoLineHeight", "typoWordSpacing",
+            "typoZoom", "typoFontSize", "typoLineHeight", "typoWordSpacing",
             "typoLetterSpacing", "typoAlign"
         ]);
     });

@@ -3,7 +3,14 @@
    xmlns:core="sap.ui.core"
    xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
-   <VBox id="saPageContrast" class="saPage saDetailPage contrastSection" width="100%">
+   <VBox id="saPageContrast" class="saPage saDetailPage saTpl contrastSection" width="100%">
+      <VBox class="saPreview saPreviewContrast" width="100%" renderType="Bare">
+          <Text text="{i18n>detail.preview}" class="saPreviewLabel" />
+          <HBox class="contrastPreviewBox" alignItems="Center" justifyContent="Center" width="100%">
+              <Text text="{i18n>contrast.sample}" class="contrastPreviewText" />
+          </HBox>
+      </VBox>
+
       <Label text="{i18n>contrast.sapThemes}" class="contrastLabel" />
       <HBox class="contrastThemeRow" alignItems="Center" width="100%">
           <Button text="{i18n>contrast.hcw}" press=".onContrastHighContrast" custom:variant="hcw" tooltip="{i18n>contrast.hcwTooltip}" class="contrastThemeBtn contrastThemeHcw">
@@ -29,15 +36,17 @@
           <Image src="{settings>preview}" width="28px" height="28px" densityAware="false" press=".onContrastTextSelect" tooltip="{= ${settings>color} === 'custom' ? ${i18n>contrast.custom} : ${settings>color}}" class="contrastSwatch" />
       </HBox>
 
-      <Label text="{i18n>contrast.preview}" class="contrastLabel" />
-      <HBox class="contrastPreviewBox" alignItems="Center" justifyContent="Center" width="100%">
-          <Text text="{i18n>contrast.sample}" class="contrastPreviewText" />
-      </HBox>
-
-      <HBox class="contrastActions" alignItems="Center" justifyContent="SpaceBetween" width="100%">
-          <Button icon="sap-icon://accept" press=".onContrastSet" tooltip="{i18n>contrast.set}" class="contrastSetBtn" />
-          <Button icon="sap-icon://refresh" press=".onContrastReset" tooltip="{i18n>contrast.reset}" class="contrastActionBtn" />
-          <Button icon="sap-icon://decline" press=".onContrastCancel" tooltip="{i18n>contrast.cancel}" class="contrastActionBtn" />
+      <HBox class="saDetailFooter" justifyContent="SpaceBetween" alignItems="Center" renderType="Bare">
+          <Button
+              text="{i18n>detail.reset}"
+              icon="sap-icon://reset"
+              press=".onDetailReset"
+              enabled="{= ${settings>/contrastModeActive} || ${settings>/contrastTheme} !== '' || ${settings>/contrastBgColor} !== '#ffffff' || ${settings>/contrastTextColor} !== '#000000' || ${settings>/contrastUnderlineLinks} !== true}"
+              class="saFooterBtn saFooterReset" />
+          <HBox class="saFooterEnd" alignItems="Center" renderType="Bare">
+              <Button text="{i18n>contrast.cancel}" press=".onContrastCancel" class="saFooterBtn saFooterCancel" />
+              <Button text="{i18n>contrast.set}" type="Emphasized" press=".onContrastSet" class="saFooterBtn saFooterDone" />
+          </HBox>
       </HBox>
    </VBox>
 </core:FragmentDefinition>

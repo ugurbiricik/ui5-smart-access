@@ -24,9 +24,9 @@ const s = await import("../js/rowStatus.js");
 describe("row status lines (de)", () => {
     it("font: Standard when nothing changed, otherwise the changed values", () => {
         lang = "de";
-        expect(s.fontStatus(0, 100, 0, 0, 0, "none")).toBe("Standard");
-        expect(s.fontStatus(20, 100, 0, 0, 0, "none")).toBe("Schrift 120 %");
-        expect(s.fontStatus(-10, 150, 0, 10, 0, "left")).toBe("Schrift 90 % · Zoom 150 % · Abstände angepasst · Ausrichtung");
+        expect(s.fontStatus(100, 100, 0, 0, 0, "none")).toBe("Standard");
+        expect(s.fontStatus(120, 100, 0, 0, 0, "none")).toBe("Schrift 120 %");
+        expect(s.fontStatus(90, 150, 0, 10, 0, "left")).toBe("Schrift 90 % · Zoom 150 % · Abstände angepasst · Ausrichtung");
         expect(s.fontStatus(undefined, undefined, undefined, undefined, undefined, undefined)).toBe("Standard");
     });
 
@@ -65,7 +65,7 @@ describe("row status lines (de)", () => {
 describe("row status lines (en)", () => {
     it("uses the English bundle and percent format", () => {
         lang = "en";
-        expect(s.fontStatus(0, 120, 0, 0, 0, "none")).toBe("Zoom 120%");
+        expect(s.fontStatus(100, 120, 0, 0, 0, "none")).toBe("Zoom 120%");
         expect(s.colorBlindnessStatus("grayscale", 100)).toBe("Grayscale · 100%");
         expect(s.toggleStatus(true)).toBe("On");
         lang = "de";

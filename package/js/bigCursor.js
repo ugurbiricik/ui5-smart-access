@@ -81,3 +81,10 @@ export const setBigCursorCustom = (hex) => {
 };
 
 export const disableBigCursor = () => removeStyle(STYLE_ID);
+
+export const bigCursorPreviewSrc = (key, customHex) => {
+    if (key === "custom" && customHex) return buildSvg(customHex, customHex, 36, CURSOR_VIEWBOX);
+    const c = COLORS[key];
+    if (c) return buildSvg(c.fill, c.previewStroke, 36, CURSOR_VIEWBOX);
+    return buildSvg("#111827", "#ffffff", 20, CURSOR_VIEWBOX);
+};

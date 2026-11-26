@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import {
     setTypoZoom,
-    setTypoFontPct,
+    setTypoFontSize,
     setTypoLineHeight,
     setTypoWordSpacing,
     setTypoLetterSpacing,
@@ -44,11 +44,12 @@ describe("typography", () => {
         expect(css()).toContain("letter-spacing: 0.300em !important;");
     });
 
-    it("setTypoFontPct sets and clears the root font-size", () => {
-        setTypoFontPct(100);
-        // (100 + 100*0.5).toFixed(1) === "150.0%"; jsdom normalizes to "150%"
+    it("setTypoFontSize applies the real percentage and clears it at 100", () => {
+        setTypoFontSize(150);
         expect(document.documentElement.style.fontSize).toBe("150%");
-        setTypoFontPct(0);
+        setTypoFontSize(125);
+        expect(document.documentElement.style.fontSize).toBe("125%");
+        setTypoFontSize(100);
         expect(document.documentElement.style.fontSize).toBe("");
     });
 
@@ -81,7 +82,7 @@ describe("typography", () => {
         staticArea.id = "sap-ui-static";
         document.body.appendChild(staticArea);
         setTypoLineHeight(50);
-        setTypoFontPct(100);
+        setTypoFontSize(150);
         setTypoZoom(200);
         resetTypography();
         expect(isTypographyActive()).toBe(false);

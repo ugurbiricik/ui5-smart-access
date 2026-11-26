@@ -86,19 +86,6 @@ const ensurePopoverLoaded = (controller) => {
         restoreActiveFeatureClasses(sFragmentId);
         labelRowGroups(sFragmentId);
 
-        // The Select's dropdown renders outside the popover DOM, so its
-        // items can't be reached by our `.abicsAccessibilityPopover` rules.
-        // Tag its picker with a scoped class so we can restyle ONLY our
-        // dropdown (never the host app's selects).
-        try {
-            const oRGSelect = Fragment.byId(sFragmentId, "readingGuideSelect");
-            if (oRGSelect && typeof oRGSelect.getPicker === "function") {
-                oRGSelect.getPicker().addStyleClass("saSelectPicker");
-            }
-        } catch (e) {
-            /* dropdown styling is best-effort */
-        }
-
         oPopover.attachAfterClose(() => {
             stopReading();
             hideHint();

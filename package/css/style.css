@@ -41,6 +41,7 @@
   --sa-hcw-text: #000000;
   --sa-hcb-bg: #000000;
   --sa-hcb-text: #ffffff;
+  --sa-spectrum: linear-gradient(90deg, #e53935, #fb8c00, #fdd835, #43a047, #00acc1, #1e88e5, #8e24aa);
 }
 
 /* ── Read-aloud highlight (GLOBAL — applied to host-page blocks while the
@@ -231,49 +232,6 @@
 
 .abicsAccessibilityPopover .sapMPanelContent:not(.sapMPanelBGTransparent) {
   border-bottom: 0;
-}
-
-/* Big-cursor colour swatches + reset (swatches spread across; reset at right) */
-.abicsAccessibilityPopover .bigCursorRow {
-  padding: 10px 0;
-  gap: 10px;
-}
-
-.abicsAccessibilityPopover .bigCursorSwatches {
-  gap: 4px;
-  flex-wrap: nowrap;
-}
-
-/* No background on the swatches (user request) — just the plain arrows. Only
-   the SELECTED one gets a soft tint (the selection indicator). */
-.abicsAccessibilityPopover .bigCursorSwatch {
-  padding: 3px;
-  border-radius: 8px;
-  background: transparent;
-  cursor: pointer;
-  box-sizing: content-box;
-}
-
-/* Selected: soft tint only. NO border/outline/ring in ANY state (unconditional
-   so it beats sap.m.Image's focus/press ring whatever form it takes).
-   (Selected is a writeToDom CustomData attribute — XML `class` can't be bound.) */
-.abicsAccessibilityPopover .bigCursorSwatch[data-sacursorsel="yes"] {
-  background: var(--sa-selected-bg);
-  box-shadow: inset 0 0 0 1px var(--sa-selected-line);
-}
-
-.abicsAccessibilityPopover .bigCursorSwatch,
-.abicsAccessibilityPopover img.bigCursorSwatch,
-.abicsAccessibilityPopover .bigCursorSwatch:hover,
-.abicsAccessibilityPopover .bigCursorSwatch:focus,
-.abicsAccessibilityPopover .bigCursorSwatch:focus-visible,
-.abicsAccessibilityPopover .bigCursorSwatch:active,
-.abicsAccessibilityPopover .bigCursorRow .sapMImg,
-.abicsAccessibilityPopover .bigCursorRow .sapMImg:focus,
-.abicsAccessibilityPopover .bigCursorRow .sapMImg:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-  border: none !important;
 }
 
 /* ── Header-only panels (opener rows / switches, no inline content) ── */
@@ -592,33 +550,6 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   border: none !important;
 }
 
-/* ── Select dropdown (rendered in the static area) ──
-   Scoped to OUR picker only via the programmatically-added `.saSelectPicker`
-   class (see index.js) so host-app selects are never affected. Removes the
-   item focus/selection border/outline. NOT prefixed with the popover class
-   because the picker lives outside the popover DOM. */
-/* The item is `.sapMSelectListItemBase` (NOT `.sapMLIB`), and the blue ring is
-   drawn by its `::after` pseudo-element's outline — verified via DOM. */
-.saSelectPicker .sapMSelectList,
-.saSelectPicker .sapMSelectListItemBase,
-.saSelectPicker .sapMSelectListItem,
-.saSelectPicker .sapMSelectListItemBase:focus,
-.saSelectPicker .sapMSelectListItemBaseSelected,
-.saSelectPicker .sapMSelectListItemBaseHoverable:hover {
-  outline: none !important;
-  box-shadow: none !important;
-  border-color: transparent !important;
-}
-
-.saSelectPicker .sapMSelectListItemBase::after,
-.saSelectPicker .sapMSelectListItem::after,
-.saSelectPicker .sapMSelectListItemBase::before {
-  display: none !important;
-  content: none !important;
-  outline: none !important;
-  border: none !important;
-}
-
 /* ── Colour picker (Simplified) polish — our 3 pickers only ──
    ALL rules are scoped to a popover that contains the unified colour picker
    (`.sapMPopover:has(.sapUnifiedColorPicker)`) so this styling can never leak
@@ -726,21 +657,6 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   font-size: 12px !important;
 }
 
-.abicsAccessibilityPopover .cbIntensity {
-  padding-top: 10px;
-  margin-top: 8px;
-  border-top: 1px solid var(--sa-line);
-}
-
-.abicsAccessibilityPopover .cbPercent {
-  font-weight: 700;
-  color: var(--sa-accent);
-}
-
-.abicsAccessibilityPopover .cbIntensityBtns {
-  margin-top: 10px;
-}
-
 /* −/reset/+ icon buttons: solid rounded-square, blue icon, fixed box so they
    line up cleanly with the slider (matches the Eye-Able reference). */
 .abicsAccessibilityPopover .cbIntBtn {
@@ -771,21 +687,6 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   background-color: var(--sa-control-hover) !important;
 }
 
-/* Selected card highlight — just a soft tinted fill, NO border/outline
-   (user request). Only the selected card has a live .cbIntensity child. */
-.abicsAccessibilityPopover .cbCard:has(.cbIntensity) {
-  border-color: var(--sa-selected-line);
-  background: var(--sa-selected-bg);
-}
-
-/* Compact inline quick control in the main list (full picker is in flyout).
-   The panel content already supplies the horizontal inset, so the quick
-   control only adds vertical breathing room — keeps both compact controls
-   aligned to the same left edge as the row icon/title. */
-.abicsAccessibilityPopover .cbQuick {
-  padding: 4px 0 10px 0;
-}
-
 /* ── Contrast-mode flyout (presets + colour pickers + live preview) ── */
 .abicsAccessibilityPopover .contrastSection .contrastLabel {
   font-weight: 600;
@@ -801,65 +702,11 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   flex-wrap: nowrap;
 }
 
-
 .abicsAccessibilityPopover .contrastPreset,
 .abicsAccessibilityPopover .contrastSwatch {
   cursor: pointer;
   border-radius: 8px;
   box-shadow: 0 0 0 1px var(--sa-line);
-}
-
-/* SET / RESET / CANCEL action row */
-.abicsAccessibilityPopover .contrastActions {
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.abicsAccessibilityPopover .contrastActions .sapMBtn {
-  flex: 1 1 0;
-}
-
-.abicsAccessibilityPopover .contrastSetBtn .sapMBtnInner {
-  background-color: var(--sa-emph-bg) !important;
-  border: 1px solid var(--sa-emph-line) !important;
-  border-radius: 9px !important;
-  box-shadow: none;
-}
-
-.abicsAccessibilityPopover .contrastSetBtn .sapMBtnInner .sapMBtnContent,
-.abicsAccessibilityPopover .contrastSetBtn .sapMBtnInner .sapUiIcon {
-  color: var(--sa-emph-text) !important;
-}
-
-.abicsAccessibilityPopover .contrastActionBtn .sapMBtnInner {
-  background-color: var(--sa-control-bg) !important;
-  border: 1px solid var(--sa-control-line) !important;
-  border-radius: 9px !important;
-  box-shadow: none;
-}
-
-.abicsAccessibilityPopover .contrastActionBtn .sapMBtnInner .sapMBtnContent,
-.abicsAccessibilityPopover .contrastActionBtn .sapMBtnInner .sapUiIcon {
-  color: var(--sa-control-text) !important;
-}
-
-/* SET/RESET/CANCEL: NO focus ring/outline/border in ANY state — unconditional
-   on both the outer button and the inner (beats the theme ring). */
-.abicsAccessibilityPopover .contrastActions .sapMBtn,
-.abicsAccessibilityPopover .contrastActions .sapMBtn:focus,
-.abicsAccessibilityPopover .contrastActions .sapMBtn:focus-visible,
-.abicsAccessibilityPopover .contrastActions .sapMBtn:active,
-.abicsAccessibilityPopover .contrastActions .sapMBtnInner,
-.abicsAccessibilityPopover .contrastActions .sapMBtnInner:focus,
-.abicsAccessibilityPopover .contrastActions .sapMBtnInner:focus-visible,
-.abicsAccessibilityPopover .contrastActions .sapMBtnInner:active {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-.abicsAccessibilityPopover .contrastActions .sapMBtnInner::before,
-.abicsAccessibilityPopover .contrastActions .sapMBtnInner::after {
-  display: none !important;
 }
 
 .abicsAccessibilityPopover .contrastPreset:hover,
@@ -887,33 +734,6 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   font-weight: 600;
 }
 
-/* Font panel: simple stepper (value box + − / reset / + buttons), no slider —
-   matches the Eye-Able reference. */
-.abicsAccessibilityPopover .fontQuick {
-  padding: 8px 0 10px 0;
-  gap: 12px;
-}
-
-.abicsAccessibilityPopover .fontValueBox {
-  border: 1px solid var(--sa-control-line);
-  border-radius: 10px;
-  background-color: var(--sa-control-bg);
-  min-width: 96px;
-  height: 40px;
-  padding: 0 16px;
-  box-sizing: border-box;
-}
-
-.abicsAccessibilityPopover .fontValueText {
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  color: var(--sa-text);
-}
-
-.abicsAccessibilityPopover .fontStepRow {
-  gap: 18px;
-}
-
 /* −/reset/+ icon buttons: never show a focus ring/outline/border in any state
    (user request — the solid button already signals the affordance). */
 .abicsAccessibilityPopover .cbIntBtn:focus-visible,
@@ -932,7 +752,6 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
 /* TTS section labels (Geschwindigkeit / Lautstärke / Hover-Lesen): the semibold
    look comes from the SAP "72-SemiboldDuplex" font variant (not font-weight —
    the plain "72" looked thin and font-weight:600 mapped to the heading "72-Bold"). */
-.abicsAccessibilityPopover .ttsFlyoutSection .typoRow .sapMLabel,
 .abicsAccessibilityPopover .ttsHoverRow .sapMLabel {
   font-family: "72-SemiboldDuplex", "72", "72full", Arial, sans-serif;
   font-weight: 400;
@@ -965,20 +784,6 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
 .abicsAccessibilityPopover .saDetailPage {
   padding: 8px 16px 14px 16px;
   box-sizing: border-box;
-}
-
-/* ── Font (typography) flyout rows ── */
-.abicsAccessibilityPopover .typoRow {
-  padding: 6px 0;
-  width: 100%;
-}
-
-.abicsAccessibilityPopover .typoSliderRow {
-  gap: 12px;
-}
-
-.abicsAccessibilityPopover .typoAlignRow {
-  margin-top: 4px;
 }
 
 /* ── Slider ── */
@@ -1015,13 +820,6 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
 .abicsAccessibilityPopover .sapMSlider::after {
   display: none !important;
   content: none !important;
-}
-
-/* Keep the track inset from the slider box edges so the handle, at its 0%/100%
-   extremes, keeps clear space from the flanking −/+ buttons. */
-.abicsAccessibilityPopover .typoSliderRow .sapMSlider {
-  padding-left: 12px;
-  padding-right: 12px;
 }
 
 /* Slider handle: keep the theme's default knob (with its grip icon), just a
@@ -1205,6 +1003,228 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   color: var(--sa-hcb-text);
 }
 
+.abicsAccessibilityPopover .saTpl {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 0;
+}
+
+.abicsAccessibilityPopover .saPreview {
+  border: 1px dashed var(--sa-field-line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--sa-field-bg);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.abicsAccessibilityPopover .saPreview .saPreviewLabel.sapMText {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px !important;
+  font-weight: 600;
+  color: var(--sa-text-2);
+}
+
+.abicsAccessibilityPopover .saPreviewSample {
+  color: var(--sa-text);
+  overflow-wrap: anywhere;
+}
+
+.abicsAccessibilityPopover .saPreviewSpectrum {
+  height: 24px;
+  margin: 2px 0 6px;
+  border-radius: 6px;
+  background: var(--sa-spectrum);
+}
+
+.abicsAccessibilityPopover .saPreviewLines {
+  gap: 2px;
+}
+
+.abicsAccessibilityPopover .saPreviewLines .saPreviewSample {
+  display: block;
+  padding: 3px 4px;
+  border-radius: 4px;
+}
+
+.abicsAccessibilityPopover .saPreviewReading[data-samode="guide"] .saPreviewLineFocus {
+  box-shadow: inset 0 -3px 0 var(--sa-accent);
+}
+
+.abicsAccessibilityPopover .saPreviewReading[data-samode="mask"] .saPreviewLineDim {
+  opacity: 0.25;
+}
+
+.abicsAccessibilityPopover .saPreviewReading[data-samode="mask"] .saPreviewLineFocus {
+  background: var(--sa-row-active);
+}
+
+.abicsAccessibilityPopover .saPreviewCursorRow,
+.abicsAccessibilityPopover .saPreviewTtsRow {
+  gap: 12px;
+}
+
+.abicsAccessibilityPopover .saPreviewCursorImg {
+  flex: 0 0 36px;
+  display: flex;
+  justify-content: center;
+}
+
+.abicsAccessibilityPopover .saPreviewTtsRow .saPreviewAction {
+  flex: none;
+}
+
+.abicsAccessibilityPopover .saTplField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.abicsAccessibilityPopover .saTplLabelRow .sapMLabel,
+.abicsAccessibilityPopover .saTplField > .sapMLabel {
+  font-family: "72-SemiboldDuplex", "72", "72full", Arial, sans-serif;
+  color: var(--sa-text);
+}
+
+.abicsAccessibilityPopover .saTplValue {
+  font-weight: 700;
+  color: var(--sa-accent);
+}
+
+.abicsAccessibilityPopover .saTplHint {
+  font-size: 12px !important;
+  color: var(--sa-text-2);
+}
+
+.abicsAccessibilityPopover .saTplSliderRow {
+  gap: 10px;
+}
+
+.abicsAccessibilityPopover .saTpl .sapMSlider {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.abicsAccessibilityPopover .saSeg {
+  gap: 4px;
+}
+
+.abicsAccessibilityPopover .saSeg .saSegItem,
+.abicsAccessibilityPopover .saSeg .saSegItem .sapMBtnInner {
+  width: 100%;
+  min-width: 0;
+}
+
+.abicsAccessibilityPopover .saSeg .saSegItem .sapMBtnInner {
+  padding: 0 2px;
+}
+
+.abicsAccessibilityPopover .saDetailPage .sapMBtnInner.sapMToggleBtnPressed {
+  background-color: var(--sa-selected-bg) !important;
+  border: 2px solid var(--sa-selected-line) !important;
+}
+
+.abicsAccessibilityPopover .saDetailPage .sapMBtnInner.sapMToggleBtnPressed .sapMBtnContent,
+.abicsAccessibilityPopover .saDetailPage .sapMBtnInner.sapMToggleBtnPressed .sapUiIcon {
+  color: var(--sa-control-text) !important;
+  font-weight: 700;
+}
+
+.abicsAccessibilityPopover .saSegControl.sapMSegB {
+  display: flex;
+  width: 100%;
+}
+
+.abicsAccessibilityPopover .saSegControl .sapMSegBBtn {
+  flex: 1 1 auto;
+  width: auto !important;
+  min-width: 36px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.abicsAccessibilityPopover .saSegControl .sapMSegBBtn .sapMSegBBtnInner {
+  overflow: visible;
+  font-size: 14px !important;
+}
+
+.abicsAccessibilityPopover .saChipWrap {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.abicsAccessibilityPopover .saChipWrap > .saChipGrid {
+  display: contents;
+}
+
+.abicsAccessibilityPopover .saChip,
+.abicsAccessibilityPopover .saChip .sapMBtnInner {
+  width: 100%;
+  min-width: 0;
+}
+
+.abicsAccessibilityPopover .saChip .sapMBtnInner {
+  height: 40px;
+  justify-content: flex-start;
+  padding: 0 8px;
+}
+
+.abicsAccessibilityPopover .saChip .sapMBtnCustomIcon {
+  width: 22px;
+  height: 22px;
+}
+
+.abicsAccessibilityPopover .cbItem[data-sasel="yes"] .cbCard {
+  border-color: var(--sa-selected-line);
+  background: var(--sa-selected-bg);
+}
+
+.abicsAccessibilityPopover .cbCheck {
+  color: var(--sa-accent);
+}
+
+.abicsAccessibilityPopover .saDetailFooter {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  gap: 8px;
+  margin: 4px -16px 0;
+  padding: 10px 16px;
+  width: calc(100% + 32px);
+  box-sizing: border-box;
+  background-color: var(--sa-bg);
+  border-top: 1px solid var(--sa-line);
+}
+
+.abicsAccessibilityPopover .saFooterEnd {
+  gap: 8px;
+}
+
+.abicsAccessibilityPopover .saDetailPage .saFooterReset .sapMBtnInner {
+  background-color: transparent !important;
+}
+
+.abicsAccessibilityPopover .saDetailPage .saFooterReset.sapMBtnDisabled {
+  opacity: 0.45;
+}
+
+.abicsAccessibilityPopover .saDetailPage .saFooterDone .sapMBtnInner {
+  min-width: 88px;
+  background-color: var(--sa-emph-bg) !important;
+  border-color: var(--sa-emph-line) !important;
+}
+
+.abicsAccessibilityPopover .saDetailPage .saFooterDone .sapMBtnInner:hover {
+  background-color: var(--sa-emph-hover) !important;
+}
+
+.abicsAccessibilityPopover .saDetailPage .saFooterDone .sapMBtnContent {
+  color: var(--sa-emph-text);
+}
+
 /* ══ Keyboard focus indicator (WCAG 2.4.7) ══
    The inner controls were deliberately made ring-free for a clean look on
    MOUSE use. These :focus-visible rules restore a subtle keyboard-only ring so
@@ -1213,11 +1233,10 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
    leading `html` lifts specificity just above the unconditional `outline:none`
    suppressor rules, so source order alone doesn't have to win. */
 html .abicsAccessibilityPopover .cbIntBtn:focus-visible,
-html .abicsAccessibilityPopover .contrastActions .sapMBtn:focus-visible,
+html .abicsAccessibilityPopover .saDetailPage .sapMBtn:focus-visible,
+html .abicsAccessibilityPopover .saSegControl .sapMSegBBtn:focus-visible,
 html .abicsAccessibilityPopover .contrastThemeBtn:focus-visible,
 html .abicsAccessibilityPopover .contrastSection .sapMImg:focus-visible,
-html .abicsAccessibilityPopover .bigCursorSwatch:focus-visible,
-html .abicsAccessibilityPopover .bigCursorRow .sapMImg:focus-visible,
 html .abicsAccessibilityPopover .cbList .sapMCLI:focus-visible,
 html .abicsAccessibilityPopover .cbList .sapMLIB:focus-visible,
 html .abicsAccessibilityPopover .sapMSlt:focus-visible,

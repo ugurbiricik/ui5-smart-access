@@ -1,28 +1,45 @@
 <core:FragmentDefinition
    xmlns="sap.m"
    xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
-   <VBox id="saPageBigCursor" class="saPage saDetailPage" width="100%">
-      <HBox class="bigCursorRow" alignItems="Center" width="100%">
-         <HBox class="bigCursorSwatches" items="{settings>/bigCursorColors}" alignItems="Center" justifyContent="SpaceBetween">
-            <layoutData><FlexItemData growFactor="1" /></layoutData>
+   <VBox id="saPageBigCursor" class="saPage saDetailPage saTpl" width="100%">
+      <VBox class="saPreview saPreviewCursor" width="100%" renderType="Bare">
+         <Text text="{i18n>detail.preview}" class="saPreviewLabel" />
+         <HBox alignItems="Center" class="saPreviewCursorRow" renderType="Bare">
             <Image
-               src="{settings>preview}"
-               width="34px"
-               height="34px"
+               src="{parts: ['settings>/bigCursorColor', 'settings>/bigCursorCustomColor'], formatter: '.fmtBigCursorPreview'}"
                densityAware="false"
-               tooltip="{settings>label}"
-               press=".onBigCursorSelect"
-               class="bigCursorSwatch">
-               <customData>
-                  <core:CustomData
-                     key="sacursorsel"
-                     writeToDom="true"
-                     value="{= ${settings>key} === ${settings>/bigCursorColor} ? 'yes' : 'no' }" />
-               </customData>
-            </Image>
+               decorative="true"
+               class="saPreviewCursorImg" />
+            <Text text="{i18n>detail.sample}" class="saPreviewSample" />
          </HBox>
-         <Button icon="sap-icon://refresh" press=".onBigCursorReset" tooltip="{i18n>aria.bigCursorReset}" class="cbIntBtn bigCursorResetBtn" />
-      </HBox>
+      </VBox>
+
+      <VBox class="saTplField" width="100%" renderType="Bare">
+         <Label id="bigCursorColorLabel" text="{i18n>bigCursor.color}" class="saTplLabelRow" />
+         <VBox class="saChipWrap" width="100%" renderType="Bare">
+            <HBox class="saChipGrid" width="100%" renderType="Bare">
+               <ToggleButton
+                  text="{i18n>status.off}"
+                  icon="sap-icon://decline"
+                  pressed="{= ${settings>/bigCursorColor} === 'none'}"
+                  press=".onBigCursorOff"
+                  ariaDescribedBy="bigCursorColorLabel"
+                  class="saChip" />
+            </HBox>
+            <HBox class="saChipGrid" width="100%" items="{settings>/bigCursorColors}" renderType="Bare">
+               <ToggleButton
+                  text="{settings>label}"
+                  icon="{settings>preview}"
+                  pressed="{= ${settings>key} === ${settings>/bigCursorColor}}"
+                  press=".onBigCursorSelect"
+                  ariaDescribedBy="bigCursorColorLabel"
+                  class="saChip" />
+            </HBox>
+         </VBox>
+      </VBox>
+
+      <core:Fragment fragmentName="ui5-smart-access.fragments.DetailFooter" type="XML" />
    </VBox>
 </core:FragmentDefinition>

@@ -311,3 +311,14 @@ export const disableHoverRead = () => {
         hoverActive = false;
     }
 };
+
+export const speakSample = (text) => {
+    if (!isTTSSupported() || isReading || !text) return false;
+    readToken++;
+    if (synth.speaking || synth.pending) synth.cancel();
+    const sample = new SpeechSynthesisUtterance(text);
+    sample.rate = getRate();
+    sample.volume = getVolume();
+    synth.speak(sample);
+    return true;
+};

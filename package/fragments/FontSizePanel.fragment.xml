@@ -10,7 +10,7 @@
             <VBox class="saRowTexts" renderType="Bare">
                <layoutData><ToolbarLayoutData shrinkable="true" /></layoutData>
                <Title id="fontSizeTitle" text="{i18n>fontSize.title}" class="saRowTitle" wrapping="false" />
-               <Text id="fontSizeStatus" text="{parts: ['settings>/typoFontPct', 'settings>/typoZoom', 'settings>/typoLineHeight', 'settings>/typoWordSpacing', 'settings>/typoLetterSpacing', 'settings>/typoAlign'], formatter: '.fmtFontStatus'}" class="saRowStatus" wrapping="false" />
+               <Text id="fontSizeStatus" text="{parts: ['settings>/typoFontSize', 'settings>/typoZoom', 'settings>/typoLineHeight', 'settings>/typoWordSpacing', 'settings>/typoLetterSpacing', 'settings>/typoAlign'], formatter: '.fmtFontStatus'}" class="saRowStatus" wrapping="false" />
             </VBox>
             <ToolbarSpacer />
             <core:Icon src="sap-icon://slim-arrow-right" size="14px" class="saNavChevron" decorative="true" />

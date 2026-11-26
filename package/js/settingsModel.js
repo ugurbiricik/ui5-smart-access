@@ -20,7 +20,7 @@ import { setReadingGuide } from "./readingGuide.js";
 import { prefersReducedMotion } from "./osPreferences.js";
 import {
     setTypoZoom,
-    setTypoFontPct,
+    setTypoFontSize,
     setTypoLineHeight,
     setTypoWordSpacing,
     setTypoLetterSpacing,
@@ -36,7 +36,7 @@ export const PERSISTED_KEYS = [
     "contrastUnderlineLinks", "colorBlindnessIntensity",
     "readingGuideMode",
     "bigCursorColor", "bigCursorCustomColor", "highlightLinksActive", "stopAnimationsActive",
-    "typoZoom", "typoFontPct", "typoLineHeight", "typoWordSpacing",
+    "typoZoom", "typoFontSize", "typoLineHeight", "typoWordSpacing",
     "typoLetterSpacing", "typoAlign"
 ];
 
@@ -50,9 +50,21 @@ const CB_TYPE_MIGRATION = {
 };
 const migrateCbType = (t) => CB_TYPE_MIGRATION[t] || t;
 
+const LEGACY_KEYS = ["typoFontPct"];
+
+export const FONT_SIZE_MIN = 50;
+export const FONT_SIZE_MAX = 200;
+
+export const migrateFontSize = (saved) => {
+    const clamp = (n) => Math.max(FONT_SIZE_MIN, Math.min(FONT_SIZE_MAX, Math.round(n)));
+    if (Number.isFinite(saved.typoFontSize)) return clamp(saved.typoFontSize);
+    if (Number.isFinite(saved.typoFontPct)) return clamp(100 + saved.typoFontPct * 0.5);
+    return 100;
+};
+
 const loadSavedSettings = () => {
     const saved = {};
-    PERSISTED_KEYS.forEach((key) => {
+    PERSISTED_KEYS.concat(LEGACY_KEYS).forEach((key) => {
         const val = loadPref(key, undefined);
         if (val !== undefined) saved[key] = val;
     });
@@ -116,7 +128,7 @@ export const oSettingsModel = new JSONModel({
 
     // Font panel (typography)
     typoZoom: savedSettings.typoZoom ?? 100,
-    typoFontPct: savedSettings.typoFontPct ?? 0,
+    typoFontSize: migrateFontSize(savedSettings),
     typoLineHeight: savedSettings.typoLineHeight ?? 0,
     typoWordSpacing: savedSettings.typoWordSpacing ?? 0,
     typoLetterSpacing: savedSettings.typoLetterSpacing ?? 0,
@@ -137,7 +149,7 @@ export const clearAllPrefs = () => clearPrefs();
 export const restoreSavedState = () => {
     // Font panel (typography) — re-apply saved values.
     setTypoZoom(oSettingsModel.getProperty("/typoZoom"));
-    setTypoFontPct(oSettingsModel.getProperty("/typoFontPct"));
+    setTypoFontSize(oSettingsModel.getProperty("/typoFontSize"));
     setTypoLineHeight(oSettingsModel.getProperty("/typoLineHeight"));
     setTypoWordSpacing(oSettingsModel.getProperty("/typoWordSpacing"));
     setTypoLetterSpacing(oSettingsModel.getProperty("/typoLetterSpacing"));

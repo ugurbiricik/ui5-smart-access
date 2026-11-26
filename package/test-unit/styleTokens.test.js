@@ -21,7 +21,8 @@ const FIXED = new Set([
     "--sa-hcw-bg",
     "--sa-hcw-text",
     "--sa-hcb-bg",
-    "--sa-hcb-text"
+    "--sa-hcb-text",
+    "--sa-spectrum"
 ]);
 
 describe("style.css design tokens", () => {

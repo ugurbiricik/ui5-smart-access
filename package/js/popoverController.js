@@ -28,7 +28,8 @@ import {
     setTTSRate,
     setTTSVolume,
     enableHoverRead,
-    disableHoverRead
+    disableHoverRead,
+    speakSample
 } from "./textToSpeech.js";
 import { applyColorBlindness, resetColorBlindness } from "./colorBlindness.js";
 import { enableBlueLightFilter, disableBlueLightFilter } from "./blueLightFilter.js";
@@ -47,19 +48,22 @@ import {
 } from "./highContrastTheme.js";
 import { announce } from "./announcer.js";
 import { applyTextSpacing, resetTextSpacing } from "./textSpacing.js";
-import { setBigCursor, setBigCursorCustom, disableBigCursor } from "./bigCursor.js";
+import { setBigCursor, setBigCursorCustom, disableBigCursor, bigCursorPreviewSrc } from "./bigCursor.js";
 import { enableHighlightLinks, disableHighlightLinks } from "./highlightLinks.js";
 import { enableStopAnimations, disableStopAnimations } from "./stopAnimations.js";
-import { setReadingGuide, resetReadingGuide } from "./readingGuide.js";
+import { setReadingGuide } from "./readingGuide.js";
 import {
     setTypoZoom,
-    setTypoFontPct,
+    setTypoFontSize,
     setTypoLineHeight,
     setTypoWordSpacing,
     setTypoLetterSpacing,
     setTypoAlign,
-    isTypographyActive
+    isTypographyActive,
+    previewCss
 } from "./typography.js";
+import { injectStyle } from "./styleInjector.js";
+import { isDetailAtDefault } from "./detailDefaults.js";
 import { resetAll } from "./resetAll.js";
 import { getText } from "./i18nModel.js";
 import { hideHint } from "./hoverHints.js";
@@ -96,6 +100,26 @@ const updateContrastPreview = () => {
     const texts = document.querySelectorAll(".abicsAccessibilityPopover .contrastPreviewText");
     boxes.forEach((box) => { box.style.backgroundColor = hasColors ? bg : ""; });
     texts.forEach((txt) => { txt.style.color = hasColors ? text : ""; });
+};
+
+const FONT_PREVIEW_STYLE_ID = "ui5-smart-access-font-preview";
+
+const updateFontPreview = () => {
+    injectStyle(
+        FONT_PREVIEW_STYLE_ID,
+        previewCss(".abicsAccessibilityPopover .saPreviewFont .saPreviewFontSample.sapMText", {
+            fontSize: oSettingsModel.getProperty("/typoFontSize"),
+            zoom: oSettingsModel.getProperty("/typoZoom"),
+            lineHeight: oSettingsModel.getProperty("/typoLineHeight"),
+            wordSpacing: oSettingsModel.getProperty("/typoWordSpacing"),
+            letterSpacing: oSettingsModel.getProperty("/typoLetterSpacing"),
+            align: oSettingsModel.getProperty("/typoAlign")
+        })
+    );
+};
+
+const syncPressed = (oSource, bPressed) => {
+    if (oSource && typeof oSource.setPressed === "function") oSource.setPressed(!!bPressed);
 };
 
 const CONTRAST_PRESETS = {
@@ -147,6 +171,7 @@ export const popoverInternalController = {
             this._mainScrollTop = scroller ? scroller.scrollTop : 0;
         }
         if (key === "contrast") this._prepareContrastPage();
+        if (key === "font") updateFontPreview();
         this._navOrigin = key;
         oSettingsModel.setProperty("/navTitle", getText(page.titleKey));
         oSettingsModel.setProperty("/navPage", key);
@@ -185,6 +210,7 @@ export const popoverInternalController = {
             target = panel && panel.getHeaderToolbar && panel.getHeaderToolbar();
         } else {
             if (this.getCurrentPageKey() === "contrast") updateContrastPreview();
+            if (this.getCurrentPageKey() === "font") updateFontPreview();
             const dom = to && to.getDomRef();
             target = dom && dom.querySelector(FOCUSABLE);
         }
@@ -198,6 +224,9 @@ export const popoverInternalController = {
     onBlueLightFilterSwitch(oEvent) {
         const on = oEvent.getParameter("state");
         if (on) {
+            if (!(oSettingsModel.getProperty("/blueLightFilterLevel") > 0)) {
+                oSettingsModel.setProperty("/blueLightFilterLevel", 50);
+            }
             enableBlueLightFilter(oSettingsModel.getProperty("/blueLightFilterLevel"));
         } else {
             disableBlueLightFilter();
@@ -207,37 +236,28 @@ export const popoverInternalController = {
         saveCurrentSettings();
         announce(getText(on ? "announce.blueFilterOn" : "announce.blueFilterOff"));
     },
-    onBlueLightFilterSliderChange(e) {
-        const level = e.getParameter("value");
-        oSettingsModel.setProperty("/blueLightFilterLevel", level);
-        enableBlueLightFilter(level);
-        oSettingsModel.setProperty("/blueLightFilterActive", level > 0);
-        toggleActiveFeatureClass.call(this, "blueLightFilterPanel", level > 0);
-        saveCurrentSettings();
-    },
-    onBlueLightFilterReset() {
-        // Reset restores the DEFAULT intensity (50%), not zero — the filter
-        // stays on at its initial level.
-        oSettingsModel.setProperty("/blueLightFilterLevel", 50);
-        enableBlueLightFilter(50);
-        oSettingsModel.setProperty("/blueLightFilterActive", true);
-        toggleActiveFeatureClass.call(this, "blueLightFilterPanel", true);
-        saveCurrentSettings();
-    },
-    _stepBlueLightFilter(delta) {
-        let v = oSettingsModel.getProperty("/blueLightFilterLevel") + delta;
-        v = Math.max(0, Math.min(100, v));
+    _setBlueLightFilterLevel(level) {
+        const v = Math.max(0, Math.min(100, Math.round(level)));
         oSettingsModel.setProperty("/blueLightFilterLevel", v);
-        enableBlueLightFilter(v);
+        if (v > 0) enableBlueLightFilter(v); else disableBlueLightFilter();
         oSettingsModel.setProperty("/blueLightFilterActive", v > 0);
         toggleActiveFeatureClass.call(this, "blueLightFilterPanel", v > 0);
         saveCurrentSettings();
     },
-    onBlueLightFilterDecrease() {
-        this._stepBlueLightFilter(-10);
+    onBlueLightFilterSliderChange(e) {
+        this._setBlueLightFilterLevel(e.getParameter("value"));
     },
-    onBlueLightFilterIncrease() {
-        this._stepBlueLightFilter(10);
+    onBlueLightFilterPreset(oEvent) {
+        const src = oEvent.getSource();
+        this._setBlueLightFilterLevel(Number(src.data("value")));
+        syncPressed(src, true);
+    },
+    _resetBlueLightFilter() {
+        disableBlueLightFilter();
+        oSettingsModel.setProperty("/blueLightFilterLevel", 50);
+        oSettingsModel.setProperty("/blueLightFilterActive", false);
+        toggleActiveFeatureClass.call(this, "blueLightFilterPanel", false);
+        saveCurrentSettings();
     },
 
     _toggleFeatures: {
@@ -500,26 +520,42 @@ export const popoverInternalController = {
         setTTSVolume(e.getParameter("value"));
         saveCurrentSettings();
     },
-    // Value displays: "1.0x" for speed, "100%" for volume.
     formatTtsRate(v) {
-        return (v == null ? 1 : v).toFixed(1) + "x";
+        const rate = v == null ? 1 : Number(v);
+        if (rate === 1) return getText("tts.normal");
+        return String(Math.round(rate * 100) / 100) + "\u00d7";
     },
     formatTtsVolume(v) {
-        return Math.round((v == null ? 1 : v) * 100) + "%";
+        return getText("status.percent", [Math.round((v == null ? 1 : v) * 100)]);
     },
-    _ttsMap: {
-        rate: { path: "/ttsRate", min: 0.5, max: 2, step: 0.1, set: setTTSRate },
-        volume: { path: "/ttsVolume", min: 0, max: 1, step: 0.1, set: setTTSVolume }
+    formatPercent(v) {
+        return getText("status.percent", [Math.round(Number(v) || 0)]);
     },
-    onTtsStep(oEvent) {
+    formatPlusPercent(v) {
+        return "+" + getText("status.percent", [Math.round(Number(v) || 0)]);
+    },
+    onTtsRatePreset(oEvent) {
         const src = oEvent.getSource();
-        const m = this._ttsMap[src.data("tts")];
-        if (!m) return;
-        const dir = parseInt(src.data("dir"), 10) || 0;
-        let v = Math.round((oSettingsModel.getProperty(m.path) + dir * m.step) * 100) / 100;
-        v = Math.max(m.min, Math.min(m.max, v));
-        oSettingsModel.setProperty(m.path, v);
-        m.set(v);
+        const v = Number(src.data("value"));
+        oSettingsModel.setProperty("/ttsRate", v);
+        setTTSRate(v);
+        saveCurrentSettings();
+        syncPressed(src, true);
+    },
+    onTtsSample() {
+        speakSample(getText("detail.sample"));
+    },
+    _resetTts() {
+        stopReading();
+        oSettingsModel.setProperty("/ttsRate", 1);
+        oSettingsModel.setProperty("/ttsVolume", 1);
+        setTTSRate(1);
+        setTTSVolume(1);
+        if (oSettingsModel.getProperty("/ttsHover")) {
+            oSettingsModel.setProperty("/ttsHover", false);
+            disableHoverRead();
+        }
+        toggleActiveFeatureClass.call(this, "ttsPanel", false);
         saveCurrentSettings();
     },
     onTTSHoverChange(e) {
@@ -548,18 +584,15 @@ export const popoverInternalController = {
     },
 
     // ---- Reading aid (guide / mask) ----
-    onReadingGuideChange(e) {
-        const mode = e.getParameter("selectedItem").getKey();
+    _setReadingGuideMode(mode) {
         oSettingsModel.setProperty("/readingGuideMode", mode);
         setReadingGuide(mode);
         toggleActiveFeatureClass.call(this, "readingGuidePanel", mode !== "none");
         saveCurrentSettings();
     },
-    onReadingGuideReset() {
-        oSettingsModel.setProperty("/readingGuideMode", "none");
-        resetReadingGuide();
-        toggleActiveFeatureClass.call(this, "readingGuidePanel", false);
-        saveCurrentSettings();
+    onReadingGuideSelect(e) {
+        const item = e.getParameter("item");
+        if (item) this._setReadingGuideMode(item.getKey());
     },
 
     // ---- Big cursor (selectable colours + custom) ----
@@ -586,7 +619,11 @@ export const popoverInternalController = {
         const ctx = oEvent.getSource().getBindingContext("settings");
         const key = ctx ? ctx.getProperty("key") : oEvent.getSource().data("cursor");
         // The custom (rainbow) chip always opens the colour picker.
-        if (key === "custom") { this._openBigCursorColorPicker(oEvent.getSource()); return; }
+        if (key === "custom") {
+            syncPressed(oEvent.getSource(), oSettingsModel.getProperty("/bigCursorColor") === "custom");
+            this._openBigCursorColorPicker(oEvent.getSource());
+            return;
+        }
         const current = oSettingsModel.getProperty("/bigCursorColor");
         // Clicking the active colour again turns the big cursor off.
         const next = current === key ? "none" : key;
@@ -595,12 +632,17 @@ export const popoverInternalController = {
         toggleActiveFeatureClass.call(this, "bigCursorPanel", next !== "none");
         saveCurrentSettings();
     },
-    onBigCursorReset() {
+    onBigCursorOff(oEvent) {
+        this._resetBigCursor();
+        syncPressed(oEvent && oEvent.getSource(), true);
+    },
+    _resetBigCursor() {
         oSettingsModel.setProperty("/bigCursorColor", "none");
         disableBigCursor();
         toggleActiveFeatureClass.call(this, "bigCursorPanel", false);
         saveCurrentSettings();
     },
+    fmtBigCursorPreview: bigCursorPreviewSrc,
 
     // ---- Highlight links + focus ----
     setHighlightLinks(active) {
@@ -645,44 +687,34 @@ export const popoverInternalController = {
         applyColorBlindness(oSettingsModel.getProperty("/colorBlindnessType"), value);
         saveCurrentSettings();
     },
-    _stepColorBlindnessIntensity(delta) {
-        let v = oSettingsModel.getProperty("/colorBlindnessIntensity") + delta;
-        v = Math.max(0, Math.min(100, v));
-        oSettingsModel.setProperty("/colorBlindnessIntensity", v);
-        applyColorBlindness(oSettingsModel.getProperty("/colorBlindnessType"), v);
-        saveCurrentSettings();
-    },
-    onColorBlindnessIntensityDecrease() {
-        this._stepColorBlindnessIntensity(-10);
-    },
-    onColorBlindnessIntensityIncrease() {
-        this._stepColorBlindnessIntensity(10);
-    },
-    onColorBlindnessIntensityReset() {
+    _resetColorBlindness() {
+        oSettingsModel.setProperty("/colorBlindnessType", "none");
         oSettingsModel.setProperty("/colorBlindnessIntensity", 100);
-        applyColorBlindness(oSettingsModel.getProperty("/colorBlindnessType"), 100);
+        applyColorBlindness("none", 100);
+        toggleActiveFeatureClass.call(this, "colorBlindnessPanel", false);
         saveCurrentSettings();
     },
 
     // ---- Font (typography) ----
-    onFontSizeReset() {
-        this._applyTypo("fontPct", 0);
-    },
-
     _typoMap: {
-        zoom: { path: "/typoZoom", set: setTypoZoom, min: 50, max: 200, step: 10 },
-        fontPct: { path: "/typoFontPct", set: setTypoFontPct, min: -50, max: 100, step: 10 },
-        lineHeight: { path: "/typoLineHeight", set: setTypoLineHeight, min: 0, max: 100, step: 10 },
-        wordSpacing: { path: "/typoWordSpacing", set: setTypoWordSpacing, min: 0, max: 100, step: 10 },
-        letterSpacing: { path: "/typoLetterSpacing", set: setTypoLetterSpacing, min: 0, max: 100, step: 10 }
+        zoom: { path: "/typoZoom", set: setTypoZoom, min: 50, max: 200, step: 5 },
+        fontSize: { path: "/typoFontSize", set: setTypoFontSize, min: 50, max: 200, step: 5 },
+        lineHeight: { path: "/typoLineHeight", set: setTypoLineHeight, min: 0, max: 100, step: 5 },
+        wordSpacing: { path: "/typoWordSpacing", set: setTypoWordSpacing, min: 0, max: 100, step: 5 },
+        letterSpacing: { path: "/typoLetterSpacing", set: setTypoLetterSpacing, min: 0, max: 100, step: 5 }
     },
-    _applyTypo(prop, value) {
+    _setTypo(prop, value) {
         const m = this._typoMap[prop];
-        if (!m) return;
-        const v = Math.max(m.min, Math.min(m.max, value));
+        if (!m) return false;
+        const v = Math.max(m.min, Math.min(m.max, Math.round(Number(value))));
+        if (!Number.isFinite(v)) return false;
         oSettingsModel.setProperty(m.path, v);
         m.set(v);
-        this._afterTypoChange();
+        updateFontPreview();
+        return true;
+    },
+    _applyTypo(prop, value) {
+        if (this._setTypo(prop, value)) this._afterTypoChange();
     },
     _stepTypo(prop, dir) {
         const m = this._typoMap[prop];
@@ -696,17 +728,68 @@ export const popoverInternalController = {
     onTypoSliderChange(e) {
         this._applyTypo(e.getSource().data("typo"), e.getParameter("value"));
     },
+    onTypoSliderLive(e) {
+        this._setTypo(e.getSource().data("typo"), e.getParameter("value"));
+    },
     onTypoDec(e) {
         this._stepTypo(e.getSource().data("typo"), -1);
     },
     onTypoInc(e) {
         this._stepTypo(e.getSource().data("typo"), 1);
     },
-    onTypoAlign(e) {
-        const align = e.getSource().data("align");
-        oSettingsModel.setProperty("/typoAlign", align);
-        setTypoAlign(align);
+    onFontSizePreset(oEvent) {
+        const src = oEvent.getSource();
+        this._applyTypo("fontSize", Number(src.data("value")));
+        syncPressed(src, true);
+    },
+    _setTypoAlign(align) {
+        const v = align || "none";
+        oSettingsModel.setProperty("/typoAlign", v);
+        setTypoAlign(v);
+        updateFontPreview();
         this._afterTypoChange();
+    },
+    onTypoAlignChange(e) {
+        const item = e.getParameter("item");
+        if (item) this._setTypoAlign(item.getKey());
+    },
+    _resetTypography() {
+        Object.keys(this._typoMap).forEach((prop) => {
+            const m = this._typoMap[prop];
+            const v = prop === "zoom" || prop === "fontSize" ? 100 : 0;
+            oSettingsModel.setProperty(m.path, v);
+            m.set(v);
+        });
+        this._setTypoAlign("none");
+    },
+
+    _detailResetters: {
+        font: "_resetTypography",
+        readingGuide: "_resetReadingGuide",
+        bigCursor: "_resetBigCursor",
+        tts: "_resetTts",
+        colorBlindness: "_resetColorBlindness",
+        blueLightFilter: "_resetBlueLightFilter",
+        contrast: "onContrastReset"
+    },
+    _resetReadingGuide() {
+        this._setReadingGuideMode("none");
+    },
+    resetDetail(key) {
+        const fn = this._detailResetters[key];
+        if (!fn) return false;
+        this[fn]();
+        if (key !== "contrast") announce(getText("announce.detailReset"));
+        return true;
+    },
+    onDetailReset() {
+        this.resetDetail(this.getCurrentPageKey());
+    },
+    onDetailDone() {
+        this.navToMain();
+    },
+    fmtDetailCanReset(navPage) {
+        return !isDetailAtDefault(navPage, (path) => oSettingsModel.getProperty(path));
     },
 
     fmtFontStatus: fontStatus,
@@ -723,7 +806,7 @@ export const popoverInternalController = {
         resetAll();
         oSettingsModel.setProperty("/fontStep", 0);
         oSettingsModel.setProperty("/typoZoom", 100);
-        oSettingsModel.setProperty("/typoFontPct", 0);
+        oSettingsModel.setProperty("/typoFontSize", 100);
         oSettingsModel.setProperty("/typoLineHeight", 0);
         oSettingsModel.setProperty("/typoWordSpacing", 0);
         oSettingsModel.setProperty("/typoLetterSpacing", 0);
