@@ -69,6 +69,15 @@ import { isDetailAtDefault } from "./detailDefaults.js";
 import { resetAll } from "./resetAll.js";
 import { getText } from "./i18nModel.js";
 import { hideHint } from "./hoverHints.js";
+import {
+    getProfile,
+    profileMatches,
+    takeSnapshot,
+    defaultsFor,
+    isValidSnapshot,
+    activeProfileMap,
+    WATCHED_PATHS
+} from "./profiles.js";
 
 // Resolve the picked colour from a ColorPickerPopover `change` event. Prefer
 // the event's own colour params (colorString/hex/rgb); fall back to the
@@ -877,6 +886,142 @@ export const popoverInternalController = {
     },
     fmtToggleStatus: toggleStatus,
 
+    // ---- Profiles ----
+    _readSetting(key) {
+        return oSettingsModel.getProperty("/" + key);
+    },
+    refreshProfiles() {
+        oSettingsModel.setProperty("/profileActive", activeProfileMap((k) => this._readSetting(k)));
+    },
+    initProfiles() {
+        if (!this._profileBindings && typeof oSettingsModel.bindProperty === "function") {
+            const refresh = () => this.refreshProfiles();
+            this._profileBindings = WATCHED_PATHS.map((p) => {
+                const oBinding = oSettingsModel.bindProperty("/" + p);
+                oBinding.attachChange(refresh);
+                return oBinding;
+            });
+        }
+        this.refreshProfiles();
+    },
+    _typoSettingProps: {
+        typoZoom: "zoom",
+        typoFontSize: "fontSize",
+        typoLineHeight: "lineHeight",
+        typoWordSpacing: "wordSpacing",
+        typoLetterSpacing: "letterSpacing"
+    },
+    _applyContrastValues(values) {
+        const pick = (k) => (Object.prototype.hasOwnProperty.call(values, k) ? values[k] : this._readSetting(k));
+        ["contrastBgColor", "contrastTextColor", "contrastUnderlineLinks"].forEach((k) => {
+            if (Object.prototype.hasOwnProperty.call(values, k)) oSettingsModel.setProperty("/" + k, values[k]);
+        });
+        const theme = values.contrastTheme;
+        if (theme === "hcb" || theme === "hcw") {
+            this._setContrastTheme(theme);
+            return;
+        }
+        disableHighContrastTheme();
+        oSettingsModel.setProperty("/contrastTheme", "");
+        const bg = pick("contrastBgColor");
+        const text = pick("contrastTextColor");
+        const active = !!pick("contrastModeActive") && !!bg && !!text;
+        if (active) {
+            applyCustomContrast(bg, text, pick("contrastUnderlineLinks"));
+            oSettingsModel.setProperty("/contrastRatio", getContrastRatio(bg, text).ratioText);
+        } else {
+            removeCustomContrast();
+        }
+        oSettingsModel.setProperty("/contrastModeActive", active);
+        toggleActiveFeatureClass.call(this, "contrastModePanel", active);
+    },
+    _applySettingValues(values) {
+        const has = (k) => Object.prototype.hasOwnProperty.call(values, k);
+        let typo = false;
+        Object.keys(this._typoSettingProps).forEach((k) => {
+            if (has(k) && this._setTypo(this._typoSettingProps[k], values[k])) typo = true;
+        });
+        if (has("typoAlign")) {
+            const align = values.typoAlign || "none";
+            oSettingsModel.setProperty("/typoAlign", align);
+            setTypoAlign(align);
+            updateFontPreview();
+            typo = true;
+        }
+        if (typo) this._afterTypoChange();
+        if (has("contrastTheme")) this._applyContrastValues(values);
+        if (has("nightModeActive")) this.setNightMode(!!values.nightModeActive);
+        if (has("highlightLinksActive") && !!values.highlightLinksActive !== !!this._readSetting("highlightLinksActive")) {
+            this.setHighlightLinks(!!values.highlightLinksActive);
+        }
+        if (has("stopAnimationsActive") && !!values.stopAnimationsActive !== !!this._readSetting("stopAnimationsActive")) {
+            this.setStopAnimations(!!values.stopAnimationsActive);
+        }
+        if (has("bigCursorCustomColor")) oSettingsModel.setProperty("/bigCursorCustomColor", values.bigCursorCustomColor);
+        if (has("bigCursorColor")) {
+            const color = values.bigCursorColor || "none";
+            oSettingsModel.setProperty("/bigCursorColor", color);
+            if (color === "none") disableBigCursor();
+            else if (color === "custom") setBigCursorCustom(this._readSetting("bigCursorCustomColor"));
+            else setBigCursor(color);
+            toggleActiveFeatureClass.call(this, "bigCursorPanel", color !== "none");
+        }
+        if (has("readingGuideMode")) this._setReadingGuideMode(values.readingGuideMode || "none");
+        if (has("colorBlindnessType") || has("colorBlindnessIntensity")) {
+            if (has("colorBlindnessType")) oSettingsModel.setProperty("/colorBlindnessType", values.colorBlindnessType || "none");
+            if (has("colorBlindnessIntensity")) oSettingsModel.setProperty("/colorBlindnessIntensity", values.colorBlindnessIntensity);
+            const type = this._readSetting("colorBlindnessType");
+            applyColorBlindness(type, this._readSetting("colorBlindnessIntensity"));
+            toggleActiveFeatureClass.call(this, "colorBlindnessPanel", type !== "none");
+        }
+        saveCurrentSettings();
+        this.refreshProfiles();
+    },
+    _storedSnapshot(profile) {
+        const snap = this._readSetting("profileSnapshot");
+        return this._readSetting("profileId") === profile.id && isValidSnapshot(profile, snap) ? snap : null;
+    },
+    _setProfileRecord(id, snapshot) {
+        oSettingsModel.setProperty("/profileId", id);
+        oSettingsModel.setProperty("/profileSnapshot", snapshot);
+    },
+    applyProfile(id) {
+        const profile = getProfile(id);
+        if (!profile) return false;
+        const read = (k) => this._readSetting(k);
+        let snapshot = this._storedSnapshot(profile);
+        if (!snapshot) {
+            const prev = getProfile(this._readSetting("profileId"));
+            const prevSnap = prev && this._storedSnapshot(prev);
+            if (prevSnap && profileMatches(prev, read)) this._applySettingValues(prevSnap);
+            snapshot = takeSnapshot(profile, read);
+        }
+        this._setProfileRecord(id, snapshot);
+        this._applySettingValues(profile.values);
+        announce(getText("announce.profileOn", [getText("profile." + id)]), true);
+        return true;
+    },
+    undoProfile(id) {
+        const profile = getProfile(id);
+        if (!profile) return false;
+        const snapshot = this._storedSnapshot(profile) || defaultsFor(profile);
+        this._setProfileRecord("", null);
+        this._applySettingValues(snapshot);
+        announce(getText("announce.profileOff", [getText("profile." + id)]), true);
+        return true;
+    },
+    toggleProfile(id) {
+        const profile = getProfile(id);
+        if (!profile) return false;
+        return profileMatches(profile, (k) => this._readSetting(k)) ? this.undoProfile(id) : this.applyProfile(id);
+    },
+    onProfilePress(oEvent) {
+        const src = oEvent.getSource();
+        this.toggleProfile(src.data("profile"));
+        const active = oSettingsModel.getProperty("/profileActive") || {};
+        syncPressed(src, !!active[src.data("profile")]);
+    },
+
     // ---- Reset all ----
     onResetAllToolbarPress() {
         resetAll();
@@ -904,6 +1049,7 @@ export const popoverInternalController = {
         oSettingsModel.setProperty("/highlightLinksActive", false);
         oSettingsModel.setProperty("/stopAnimationsActive", false);
         oSettingsModel.setProperty("/textSpacingExpanded", false);
+        this._setProfileRecord("", null);
         disableBigCursor();
 
         toggleActiveFeatureClass.call(this, "nightModePanel", false);
@@ -918,6 +1064,7 @@ export const popoverInternalController = {
         toggleActiveFeatureClass.call(this, "colorBlindnessPanel", false);
         toggleActiveFeatureClass.call(this, "fontSizePanel", false);
         toggleActiveFeatureClass.call(this, "ttsPanel", false);
+        this.refreshProfiles();
         this.navToMain();
         clearAllPrefs();
         announce(getText("announce.resetAll"), true);

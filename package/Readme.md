@@ -91,6 +91,25 @@ to the control passed to `initAccessibility` (or the button that opened the popo
 for an `sap.m.Button` it sits on the inner round/rect shape, so keep that element
 free of `overflow: hidden` overrides.
 
+### Profiles
+
+The top of the main list offers four one-tap profiles. Each one only combines
+existing features; no extra filters are involved:
+
+| Profile | Applies |
+|---|---|
+| Sehschwäche / Low vision | Text 150 %, SAP high contrast black (`sap_horizon_hcb`), highlighted links, large black pointer |
+| Legasthenie / Dyslexia | Line height 1.5, letter spacing 0.12em, word spacing 0.175em (WCAG 1.4.12), left-aligned, reading line |
+| Epilepsie-sicher / Seizure safe | Animations stopped, colours 60 % desaturated (grayscale filter) |
+| Konzentration / Focus | Reading mask, animations stopped |
+
+A chip is shown as pressed (`aria-pressed`) while the current settings match the
+profile. Pressing it again restores the settings the user had before the profile,
+not just the defaults; settings outside the profile are left alone. Only one profile
+is applied at a time: picking another one first undoes the previous one. The undo
+snapshot is stored with the other preferences, so it survives a reload. Changing a
+setting by hand releases the chip; "Reset all" clears the profile as well.
+
 ## Deployment (BTP / SAP Build Work Zone)
 
 A standard html5-apps-repo / managed-approuter deployment. Only three

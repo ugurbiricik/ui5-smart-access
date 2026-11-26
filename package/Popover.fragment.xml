@@ -44,6 +44,7 @@
                     class="saNav"
                 >
                     <VBox id="saMainPage" class="saPage saMainPage" width="100%" renderType="Bare">
+                        <core:Fragment fragmentName="ui5-smart-access.fragments.ProfileChips" type="XML" />
                         <VBox id="saGroupVision" class="saGroup" width="100%" renderType="Bare">
                             <Title id="saGroupVisionTitle" text="{i18n>group.vision}" level="H3" titleStyle="H6" wrapping="true" class="saGroupTitle" />
                             <core:Fragment fragmentName="ui5-smart-access.fragments.FontSizePanel" type="XML" />

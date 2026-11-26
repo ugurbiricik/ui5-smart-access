@@ -45,6 +45,7 @@ const ensureInitialized = () => {
     prefetchDarkTheme();
     oSettingsModel.setProperty("/colorBlindnessModes", buildColorBlindnessModes());
     oSettingsModel.setProperty("/bigCursorColors", buildBigCursorColors());
+    popoverInternalController.initProfiles();
 };
 
 // Load + wire the popover (and its flyout) once, storing the promise on the

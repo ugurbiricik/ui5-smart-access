@@ -17,8 +17,10 @@ export function toggleActiveFeatureClass(panelId, active) {
 
 export const ROW_GROUPS = ["saGroupVision", "saGroupReading", "saGroupMotion"];
 
+export const LABELLED_GROUPS = ["saGroupProfiles"].concat(ROW_GROUPS);
+
 export function labelRowGroups(sFragmentId) {
-    ROW_GROUPS.forEach((groupId) => {
+    LABELLED_GROUPS.forEach((groupId) => {
         const group = Fragment.byId(sFragmentId, groupId);
         const title = Fragment.byId(sFragmentId, groupId + "Title");
         if (!group || !title) return;

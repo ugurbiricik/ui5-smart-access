@@ -166,7 +166,8 @@ describe("settingsModel — PERSISTED_KEYS", () => {
             "readingGuideMode",
             "bigCursorColor", "bigCursorCustomColor", "highlightLinksActive", "stopAnimationsActive",
             "typoZoom", "typoFontSize", "typoLineHeight", "typoWordSpacing",
-            "typoLetterSpacing", "typoAlign"
+            "typoLetterSpacing", "typoAlign",
+            "profileId", "profileSnapshot"
         ]);
     });
 

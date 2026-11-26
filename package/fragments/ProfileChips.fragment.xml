@@ -1,0 +1,51 @@
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <VBox id="saGroupProfiles" class="saGroup saProfiles" width="100%" renderType="Bare">
+      <Title id="saGroupProfilesTitle" text="{i18n>group.profiles}" level="H3" titleStyle="H6" wrapping="true" class="saGroupTitle" />
+      <FlexBox id="saProfileChips" wrap="Wrap" renderType="Bare" class="saProfileChips">
+         <ToggleButton
+            id="profileVisionButton"
+            icon="sap-icon://show"
+            text="{i18n>profile.vision}"
+            pressed="{= !!${settings>/profileActive/vision} }"
+            press=".onProfilePress"
+            custom:profile="vision"
+            tooltip="{i18n>profile.vision.desc}"
+            class="saProfileChip"
+         />
+         <ToggleButton
+            id="profileDyslexiaButton"
+            icon="sap-icon://text"
+            text="{i18n>profile.dyslexia}"
+            pressed="{= !!${settings>/profileActive/dyslexia} }"
+            press=".onProfilePress"
+            custom:profile="dyslexia"
+            tooltip="{i18n>profile.dyslexia.desc}"
+            class="saProfileChip"
+         />
+         <ToggleButton
+            id="profileSeizureSafeButton"
+            icon="sap-icon://high-priority"
+            text="{i18n>profile.seizureSafe}"
+            pressed="{= !!${settings>/profileActive/seizureSafe} }"
+            press=".onProfilePress"
+            custom:profile="seizureSafe"
+            tooltip="{i18n>profile.seizureSafe.desc}"
+            class="saProfileChip"
+         />
+         <ToggleButton
+            id="profileFocusButton"
+            icon="sap-icon://target-group"
+            text="{i18n>profile.focus}"
+            pressed="{= !!${settings>/profileActive/focus} }"
+            press=".onProfilePress"
+            custom:profile="focus"
+            tooltip="{i18n>profile.focus.desc}"
+            class="saProfileChip"
+         />
+      </FlexBox>
+   </VBox>
+</core:FragmentDefinition>

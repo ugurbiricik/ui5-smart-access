@@ -37,7 +37,8 @@ export const PERSISTED_KEYS = [
     "readingGuideMode",
     "bigCursorColor", "bigCursorCustomColor", "highlightLinksActive", "stopAnimationsActive",
     "typoZoom", "typoFontSize", "typoLineHeight", "typoWordSpacing",
-    "typoLetterSpacing", "typoAlign"
+    "typoLetterSpacing", "typoAlign",
+    "profileId", "profileSnapshot"
 ];
 
 // Map legacy colour-blindness keys (v1.1.x used the -opia/achromatopsia names)
@@ -136,7 +137,11 @@ export const oSettingsModel = new JSONModel({
     typoLineHeight: savedSettings.typoLineHeight ?? 0,
     typoWordSpacing: savedSettings.typoWordSpacing ?? 0,
     typoLetterSpacing: savedSettings.typoLetterSpacing ?? 0,
-    typoAlign: savedSettings.typoAlign ?? "none"
+    typoAlign: savedSettings.typoAlign ?? "none",
+
+    profileId: savedSettings.profileId ?? "",
+    profileSnapshot: savedSettings.profileSnapshot ?? null,
+    profileActive: {}
 });
 
 export const saveCurrentSettings = () => {

@@ -1373,3 +1373,78 @@ html .saLauncherBadgeHost > span.saLauncherBadge {
     forced-color-adjust: none;
   }
 }
+
+.abicsAccessibilityPopover .saProfileChips {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0.25rem 1rem 0.875rem;
+}
+
+.abicsAccessibilityPopover .saProfileChips .saProfileChip,
+.abicsAccessibilityPopover .saProfileChips .saProfileChip .sapMBtnInner {
+  width: 100%;
+  min-width: 0;
+}
+
+.abicsAccessibilityPopover .saProfileChips .saProfileChip {
+  height: auto;
+  padding: 0;
+}
+
+.abicsAccessibilityPopover .saProfileChips .saProfileChip .sapMBtnInner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 44px;
+  height: auto;
+  padding: 6px 12px;
+  border-radius: 22px;
+  border: 1px solid var(--sa-line);
+  background-color: var(--sa-bg);
+  color: var(--sa-text);
+  text-align: start;
+}
+
+.abicsAccessibilityPopover .saProfileChips .saProfileChip .sapMBtnInner:hover {
+  background-color: var(--sa-row-hover);
+}
+
+.abicsAccessibilityPopover .saProfileChips .saProfileChip .sapMBtnIcon {
+  flex: none;
+  width: 20px;
+  min-width: 20px;
+  margin: 0 8px 0 0;
+  padding: 0;
+  font-size: 16px !important;
+  line-height: 20px;
+  color: var(--sa-accent);
+}
+
+.abicsAccessibilityPopover .saProfileChips .saProfileChip .sapMBtnContent {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
+  overflow: visible;
+  white-space: normal;
+  line-height: 1.2;
+  font-size: 13px !important;
+  font-weight: 600;
+  color: var(--sa-text);
+  text-align: start;
+}
+
+.abicsAccessibilityPopover .saProfileChips .saProfileChip .sapMBtnContent > bdi {
+  white-space: normal;
+}
+
+.abicsAccessibilityPopover .saProfileChips .saProfileChip .sapMBtnInner.sapMToggleBtnPressed {
+  background-color: var(--sa-selected-bg) !important;
+  border: 2px solid var(--sa-selected-line) !important;
+  padding: 5px 11px;
+}
+
+.abicsAccessibilityPopover .saProfileChips .saProfileChip .sapMBtnInner.sapMToggleBtnPressed .sapMBtnContent,
+.abicsAccessibilityPopover .saProfileChips .saProfileChip .sapMBtnInner.sapMToggleBtnPressed .sapUiIcon {
+  color: var(--sa-control-text) !important;
+}
