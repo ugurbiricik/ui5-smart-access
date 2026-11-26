@@ -14,3 +14,21 @@ export function toggleActiveFeatureClass(panelId, active) {
         panel.removeStyleClass("activeFeature");
     }
 }
+
+export const ROW_GROUPS = ["saGroupVision", "saGroupReading", "saGroupMotion"];
+
+export function labelRowGroups(sFragmentId) {
+    ROW_GROUPS.forEach((groupId) => {
+        const group = Fragment.byId(sFragmentId, groupId);
+        const title = Fragment.byId(sFragmentId, groupId + "Title");
+        if (!group || !title) return;
+        const apply = () => {
+            const dom = group.getDomRef();
+            if (!dom) return;
+            dom.setAttribute("role", "group");
+            dom.setAttribute("aria-labelledby", title.getId());
+        };
+        group.addEventDelegate({ onAfterRendering: apply });
+        apply();
+    });
+}

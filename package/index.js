@@ -8,6 +8,7 @@ import {
     restoreActiveFeatureClasses
 } from "./js/settingsModel.js";
 import { popoverInternalController } from "./js/popoverController.js";
+import { labelRowGroups } from "./js/popoverHelpers.js";
 import { initFontSizer } from "./js/fontsize.js";
 import { initTextToSpeech, stopReading } from "./js/textToSpeech.js";
 import { initImageHider, areImagesHidden } from "./js/imageHider.js";
@@ -83,6 +84,7 @@ const ensurePopoverLoaded = (controller) => {
         popoverInternalController._sFragmentId = sFragmentId;
 
         restoreActiveFeatureClasses(sFragmentId);
+        labelRowGroups(sFragmentId);
 
         // The Select's dropdown renders outside the popover DOM, so its
         // items can't be reached by our `.abicsAccessibilityPopover` rules.

@@ -44,17 +44,26 @@
                     class="saNav"
                 >
                     <VBox id="saMainPage" class="saPage saMainPage" width="100%" renderType="Bare">
-                        <core:Fragment fragmentName="ui5-smart-access.fragments.FontSizePanel" type="XML" />
-                        <core:Fragment fragmentName="ui5-smart-access.fragments.ReadingGuidePanel" type="XML" />
-                        <core:Fragment fragmentName="ui5-smart-access.fragments.BigCursorPanel" type="XML" />
-                        <core:Fragment fragmentName="ui5-smart-access.fragments.HighlightLinksPanel" type="XML" />
-                        <core:Fragment fragmentName="ui5-smart-access.fragments.TextToSpeechPanel" type="XML" />
-                        <core:Fragment fragmentName="ui5-smart-access.fragments.ColorBlindnessPanel" type="XML" />
-                        <core:Fragment fragmentName="ui5-smart-access.fragments.BlueLightFilterPanel" type="XML" />
-                        <core:Fragment fragmentName="ui5-smart-access.fragments.NightModePanel" type="XML" />
-                        <core:Fragment fragmentName="ui5-smart-access.fragments.ContrastModePanel" type="XML" />
-                        <core:Fragment fragmentName="ui5-smart-access.fragments.StopAnimationsPanel" type="XML" />
-                        <core:Fragment fragmentName="ui5-smart-access.fragments.ToggleImagesPanel" type="XML" />
+                        <VBox id="saGroupVision" class="saGroup" width="100%" renderType="Bare">
+                            <Title id="saGroupVisionTitle" text="{i18n>group.vision}" level="H3" titleStyle="H6" wrapping="true" class="saGroupTitle" />
+                            <core:Fragment fragmentName="ui5-smart-access.fragments.FontSizePanel" type="XML" />
+                            <core:Fragment fragmentName="ui5-smart-access.fragments.ContrastModePanel" type="XML" />
+                            <core:Fragment fragmentName="ui5-smart-access.fragments.NightModePanel" type="XML" />
+                            <core:Fragment fragmentName="ui5-smart-access.fragments.ColorBlindnessPanel" type="XML" />
+                            <core:Fragment fragmentName="ui5-smart-access.fragments.BlueLightFilterPanel" type="XML" />
+                        </VBox>
+                        <VBox id="saGroupReading" class="saGroup" width="100%" renderType="Bare">
+                            <Title id="saGroupReadingTitle" text="{i18n>group.reading}" level="H3" titleStyle="H6" wrapping="true" class="saGroupTitle" />
+                            <core:Fragment fragmentName="ui5-smart-access.fragments.TextToSpeechPanel" type="XML" />
+                            <core:Fragment fragmentName="ui5-smart-access.fragments.ReadingGuidePanel" type="XML" />
+                            <core:Fragment fragmentName="ui5-smart-access.fragments.HighlightLinksPanel" type="XML" />
+                        </VBox>
+                        <VBox id="saGroupMotion" class="saGroup" width="100%" renderType="Bare">
+                            <Title id="saGroupMotionTitle" text="{i18n>group.motion}" level="H3" titleStyle="H6" wrapping="true" class="saGroupTitle" />
+                            <core:Fragment fragmentName="ui5-smart-access.fragments.StopAnimationsPanel" type="XML" />
+                            <core:Fragment fragmentName="ui5-smart-access.fragments.ToggleImagesPanel" type="XML" />
+                            <core:Fragment fragmentName="ui5-smart-access.fragments.BigCursorPanel" type="XML" />
+                        </VBox>
                         <Toolbar class="resetAllToolbar">
                             <core:Fragment fragmentName="ui5-smart-access.fragments.ResetAllPanel" type="XML" />
                         </Toolbar>
