@@ -10,7 +10,7 @@ import {
 import { popoverInternalController } from "./js/popoverController.js";
 import { initFontSizer } from "./js/fontsize.js";
 import { initTextToSpeech, stopReading } from "./js/textToSpeech.js";
-import { initImageHider } from "./js/imageHider.js";
+import { initImageHider, areImagesHidden } from "./js/imageHider.js";
 import { prefetchDarkTheme } from "./js/nightMode.js";
 import { attachHoverHints, hideHint } from "./js/hoverHints.js";
 import { buildColorBlindnessModes } from "./js/cbSwatches.js";
@@ -36,6 +36,7 @@ const ensureInitialized = () => {
     initFontSizer(oSettingsModel);
     initTextToSpeech(oSettingsModel);
     initImageHider();
+    oSettingsModel.setProperty("/toggleImagesActive", areImagesHidden());
     restoreSavedState();
     // Warm up the dark theme stylesheet cache so toggling night mode later is
     // near-instant (avoids a visible delay on panel chevrons etc.).
@@ -82,9 +83,6 @@ const ensurePopoverLoaded = (controller) => {
         popoverInternalController._sFragmentId = sFragmentId;
 
         restoreActiveFeatureClasses(sFragmentId);
-        // Sync the toggle labels/icons with the current state so features
-        // switched on via keyboard before the first open read correctly.
-        popoverInternalController.syncFeatureLabels();
 
         // The Select's dropdown renders outside the popover DOM, so its
         // items can't be reached by our `.abicsAccessibilityPopover` rules.

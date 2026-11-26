@@ -3,14 +3,18 @@
    xmlns:core="sap.ui.core"
    xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
-   <Panel id="ttsPanel" expandable="false" width="auto" class="ttsPanel saNavRow">
+   <Panel id="ttsPanel" expandable="false" width="auto" class="ttsPanel saRow saNavRow">
       <headerToolbar>
-         <OverflowToolbar active="true" press=".onNavToDetail" custom:page="tts">
-            <core:Icon src="sap-icon://sound-loud" size="20px" />
-            <Title text="{i18n>tts.title}" />
+         <Toolbar active="true" press=".onNavToDetail" custom:page="tts" ariaLabelledBy="ttsTitle ttsStatus" class="saRowBar">
+            <core:Icon src="sap-icon://sound-loud" size="20px" class="saRowIcon" decorative="true" />
+            <VBox class="saRowTexts" renderType="Bare">
+               <layoutData><ToolbarLayoutData shrinkable="true" /></layoutData>
+               <Title id="ttsTitle" text="{i18n>tts.title}" class="saRowTitle" wrapping="false" />
+               <Text id="ttsStatus" text="{parts: ['settings>/ttsPlaying', 'settings>/ttsHover'], formatter: '.fmtTtsStatus'}" class="saRowStatus" wrapping="false" />
+            </VBox>
             <ToolbarSpacer />
             <core:Icon src="sap-icon://slim-arrow-right" size="14px" class="saNavChevron" decorative="true" />
-         </OverflowToolbar>
+         </Toolbar>
       </headerToolbar>
    </Panel>
 </core:FragmentDefinition>

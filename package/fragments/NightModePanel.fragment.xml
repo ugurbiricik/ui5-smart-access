@@ -1,10 +1,20 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-   <Panel id="nightModePanel" expandable="false" width="auto" class="nightModePanel">
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <Panel id="nightModePanel" expandable="false" width="auto" class="nightModePanel saRow saToggleRow">
       <headerToolbar>
-         <OverflowToolbar active="true" press=".onNightModeToolbarPress">
-            <core:Icon src="sap-icon://dark-mode" size="20px" />
-            <Title id="nightModeTitle" text="{i18n>nightMode.activate}" />
-         </OverflowToolbar>
+         <Toolbar active="true" press=".onFeatureRowPress" custom:feature="nightMode" ariaLabelledBy="nightModeTitle nightModeStatus" class="saRowBar">
+            <core:Icon src="sap-icon://dark-mode" size="20px" class="saRowIcon" decorative="true" />
+            <VBox class="saRowTexts" renderType="Bare">
+               <layoutData><ToolbarLayoutData shrinkable="true" /></layoutData>
+               <Title id="nightModeTitle" text="{i18n>nightMode.title}" class="saRowTitle" wrapping="false" />
+               <Text id="nightModeStatus" text="{path: 'settings>/nightModeActive', formatter: '.fmtToggleStatus'}" class="saRowStatus" wrapping="false" />
+            </VBox>
+            <ToolbarSpacer />
+            <Switch id="nightModeSwitch" state="{path: 'settings>/nightModeActive', mode: 'OneWay'}" change=".onFeatureSwitchChange" custom:feature="nightMode" ariaLabelledBy="nightModeTitle" class="saRowSwitch" />
+         </Toolbar>
       </headerToolbar>
    </Panel>
 </core:FragmentDefinition>

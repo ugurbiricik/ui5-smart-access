@@ -31,7 +31,7 @@ function writeHiddenPref(value) {
 // blank, unusable button.
 function shouldSkip(el) {
     if (!el.closest(".abicsAccessibilityPopover")) return false; // page element → hide
-    return !!el.closest(".sapMBtn");                             // popover: skip button icons only
+    return !!el.closest(".sapMBtn, .saNavChevron");              // popover: skip button icons and row chevrons
 }
 
 function setVisibilityAll(value) {

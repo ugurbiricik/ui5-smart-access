@@ -14,22 +14,3 @@ export function toggleActiveFeatureClass(panelId, active) {
         panel.removeStyleClass("activeFeature");
     }
 }
-
-// Sets the text of a control inside the popover to an i18n-resolved value.
-export function updateTitleText(controlId, i18nKey) {
-    const control = Fragment.byId(this._sFragmentId, controlId);
-    if (!control || !this._oPopover) return;
-    const i18n = this._oPopover.getModel("i18n");
-    const bundle = i18n && i18n.getResourceBundle();
-    if (bundle) {
-        control.setText(bundle.getText(i18nKey));
-    }
-}
-
-// Swaps the icon of a control inside the popover (e.g. play/pause on a toggle).
-export function updateIconSrc(controlId, src) {
-    const control = Fragment.byId(this._sFragmentId, controlId);
-    if (control && control.setSrc) {
-        control.setSrc(src);
-    }
-}

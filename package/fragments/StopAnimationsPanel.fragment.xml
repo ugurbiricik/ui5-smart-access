@@ -1,10 +1,20 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-   <Panel id="stopAnimationsPanel" expandable="false" width="auto" class="stopAnimationsPanel">
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <Panel id="stopAnimationsPanel" expandable="false" width="auto" class="stopAnimationsPanel saRow saToggleRow">
       <headerToolbar>
-         <OverflowToolbar active="true" press=".onStopAnimationsToolbarPress">
-            <core:Icon id="stopAnimationsIcon" src="sap-icon://media-pause" size="20px" />
-            <Title id="stopAnimationsTitle" text="{i18n>stopAnimations.title}" />
-         </OverflowToolbar>
+         <Toolbar active="true" press=".onFeatureRowPress" custom:feature="stopAnimations" ariaLabelledBy="stopAnimationsTitle stopAnimationsStatus" class="saRowBar">
+            <core:Icon src="sap-icon://media-pause" size="20px" class="saRowIcon" decorative="true" />
+            <VBox class="saRowTexts" renderType="Bare">
+               <layoutData><ToolbarLayoutData shrinkable="true" /></layoutData>
+               <Title id="stopAnimationsTitle" text="{i18n>stopAnimations.title}" class="saRowTitle" wrapping="false" />
+               <Text id="stopAnimationsStatus" text="{path: 'settings>/stopAnimationsActive', formatter: '.fmtToggleStatus'}" class="saRowStatus" wrapping="false" />
+            </VBox>
+            <ToolbarSpacer />
+            <Switch id="stopAnimationsSwitch" state="{path: 'settings>/stopAnimationsActive', mode: 'OneWay'}" change=".onFeatureSwitchChange" custom:feature="stopAnimations" ariaLabelledBy="stopAnimationsTitle" class="saRowSwitch" />
+         </Toolbar>
       </headerToolbar>
    </Panel>
 </core:FragmentDefinition>

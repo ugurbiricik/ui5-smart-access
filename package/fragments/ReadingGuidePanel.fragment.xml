@@ -3,14 +3,18 @@
    xmlns:core="sap.ui.core"
    xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
-   <Panel id="readingGuidePanel" expandable="false" width="auto" class="readingGuidePanel saNavRow">
+   <Panel id="readingGuidePanel" expandable="false" width="auto" class="readingGuidePanel saRow saNavRow">
       <headerToolbar>
-         <OverflowToolbar active="true" press=".onNavToDetail" custom:page="readingGuide">
-            <core:Icon src="sap-icon://horizontal-grip" size="20px" />
-            <Title text="{i18n>readingGuide.title}" />
+         <Toolbar active="true" press=".onNavToDetail" custom:page="readingGuide" ariaLabelledBy="readingGuideTitle readingGuideStatus" class="saRowBar">
+            <core:Icon src="sap-icon://horizontal-grip" size="20px" class="saRowIcon" decorative="true" />
+            <VBox class="saRowTexts" renderType="Bare">
+               <layoutData><ToolbarLayoutData shrinkable="true" /></layoutData>
+               <Title id="readingGuideTitle" text="{i18n>readingGuide.title}" class="saRowTitle" wrapping="false" />
+               <Text id="readingGuideStatus" text="{path: 'settings>/readingGuideMode', formatter: '.fmtReadingGuideStatus'}" class="saRowStatus" wrapping="false" />
+            </VBox>
             <ToolbarSpacer />
             <core:Icon src="sap-icon://slim-arrow-right" size="14px" class="saNavChevron" decorative="true" />
-         </OverflowToolbar>
+         </Toolbar>
       </headerToolbar>
    </Panel>
 </core:FragmentDefinition>

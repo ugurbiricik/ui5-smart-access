@@ -3,14 +3,18 @@
    xmlns:core="sap.ui.core"
    xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
-   <Panel id="colorBlindnessPanel" expandable="false" width="auto" class="colorBlindnessPanel saNavRow">
+   <Panel id="colorBlindnessPanel" expandable="false" width="auto" class="colorBlindnessPanel saRow saNavRow">
       <headerToolbar>
-         <OverflowToolbar active="true" press=".onNavToDetail" custom:page="colorBlindness">
-            <core:Icon src="sap-icon://palette" size="20px" />
-            <Title text="{i18n>colorBlindness.title}" />
+         <Toolbar active="true" press=".onNavToDetail" custom:page="colorBlindness" ariaLabelledBy="colorBlindnessTitle colorBlindnessStatus" class="saRowBar">
+            <core:Icon src="sap-icon://palette" size="20px" class="saRowIcon" decorative="true" />
+            <VBox class="saRowTexts" renderType="Bare">
+               <layoutData><ToolbarLayoutData shrinkable="true" /></layoutData>
+               <Title id="colorBlindnessTitle" text="{i18n>colorBlindness.title}" class="saRowTitle" wrapping="false" />
+               <Text id="colorBlindnessStatus" text="{parts: ['settings>/colorBlindnessType', 'settings>/colorBlindnessIntensity'], formatter: '.fmtColorBlindnessStatus'}" class="saRowStatus" wrapping="false" />
+            </VBox>
             <ToolbarSpacer />
             <core:Icon src="sap-icon://slim-arrow-right" size="14px" class="saNavChevron" decorative="true" />
-         </OverflowToolbar>
+         </Toolbar>
       </headerToolbar>
    </Panel>
 </core:FragmentDefinition>

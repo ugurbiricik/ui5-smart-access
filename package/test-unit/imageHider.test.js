@@ -62,12 +62,14 @@ describe("imageHider — toggleImages / persistence", () => {
             <div class="abicsAccessibilityPopover">
                 <span id="deco" class="sapUiIcon"></span>
                 <div class="sapMBtn"><span id="btnIcon" class="sapMBtnIcon"></span></div>
+                <span id="chevron" class="sapUiIcon saNavChevron"></span>
             </div>
         `;
         toggleImages();
         expect(document.getElementById("page").style.visibility).toBe("hidden");
         expect(document.getElementById("deco").style.visibility).toBe("hidden");
         expect(document.getElementById("btnIcon").style.visibility).toBe("");
+        expect(document.getElementById("chevron").style.visibility).toBe("");
     });
 });
 

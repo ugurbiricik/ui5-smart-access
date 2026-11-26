@@ -1,10 +1,20 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-   <Panel id="toggleImagesPanel" expandable="false" width="auto" class="toggleImagesPanel">
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <Panel id="toggleImagesPanel" expandable="false" width="auto" class="toggleImagesPanel saRow saToggleRow">
       <headerToolbar>
-         <OverflowToolbar active="true" press=".onToggleImagesToolbarPress">
-            <core:Icon src="sap-icon://background" size="20px" />
-            <Title id="toggleImagesTitle" text="{i18n>toggleImages.hide}" />
-         </OverflowToolbar>
+         <Toolbar active="true" press=".onFeatureRowPress" custom:feature="toggleImages" ariaLabelledBy="toggleImagesTitle toggleImagesStatus" class="saRowBar">
+            <core:Icon src="sap-icon://background" size="20px" class="saRowIcon" decorative="true" />
+            <VBox class="saRowTexts" renderType="Bare">
+               <layoutData><ToolbarLayoutData shrinkable="true" /></layoutData>
+               <Title id="toggleImagesTitle" text="{i18n>toggleImages.title}" class="saRowTitle" wrapping="false" />
+               <Text id="toggleImagesStatus" text="{path: 'settings>/toggleImagesActive', formatter: '.fmtToggleStatus'}" class="saRowStatus" wrapping="false" />
+            </VBox>
+            <ToolbarSpacer />
+            <Switch id="toggleImagesSwitch" state="{path: 'settings>/toggleImagesActive', mode: 'OneWay'}" change=".onFeatureSwitchChange" custom:feature="toggleImages" ariaLabelledBy="toggleImagesTitle" class="saRowSwitch" />
+         </Toolbar>
       </headerToolbar>
    </Panel>
 </core:FragmentDefinition>

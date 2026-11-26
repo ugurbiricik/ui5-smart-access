@@ -206,4 +206,6 @@ export const restoreActiveFeatureClasses = (sFragmentId) => {
     if (oSettingsModel.getProperty("/bigCursorColor") !== "none") markActive("bigCursorPanel");
     if (oSettingsModel.getProperty("/highlightLinksActive")) markActive("highlightLinksPanel");
     if (oSettingsModel.getProperty("/stopAnimationsActive")) markActive("stopAnimationsPanel");
+    if (oSettingsModel.getProperty("/toggleImagesActive")) markActive("toggleImagesPanel");
+    if (oSettingsModel.getProperty("/colorBlindnessType") !== "none") markActive("colorBlindnessPanel");
 };

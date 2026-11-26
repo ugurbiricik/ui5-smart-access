@@ -1,10 +1,16 @@
 import { oSettingsModel, saveCurrentSettings, clearAllPrefs } from "./settingsModel.js";
 import Fragment from "sap/ui/core/Fragment";
+import { toggleActiveFeatureClass } from "./popoverHelpers.js";
 import {
-    toggleActiveFeatureClass,
-    updateTitleText,
-    updateIconSrc
-} from "./popoverHelpers.js";
+    fontStatus,
+    readingGuideStatus,
+    bigCursorStatus,
+    ttsStatus,
+    colorBlindnessStatus,
+    blueLightFilterStatus,
+    contrastStatus,
+    toggleStatus
+} from "./rowStatus.js";
 import {
     onIncreaseFontSize as increaseFontSize,
     onDecreaseFontSize as decreaseFontSize,
@@ -26,8 +32,8 @@ import {
 } from "./textToSpeech.js";
 import { applyColorBlindness, resetColorBlindness } from "./colorBlindness.js";
 import { enableBlueLightFilter, disableBlueLightFilter } from "./blueLightFilter.js";
-import { toggleNightMode, disableNightMode } from "./nightMode.js";
-import { toggleImages } from "./imageHider.js";
+import { toggleNightMode, disableNightMode, isNightModeActive } from "./nightMode.js";
+import { toggleImages, areImagesHidden } from "./imageHider.js";
 import {
     toggleContrastMode,
     applyCustomContrast,
@@ -105,7 +111,7 @@ export const DETAIL_PAGES = {
     tts: { pageId: "saPageTts", panelId: "ttsPanel", titleKey: "tts.title" },
     colorBlindness: { pageId: "saPageColorBlindness", panelId: "colorBlindnessPanel", titleKey: "colorBlindness.title" },
     blueLightFilter: { pageId: "saPageBlueLightFilter", panelId: "blueLightFilterPanel", titleKey: "blueFilter.title" },
-    contrast: { pageId: "saPageContrast", panelId: "contrastModePanel", titleKey: "contrastMode.activate" }
+    contrast: { pageId: "saPageContrast", panelId: "contrastModePanel", titleKey: "contrastMode.title" }
 };
 
 const FOCUSABLE = "[tabindex='0'], button:not([disabled]), input:not([disabled]), select:not([disabled])";
@@ -191,8 +197,6 @@ export const popoverInternalController = {
     // ---- Blue light filter ----
     onBlueLightFilterSwitch(oEvent) {
         const on = oEvent.getParameter("state");
-        updateTitleText.call(this, "blueLightFilterTitle",
-            on ? "blueFilter.deactivate" : "blueFilter.activate");
         if (on) {
             enableBlueLightFilter(oSettingsModel.getProperty("/blueLightFilterLevel"));
         } else {
@@ -236,21 +240,49 @@ export const popoverInternalController = {
         this._stepBlueLightFilter(10);
     },
 
+    _toggleFeatures: {
+        nightMode: { path: "/nightModeActive", set: "setNightMode" },
+        highlightLinks: { path: "/highlightLinksActive", set: "setHighlightLinks" },
+        stopAnimations: { path: "/stopAnimationsActive", set: "setStopAnimations" },
+        toggleImages: { path: "/toggleImagesActive", set: "setImagesHidden" }
+    },
+    setFeature(key, on) {
+        const f = this._toggleFeatures[key];
+        if (!f) return;
+        this[f.set](!!on);
+    },
+    toggleFeature(key) {
+        const f = this._toggleFeatures[key];
+        if (!f) return;
+        this.setFeature(key, !oSettingsModel.getProperty(f.path));
+    },
+    onFeatureRowPress(oEvent) {
+        const src = oEvent.getParameter && oEvent.getParameter("srcControl");
+        if (src && typeof src.isA === "function" && src.isA("sap.m.Switch")) return;
+        this.toggleFeature(oEvent.getSource().data("feature"));
+    },
+    onFeatureSwitchChange(oEvent) {
+        this.setFeature(oEvent.getSource().data("feature"), oEvent.getParameter("state"));
+    },
+
     // ---- Night mode ----
-    onNightModeToolbarPress() {
+    setNightMode(on) {
+        if (on === isNightModeActive()) {
+            oSettingsModel.setProperty("/nightModeActive", on);
+            return;
+        }
         // Night mode and the native high-contrast themes both own the UI5 theme,
         // so they are mutually exclusive: turning night mode on clears any active
         // HC theme first (and its contrast row state).
-        if (!oSettingsModel.getProperty("/nightModeActive")) {
-            this._clearHighContrastTheme();
-        }
+        if (on) this._clearHighContrastTheme();
         const active = toggleNightMode();
         oSettingsModel.setProperty("/nightModeActive", active);
-        updateTitleText.call(this, "nightModeTitle",
-            active ? "nightMode.deactivate" : "nightMode.activate");
         toggleActiveFeatureClass.call(this, "nightModePanel", active);
         saveCurrentSettings();
         announce(getText(active ? "announce.nightModeOn" : "announce.nightModeOff"));
+    },
+    onNightModeToolbarPress() {
+        this.toggleFeature("nightMode");
     },
 
     // Turns off a native HC theme (if any) and resets the contrast row's state.
@@ -264,13 +296,18 @@ export const popoverInternalController = {
     },
 
     // ---- Toggle images ----
-    onToggleImagesToolbarPress() {
+    setImagesHidden(on) {
+        if (on === areImagesHidden()) {
+            oSettingsModel.setProperty("/toggleImagesActive", on);
+            return;
+        }
         const active = toggleImages();
         oSettingsModel.setProperty("/toggleImagesActive", active);
-        updateTitleText.call(this, "toggleImagesTitle",
-            active ? "toggleImages.show" : "toggleImages.hide");
         toggleActiveFeatureClass.call(this, "toggleImagesPanel", active);
         announce(getText(active ? "announce.imagesHidden" : "announce.imagesShown"));
+    },
+    onToggleImagesToolbarPress() {
+        this.toggleFeature("toggleImages");
     },
 
     // ---- Contrast mode ----
@@ -295,7 +332,6 @@ export const popoverInternalController = {
         if (oSettingsModel.getProperty("/nightModeActive")) {
             disableNightMode();
             oSettingsModel.setProperty("/nightModeActive", false);
-            updateTitleText.call(this, "nightModeTitle", "nightMode.activate");
             toggleActiveFeatureClass.call(this, "nightModePanel", false);
         }
         // Drop any custom-colour CSS contrast so the two don't stack.
@@ -567,28 +603,27 @@ export const popoverInternalController = {
     },
 
     // ---- Highlight links + focus ----
-    onHighlightLinksToolbarPress() {
-        const active = !oSettingsModel.getProperty("/highlightLinksActive");
+    setHighlightLinks(active) {
         oSettingsModel.setProperty("/highlightLinksActive", active);
         if (active) enableHighlightLinks(); else disableHighlightLinks();
         toggleActiveFeatureClass.call(this, "highlightLinksPanel", active);
         saveCurrentSettings();
         announce(getText(active ? "announce.highlightLinksOn" : "announce.highlightLinksOff"));
     },
+    onHighlightLinksToolbarPress() {
+        this.toggleFeature("highlightLinks");
+    },
 
     // ---- Stop animations (WCAG 2.2.2) ----
-    onStopAnimationsToolbarPress() {
-        const active = !oSettingsModel.getProperty("/stopAnimationsActive");
+    setStopAnimations(active) {
         oSettingsModel.setProperty("/stopAnimationsActive", active);
         if (active) enableStopAnimations(); else disableStopAnimations();
-        // Flip the label + icon: OFF → "stoppen"/pause, ON → "starten"/play.
-        updateTitleText.call(this, "stopAnimationsTitle",
-            active ? "stopAnimations.start" : "stopAnimations.title");
-        updateIconSrc.call(this, "stopAnimationsIcon",
-            active ? "sap-icon://media-play" : "sap-icon://media-pause");
         toggleActiveFeatureClass.call(this, "stopAnimationsPanel", active);
         saveCurrentSettings();
         announce(getText(active ? "announce.animationsStopped" : "announce.animationsStarted"));
+    },
+    onStopAnimationsToolbarPress() {
+        this.toggleFeature("stopAnimations");
     },
 
     // ---- Color blindness (mode cards + intensity) ----
@@ -674,23 +709,14 @@ export const popoverInternalController = {
         this._afterTypoChange();
     },
 
-    // Re-syncs the toggle rows' labels/icons with the current settings. Called
-    // once when the popover first opens so features switched on via keyboard
-    // shortcut (while the panel was closed) show the correct state.
-    syncFeatureLabels() {
-        updateTitleText.call(this, "nightModeTitle",
-            oSettingsModel.getProperty("/nightModeActive") ? "nightMode.deactivate" : "nightMode.activate");
-        updateTitleText.call(this, "blueLightFilterTitle",
-            oSettingsModel.getProperty("/blueLightFilterActive") ? "blueFilter.deactivate" : "blueFilter.activate");
-        updateTitleText.call(this, "toggleImagesTitle",
-            oSettingsModel.getProperty("/toggleImagesActive") ? "toggleImages.show" : "toggleImages.hide");
-        // Contrast title stays fixed (config-flyout row, not an on/off toggle).
-        const stopped = oSettingsModel.getProperty("/stopAnimationsActive");
-        updateTitleText.call(this, "stopAnimationsTitle",
-            stopped ? "stopAnimations.start" : "stopAnimations.title");
-        updateIconSrc.call(this, "stopAnimationsIcon",
-            stopped ? "sap-icon://media-play" : "sap-icon://media-pause");
-    },
+    fmtFontStatus: fontStatus,
+    fmtReadingGuideStatus: readingGuideStatus,
+    fmtBigCursorStatus: bigCursorStatus,
+    fmtTtsStatus: ttsStatus,
+    fmtColorBlindnessStatus: colorBlindnessStatus,
+    fmtBlueLightFilterStatus: blueLightFilterStatus,
+    fmtContrastStatus: contrastStatus,
+    fmtToggleStatus: toggleStatus,
 
     // ---- Reset all ----
     onResetAllToolbarPress() {
@@ -721,11 +747,6 @@ export const popoverInternalController = {
         oSettingsModel.setProperty("/textSpacingExpanded", false);
         disableBigCursor();
 
-        updateTitleText.call(this, "nightModeTitle", "nightMode.activate");
-        updateTitleText.call(this, "blueLightFilterTitle", "blueFilter.activate");
-        updateTitleText.call(this, "toggleImagesTitle", "toggleImages.hide");
-        updateTitleText.call(this, "stopAnimationsTitle", "stopAnimations.title");
-        updateIconSrc.call(this, "stopAnimationsIcon", "sap-icon://media-pause");
         toggleActiveFeatureClass.call(this, "nightModePanel", false);
         toggleActiveFeatureClass.call(this, "toggleImagesPanel", false);
         toggleActiveFeatureClass.call(this, "contrastModePanel", false);

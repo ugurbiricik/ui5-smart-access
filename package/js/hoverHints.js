@@ -14,11 +14,11 @@ const HINTS = [
     { panelId: "highlightLinksPanel", titleKey: "highlightLinks.title", descKey: "hint.highlightLinks", shortcut: "Alt + Shift + L" },
     { panelId: "ttsPanel", titleKey: "tts.title", descKey: "hint.tts", shortcut: "Alt + Shift + V" },
     { panelId: "colorBlindnessPanel", titleKey: "colorBlindness.title", descKey: "hint.colorBlindness", shortcut: "Alt + Shift + S" },
-    { panelId: "blueLightFilterPanel", titleKey: "blueFilter.activate", descKey: "hint.blueLightFilter", shortcut: "Alt + Shift + B" },
-    { panelId: "nightModePanel", titleKey: "nightMode.activate", descKey: "hint.nightMode", shortcut: "Alt + Shift + N" },
-    { panelId: "contrastModePanel", titleKey: "contrastMode.activate", descKey: "hint.contrastMode", shortcut: "Alt + Shift + K" },
+    { panelId: "blueLightFilterPanel", titleKey: "blueFilter.title", descKey: "hint.blueLightFilter", shortcut: "Alt + Shift + B" },
+    { panelId: "nightModePanel", titleKey: "nightMode.title", descKey: "hint.nightMode", shortcut: "Alt + Shift + N" },
+    { panelId: "contrastModePanel", titleKey: "contrastMode.title", descKey: "hint.contrastMode", shortcut: "Alt + Shift + K" },
     { panelId: "stopAnimationsPanel", titleKey: "stopAnimations.title", descKey: "hint.stopAnimations", shortcut: "Alt + Shift + M" },
-    { panelId: "toggleImagesPanel", titleKey: "toggleImages.hide", descKey: "hint.toggleImages", shortcut: "Alt + Shift + I" }
+    { panelId: "toggleImagesPanel", titleKey: "toggleImages.title", descKey: "hint.toggleImages", shortcut: "Alt + Shift + I" }
 ];
 
 const attachedFragments = new Set();
