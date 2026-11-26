@@ -1,12 +1,62 @@
+:root {
+  --sa-bg: var(--sapList_Background, #ffffff);
+  --sa-text: var(--sapList_TextColor, #131e29);
+  --sa-text-2: var(--sapContent_LabelColor, #556b82);
+  --sa-accent: var(--sapContent_Selected_TextColor, #0064d9);
+  --sa-line: var(--sapList_BorderColor, #e5e5e5);
+  --sa-header-bg: var(--sapPageHeader_Background, #ffffff);
+  --sa-header-text: var(--sapPageHeader_TextColor, #131e29);
+  --sa-header-line: var(--sapPageHeader_BorderColor, #d9d9d9);
+  --sa-row-hover: var(--sapList_Hover_Background, #eaecee);
+  --sa-row-active: var(--sapList_SelectionBackgroundColor, #ebf8ff);
+  --sa-row-active-line: var(--sapList_SelectionBorderColor, #0064d9);
+  --sa-control-bg: var(--sapButton_Neutral_Background, #e8f3ff);
+  --sa-control-hover: var(--sapButton_Neutral_Hover_Background, #d3e8ff);
+  --sa-control-text: var(--sapButton_Neutral_TextColor, #0064d9);
+  --sa-control-line: var(--sapButton_Lite_BorderColor, transparent);
+  --sa-selected-bg: var(--sapButton_Selected_Background, #edf5ff);
+  --sa-selected-line: var(--sapButton_Selected_BorderColor, #0064d9);
+  --sa-emph-bg: var(--sapButton_Emphasized_Background, #0070f2);
+  --sa-emph-hover: var(--sapButton_Emphasized_Hover_Background, #0064d9);
+  --sa-emph-text: var(--sapButton_Emphasized_TextColor, #ffffff);
+  --sa-emph-line: var(--sapButton_Emphasized_BorderColor, #0070f2);
+  --sa-danger-bg: var(--sapButton_Reject_Background, #ffd6e9);
+  --sa-danger-hover: var(--sapButton_Reject_Hover_Background, #ffbcdc);
+  --sa-danger-text: var(--sapButton_Reject_TextColor, #aa0808);
+  --sa-field-bg: var(--sapField_Background, #ffffff);
+  --sa-field-line: var(--sapField_BorderColor, #556b81);
+  --sa-track: var(--sapSlider_Background, #d5dadd);
+  --sa-track-line: var(--sapSlider_BorderColor, #d5dadd);
+  --sa-track-fill: var(--sapSlider_Selected_Background, #0064d9);
+  --sa-switch-on: var(--sapButton_Track_Selected_Background, #0064d9);
+  --sa-switch-off: var(--sapButton_Track_Background, #788fa6);
+  --sa-switch-text: var(--sapButton_Track_Selected_TextColor, #ffffff);
+  --sa-switch-line: var(--sapButton_Track_BorderColor, #788fa6);
+  --sa-switch-handle: var(--sapButton_Handle_Background, #ffffff);
+  --sa-scroll: var(--sapScrollBar_FaceColor, #7b91a8);
+  --sa-scroll-hover: var(--sapScrollBar_Hover_FaceColor, #5b728b);
+  --sa-focus: var(--sapContent_FocusColor, #0032a5);
+  --sa-shadow-s: var(--sapContent_Shadow0, 0 0 0.125rem 0 rgba(34, 53, 72, 0.2), 0 0.125rem 0.25rem 0 rgba(34, 53, 72, 0.2));
+  --sa-shadow: var(--sapContent_Shadow2, 0 0 0 0.0625rem rgba(34, 53, 72, 0.48), 0 0.625rem 1.875rem 0 rgba(34, 53, 72, 0.25));
+  --sa-tts-read: #7cc00a;
+  --sa-tts-hover: #ff9500;
+  --sa-bluefilter-cool: #60a5fa;
+  --sa-bluefilter-warm: #fbbf24;
+  --sa-hcw-bg: #ffffff;
+  --sa-hcw-text: #000000;
+  --sa-hcb-bg: #000000;
+  --sa-hcb-text: #ffffff;
+}
+
 /* ── Read-aloud highlight (GLOBAL — applied to host-page blocks while the
    full-page reader speaks them, NOT scoped to the popover). Outline (no layout
    shift) + soft green box, matching the reference. ── */
 .sa-tts-reading {
-  outline: 3px solid #7cc00a !important;
+  outline: 3px solid var(--sa-tts-read) !important;
   outline-offset: 3px !important;
   border-radius: 4px !important;
-  background-color: rgba(124, 192, 10, 0.12) !important;
-  box-shadow: 0 0 0 3px rgba(124, 192, 10, 0.18) !important;
+  background-color: color-mix(in srgb, var(--sa-tts-read) 12%, transparent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sa-tts-read) 18%, transparent) !important;
   transition: background-color 0.15s ease, box-shadow 0.15s ease !important;
   scroll-margin: 120px !important;
 }
@@ -14,11 +64,11 @@
 /* Hover read-aloud highlight — a DISTINCT colour (amber) from the green
    full-page reader, so the two modes are easy to tell apart. */
 .sa-tts-hover-reading {
-  outline: 3px solid #ff9500 !important;
+  outline: 3px solid var(--sa-tts-hover) !important;
   outline-offset: 3px !important;
   border-radius: 4px !important;
-  background-color: rgba(255, 149, 0, 0.12) !important;
-  box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.18) !important;
+  background-color: color-mix(in srgb, var(--sa-tts-hover) 12%, transparent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sa-tts-hover) 18%, transparent) !important;
   transition: background-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
@@ -43,7 +93,7 @@
 }
 
 .abicsAccessibilityPopover .sapMPopoverWrapper {
-  border-radius: 14px !important;
+  border-radius: 14px;
 }
 
 /* Keep a small gap from the viewport edge. UI5 anchors the main popover flush
@@ -52,17 +102,17 @@
    a transform (safe: the open popover carries no transform of its own). The
    flyout is excluded (it keeps its own offset). */
 .abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) {
-  transform: translateX(-12px) !important;
+  transform: translateX(-12px);
 }
 
 .abicsAccessibilityPopover .sapMPopoverScroll,
 .abicsAccessibilityPopover .sapMPopoverCont {
-  background-color: #ffffff !important;
+  background-color: var(--sa-bg);
   overflow-x: hidden !important;
   /* Firefox (no ::-webkit-scrollbar support): thin bar + subtle blue thumb.
      UI5's Horizon theme sets `scrollbar-color` here, so we override it. */
-  scrollbar-width: thin !important;
-  scrollbar-color: rgba(30, 58, 138, 0.35) transparent !important;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sa-scroll) transparent;
 }
 
 /* Chromium & Safari support the legacy pseudo-elements, which give a slimmer
@@ -89,33 +139,33 @@
 }
 .abicsAccessibilityPopover .sapMPopoverScroll::-webkit-scrollbar-thumb,
 .abicsAccessibilityPopover .sapMPopoverCont::-webkit-scrollbar-thumb {
-  background-color: rgba(30, 58, 138, 0.28) !important;
+  background-color: var(--sa-scroll) !important;
   border-radius: 8px !important;
 }
 .abicsAccessibilityPopover .sapMPopoverScroll::-webkit-scrollbar-thumb:hover,
 .abicsAccessibilityPopover .sapMPopoverCont::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(30, 58, 138, 0.45) !important;
+  background-color: var(--sa-scroll-hover) !important;
 }
 
-/* ── Header gradient ── */
 .abicsAccessibilityPopover .sapMPopoverHeader {
-  background: linear-gradient(135deg, #1e3a8a, #3b82f6) !important;
+  background: var(--sa-header-bg) !important;
+  border-bottom: 1px solid var(--sa-header-line);
 }
 
 .abicsAccessibilityPopover .sapMPopoverHeader * {
   background: transparent !important;
-  color: #ffffff !important;
+  color: var(--sa-header-text) !important;
 }
 
 /* ── Panel cards ── */
 /* Main popover: flat list rows (no separators, no borders; cards live only
    inside the flyout). Hover/selected are conveyed purely by background color. */
 .abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel {
-  background-color: transparent !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  margin: 0 !important;
-  border: 0 !important;
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+  border: 0;
   overflow: hidden;
 }
 
@@ -123,13 +173,13 @@
    background shows through the whole row. */
 .abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMTB.sapMPanelHeaderTB,
 .abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelContent {
-  background-color: transparent !important;
+  background-color: transparent;
 }
 
 /* Hover: subtle SOLID tint on the HEADER ROW only — never on the expanded
    inner content area (opaque so tones never blend/stack inconsistently). */
 .abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMTB.sapMPanelHeaderTB:hover {
-  background-color: #f2f6fd !important;
+  background-color: var(--sa-row-hover) !important;
 }
 
 /* Kill the rounded corners AND every inner border the theme puts on the
@@ -139,15 +189,15 @@
 .abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelHdr,
 .abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMTB.sapMPanelHeaderTB,
 .abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelContent {
-  border: 0 !important;
-  border-radius: 0 !important;
+  border: 0;
+  border-radius: 0;
 }
 
 .abicsAccessibilityPopover .sapMPanelContent {
-  background-color: #ffffff !important;
+  background-color: var(--sa-bg);
   padding: 10px 16px;
-  border-bottom: 0 !important;
-  border: 0 !important;
+  border-bottom: 0;
+  border: 0;
 }
 
 .abicsAccessibilityPopover .sapMPanelContent:not(.sapMPanelBGTransparent) {
@@ -162,8 +212,8 @@
 .abicsAccessibilityPopover .colorBlindnessPanel > .sapMPanelContent,
 .abicsAccessibilityPopover .bigCursorPanel > .sapMPanelContent,
 .abicsAccessibilityPopover .contrastModePanel > .sapMPanelContent {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* The Font panel's content shrink-wraps to the stepper (~154px), which left the
@@ -172,8 +222,8 @@
    (the value box + stepper stay centred via their own alignment). */
 .abicsAccessibilityPopover .fontSizePanel > .sapMPanelContent,
 .abicsAccessibilityPopover .fontSizePanel .fontQuick {
-  width: 100% !important;
-  box-sizing: border-box !important;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Big-cursor colour swatches + reset (swatches spread across; reset at right) */
@@ -201,7 +251,8 @@
    so it beats sap.m.Image's focus/press ring whatever form it takes).
    (Selected is a writeToDom CustomData attribute — XML `class` can't be bound.) */
 .abicsAccessibilityPopover .bigCursorSwatch[data-sacursorsel="yes"] {
-  background: #cfe0fb;
+  background: var(--sa-selected-bg);
+  box-shadow: inset 0 0 0 1px var(--sa-selected-line);
 }
 
 .abicsAccessibilityPopover .bigCursorSwatch,
@@ -224,7 +275,7 @@
 .abicsAccessibilityPopover .highlightLinksPanel,
 .abicsAccessibilityPopover .stopAnimationsPanel,
 .abicsAccessibilityPopover .ttsPanel {
-  padding: 0 !important;
+  padding: 0;
 }
 
 .abicsAccessibilityPopover .nightModePanel > .sapMPanelContent,
@@ -232,24 +283,28 @@
 .abicsAccessibilityPopover .highlightLinksPanel > .sapMPanelContent,
 .abicsAccessibilityPopover .stopAnimationsPanel > .sapMPanelContent,
 .abicsAccessibilityPopover .ttsPanel > .sapMPanelContent {
-  display: none !important;
+  display: none;
 }
 
 /* ── Panel header toolbar ── */
 .abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB {
-  background-color: #ffffff !important;
-  color: #1e3a8a;
-  border: 0 !important;
+  background-color: var(--sa-bg);
+  color: var(--sa-text);
+  border: 0;
   border-radius: 0;
-  box-shadow: none !important;
-  height: 2.75rem !important;
-  padding: 0 1rem !important;
-  min-height: unset !important;
+  box-shadow: none;
+  height: 2.75rem;
+  padding: 0 1rem;
+  min-height: unset;
 }
 
-.abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB .sapMTitle,
+.abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB .sapMTitle {
+  color: var(--sa-text);
+  background-color: transparent;
+}
+
 .abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB .sapUiIcon {
-  color: #1e3a8a;
+  color: var(--sa-accent);
   background-color: transparent;
 }
 
@@ -263,49 +318,50 @@
   border: 0;
   box-shadow: none;
   background-color: transparent;
-  color: #1e3a8a;
+  color: var(--sa-text);
 }
 
 /* ── Active feature indicator (no border/outline) ──
    The active tone lives ONLY on the header row; the expanded inner content
    stays clean white on every panel. */
 .abicsAccessibilityPopover .sapMPanel.activeFeature {
-  border-left: 0 !important;
-  background-color: #ffffff !important;
+  border-left: 0;
+  background-color: var(--sa-bg);
 }
 
 /* Exact same SOLID header tone on EVERY active panel (toggle or expandable);
    opaque so it never blends with the layer behind it — matches the Großer
    Mauszeiger row. */
 .abicsAccessibilityPopover .sapMPanel.activeFeature .sapMTB.sapMPanelHeaderTB {
-  background-color: #d5e3fa !important;
+  background-color: var(--sa-row-active);
+  box-shadow: inset 3px 0 0 var(--sa-row-active-line);
 }
 
 /* Inner content: plain white on every active panel (no blue tint). */
 .abicsAccessibilityPopover .sapMPanel.activeFeature .sapMPanelContent {
-  background-color: #ffffff !important;
+  background-color: var(--sa-bg);
 }
 
 /* ── Hide the expand chevron (sap.m.Panel renders it as a Button whose id
       ends with "-expandButton") so every panel's icon + title align ── */
 .abicsAccessibilityPopover [id$="-expandButton"] {
-  display: none !important;
+  display: none;
 }
 
 /* Remove the inline-start space the hidden expand button reserved on
    expandable panels, so their icon + title line up with the other rows. */
 .abicsAccessibilityPopover .sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTb,
 .abicsAccessibilityPopover .sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTbExpanded {
-  padding-inline-start: 0 !important;
-  padding-left: 0 !important;
+  padding-inline-start: 0;
+  padding-left: 0;
 }
 
 .abicsAccessibilityPopover .sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTb .sapMPanelHeaderTB,
 .abicsAccessibilityPopover .sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTbExpanded .sapMPanelHeaderTB {
-  padding-inline-start: 1rem !important;
-  padding-left: 1rem !important;
-  margin-inline-start: 0 !important;
-  margin-left: 0 !important;
+  padding-inline-start: 1rem;
+  padding-left: 1rem;
+  margin-inline-start: 0;
+  margin-left: 0;
 }
 
 /* ── Larger panel header icons ── */
@@ -324,11 +380,11 @@
   z-index: 2147483647;
   max-width: 280px;
   box-sizing: border-box;
-  background: #ffffff;
-  color: #1e3a8a;
+  background: var(--sa-bg);
+  color: var(--sa-text);
   border-radius: 12px;
   padding: 14px 16px;
-  box-shadow: 0 8px 24px rgba(30, 58, 138, 0.25);
+  box-shadow: var(--sa-shadow);
   pointer-events: none;
   opacity: 0;
   transform: translateY(4px);
@@ -344,16 +400,16 @@
 .abicsHoverHintTitle {
   font-size: 16px;
   font-weight: 700;
-  color: #1e3a8a;
+  color: var(--sa-text);
   padding-bottom: 8px;
   margin-bottom: 8px;
-  border-bottom: 1px solid rgba(30, 58, 138, 0.15);
+  border-bottom: 1px solid var(--sa-line);
 }
 
 .abicsHoverHintDesc {
   font-size: 13px;
   line-height: 1.4;
-  color: #475569;
+  color: var(--sa-text-2);
 }
 
 .abicsHoverHintKey {
@@ -361,7 +417,7 @@
   font-size: 12px;
   font-weight: 600;
   margin-top: 10px;
-  color: #3b82f6;
+  color: var(--sa-accent);
   letter-spacing: 0.5px;
 }
 
@@ -374,7 +430,7 @@
   transform: translateY(-50%);
   border-width: 8px 0 8px 8px;
   border-style: solid;
-  border-color: transparent transparent transparent #ffffff;
+  border-color: transparent transparent transparent var(--sa-bg);
 }
 
 /* Flipped: tooltip sits to the right, arrow points left */
@@ -382,7 +438,7 @@
   right: auto;
   left: -8px;
   border-width: 8px 8px 8px 0;
-  border-color: transparent #ffffff transparent transparent;
+  border-color: transparent var(--sa-bg) transparent transparent;
 }
 
 /* ── Buttons ── */
@@ -392,20 +448,20 @@
 
 /* App-wide button standard: solid light-blue fill, no border/outline. */
 .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner {
-  border: none !important;
+  border: 1px solid var(--sa-control-line) !important;
   border-radius: 9px !important;
-  background-color: #eaf1fd !important;
-  box-shadow: none !important;
-  color: #1e3a8a;
+  background-color: var(--sa-control-bg) !important;
+  box-shadow: none;
+  color: var(--sa-control-text);
 }
 
 .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner .sapUiIcon {
   border: 0;
-  color: #1e3a8a;
+  color: var(--sa-control-text);
 }
 
 .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner:hover {
-  background-color: #d5e3fa !important;
+  background-color: var(--sa-control-hover) !important;
 }
 
 .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner:focus,
@@ -413,7 +469,6 @@
 .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner:active {
   outline: none !important;
   box-shadow: none !important;
-  border: none !important;
 }
 
 .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner::before,
@@ -424,25 +479,25 @@
 /* ── Select ── */
 /* Uniform with the −/+ buttons: solid light-blue fill, no border/outline. */
 .abicsAccessibilityPopover .sapMSlt {
-  border: none !important;
+  border: 1px solid var(--sa-control-line) !important;
   border-radius: 9px !important;
-  background-color: #eaf1fd !important;
+  background-color: var(--sa-control-bg);
   box-shadow: none !important;
-  color: #1e3a8a !important;
+  color: var(--sa-text);
 }
 
 .abicsAccessibilityPopover .sapMSlt:hover {
-  background-color: #d5e3fa !important;
+  background-color: var(--sa-control-hover) !important;
 }
 
 .abicsAccessibilityPopover .sapMSlt .sapMSltLabel,
 .abicsAccessibilityPopover .sapMSltInner {
-  color: #1e3a8a !important;
-  background-color: transparent !important;
+  color: var(--sa-text);
+  background-color: transparent;
 }
 
 .abicsAccessibilityPopover .sapMSltArrow {
-  color: #3b82f6 !important;
+  color: var(--sa-control-text);
   background-color: transparent !important;
   border: none !important;
 }
@@ -458,7 +513,7 @@
 }
 
 .abicsAccessibilityPopover .sapMSltInner {
-  border: none !important;
+  border: none;
 }
 
 .abicsAccessibilityPopover .sapMSlt:focus,
@@ -468,6 +523,10 @@
 .abicsAccessibilityPopover .sapMSltArrow:focus-visible {
   outline: none !important;
   box-shadow: none !important;
+}
+
+.abicsAccessibilityPopover .sapMSltArrow:focus,
+.abicsAccessibilityPopover .sapMSltArrow:focus-visible {
   border: none !important;
 }
 
@@ -533,7 +592,7 @@
 .sapMPopover:has(.sapUnifiedColorPicker) .sapUiCPHexWrapper .sapUiColorPicker-ColorPickerHexText,
 .sapMPopover:has(.sapUnifiedColorPicker) .sapUiCPHexWrapper label {
   font-weight: 600 !important;
-  color: #1e3a8a !important;
+  color: var(--sa-text) !important;
 }
 
 .sapMPopover:has(.sapUnifiedColorPicker) .sapUiColorPicker-ColorPickerHexField.sapMInputBase {
@@ -545,24 +604,24 @@
 }
 
 .sapMPopover:has(.sapUnifiedColorPicker) .sapUiColorPicker-ColorPickerHexField .sapMInputBaseInner {
-  border: 1px solid #cbd5e1 !important;
+  border: 1px solid var(--sa-field-line) !important;
   border-radius: 8px !important;
-  background: #ffffff !important;
+  background: var(--sa-field-bg) !important;
   text-align: center !important;
 }
 
 /* ── Color-blindness mode cards ── */
 .abicsAccessibilityPopover .cbList {
-  border: 0 !important;
-  background: transparent !important;
+  border: 0;
+  background: transparent;
 }
 
 .abicsAccessibilityPopover .cbList .sapMListUl,
 .abicsAccessibilityPopover .cbList .sapMLIB,
 .abicsAccessibilityPopover .cbList .sapMCLI {
-  border: 0 !important;
-  background: transparent !important;
-  padding: 0 !important;
+  border: 0;
+  background: transparent;
+  padding: 0;
 }
 
 /* No focus/selection outline or ring on the colour cards. */
@@ -579,11 +638,11 @@
 }
 
 .abicsAccessibilityPopover .cbCard {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--sa-line);
   border-radius: 10px;
   padding: 8px 10px;
   margin: 4px 0;
-  background: #ffffff;
+  background: var(--sa-bg);
 }
 
 .abicsAccessibilityPopover .cbCardRow {
@@ -593,27 +652,27 @@
 .abicsAccessibilityPopover .cbSwatch {
   border-radius: 50%;
   flex-shrink: 0;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 0 0 1px var(--sa-line);
 }
 
 .abicsAccessibilityPopover .cbTitle {
-  font-weight: 600 !important;
+  font-weight: 600;
 }
 
 .abicsAccessibilityPopover .cbSub {
-  color: #64748b !important;
+  color: var(--sa-text-2);
   font-size: 12px !important;
 }
 
 .abicsAccessibilityPopover .cbIntensity {
   padding-top: 10px;
   margin-top: 8px;
-  border-top: 1px solid #eef0f3;
+  border-top: 1px solid var(--sa-line);
 }
 
 .abicsAccessibilityPopover .cbPercent {
-  font-weight: 700 !important;
-  color: #3b82f6 !important;
+  font-weight: 700;
+  color: var(--sa-accent);
 }
 
 .abicsAccessibilityPopover .cbIntensityBtns {
@@ -627,34 +686,34 @@
 }
 
 .abicsAccessibilityPopover .cbIntBtn .sapMBtnInner {
-  min-width: 34px !important;
-  width: 34px !important;
-  height: 34px !important;
-  border: none !important;
+  min-width: 34px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--sa-control-line) !important;
   border-radius: 9px !important;
-  background-color: #eaf1fd !important;
-  box-shadow: none !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  background-color: var(--sa-control-bg) !important;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .abicsAccessibilityPopover .cbIntBtn .sapMBtnInner .sapUiIcon {
-  color: #3b82f6 !important;
+  color: var(--sa-control-text) !important;
   width: auto !important;
   min-width: 0 !important;
-  padding: 0 !important;
+  padding: 0;
 }
 
 .abicsAccessibilityPopover .cbIntBtn .sapMBtnInner:hover {
-  background-color: #d5e3fa !important;
+  background-color: var(--sa-control-hover) !important;
 }
 
 /* Selected card highlight — just a soft tinted fill, NO border/outline
    (user request). Only the selected card has a live .cbIntensity child. */
 .abicsAccessibilityPopover .cbCard:has(.cbIntensity) {
-  border-color: transparent;
-  background: #eaf1fd;
+  border-color: var(--sa-selected-line);
+  background: var(--sa-selected-bg);
 }
 
 /* Compact inline quick control in the main list (full picker is in flyout).
@@ -672,8 +731,8 @@
 
 /* ── Contrast-mode flyout (presets + colour pickers + live preview) ── */
 .abicsAccessibilityPopover .contrastSection .contrastLabel {
-  font-weight: 600 !important;
-  color: #1e3a8a !important;
+  font-weight: 600;
+  color: var(--sa-text);
   margin: 10px 0 4px 0;
 }
 
@@ -690,6 +749,7 @@
 .abicsAccessibilityPopover .contrastSwatch {
   cursor: pointer;
   border-radius: 8px;
+  box-shadow: 0 0 0 1px var(--sa-line);
 }
 
 /* SET / RESET / CANCEL action row */
@@ -703,27 +763,27 @@
 }
 
 .abicsAccessibilityPopover .contrastSetBtn .sapMBtnInner {
-  background-color: #3b82f6 !important;
-  border: none !important;
+  background-color: var(--sa-emph-bg) !important;
+  border: 1px solid var(--sa-emph-line) !important;
   border-radius: 9px !important;
-  box-shadow: none !important;
+  box-shadow: none;
 }
 
 .abicsAccessibilityPopover .contrastSetBtn .sapMBtnInner .sapMBtnContent,
 .abicsAccessibilityPopover .contrastSetBtn .sapMBtnInner .sapUiIcon {
-  color: #ffffff !important;
+  color: var(--sa-emph-text) !important;
 }
 
 .abicsAccessibilityPopover .contrastActionBtn .sapMBtnInner {
-  background-color: #eaf1fd !important;
-  border: none !important;
+  background-color: var(--sa-control-bg) !important;
+  border: 1px solid var(--sa-control-line) !important;
   border-radius: 9px !important;
-  box-shadow: none !important;
+  box-shadow: none;
 }
 
 .abicsAccessibilityPopover .contrastActionBtn .sapMBtnInner .sapMBtnContent,
 .abicsAccessibilityPopover .contrastActionBtn .sapMBtnInner .sapUiIcon {
-  color: #1e3a8a !important;
+  color: var(--sa-control-text) !important;
 }
 
 /* SET/RESET/CANCEL: NO focus ring/outline/border in ANY state — unconditional
@@ -738,7 +798,6 @@
 .abicsAccessibilityPopover .contrastActions .sapMBtnInner:active {
   outline: none !important;
   box-shadow: none !important;
-  border: none !important;
 }
 
 .abicsAccessibilityPopover .contrastActions .sapMBtnInner::before,
@@ -764,11 +823,11 @@
   margin-top: 4px;
   padding: 8px 12px;
   box-sizing: border-box;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--sa-line);
 }
 
 .abicsAccessibilityPopover .contrastPreviewText {
-  font-weight: 600 !important;
+  font-weight: 600;
 }
 
 /* Font panel: simple stepper (value box + − / reset / + buttons), no slider —
@@ -779,9 +838,9 @@
 }
 
 .abicsAccessibilityPopover .fontValueBox {
-  border: none;
+  border: 1px solid var(--sa-control-line);
   border-radius: 10px;
-  background-color: #eaf1fd;
+  background-color: var(--sa-control-bg);
   min-width: 96px;
   height: 40px;
   padding: 0 16px;
@@ -791,7 +850,7 @@
 .abicsAccessibilityPopover .fontValueText {
   font-size: 16px !important;
   font-weight: 700 !important;
-  color: #1e3a8a !important;
+  color: var(--sa-text);
 }
 
 .abicsAccessibilityPopover .fontStepRow {
@@ -809,17 +868,17 @@
 }
 
 .abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner {
-  width: 100% !important;
-  min-width: 100% !important;
+  width: 100%;
+  min-width: 100%;
   border: none !important;
   background-color: transparent !important;
-  box-shadow: none !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   gap: 4px;
   padding: 0 !important;
-  height: auto !important;
+  height: auto;
 }
 
 .abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner:hover {
@@ -831,13 +890,13 @@
 }
 
 .abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnContent {
-  color: #3b82f6 !important;
+  color: var(--sa-accent);
   font-weight: 600 !important;
   font-size: 12px !important;
 }
 
 .abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner .sapUiIcon {
-  color: #3b82f6 !important;
+  color: var(--sa-accent) !important;
   font-size: 12px !important;
   width: auto !important;
   min-width: 0 !important;
@@ -872,7 +931,6 @@
 .abicsAccessibilityPopover .cbIntBtn .sapMBtnInner:active {
   outline: none !important;
   box-shadow: none !important;
-  border: none !important;
 }
 
 .abicsAccessibilityPopover .cbIntBtn .sapMBtnInner::before,
@@ -885,9 +943,9 @@
    the plain "72" looked thin and font-weight:600 mapped to the heading "72-Bold"). */
 .abicsAccessibilityPopover .ttsFlyoutSection .typoRow .sapMLabel,
 .abicsAccessibilityPopover .ttsHoverRow .sapMLabel {
-  font-family: "72-SemiboldDuplex", "72", "72full", Arial, sans-serif !important;
-  font-weight: 400 !important;
-  color: #1e3a8a !important;
+  font-family: "72-SemiboldDuplex", "72", "72full", Arial, sans-serif;
+  font-weight: 400;
+  color: var(--sa-text);
 }
 
 /* TTS player bar (⏪ ▶/⏸ ⏹ ⏩): round icon buttons; the centre play/pause is a
@@ -900,13 +958,14 @@
   border-radius: 50% !important;
 }
 .abicsAccessibilityPopover .ttsPlayBtn .sapMBtnInner {
-  background-color: #3b82f6 !important;
+  background-color: var(--sa-emph-bg) !important;
+  border-color: var(--sa-emph-line) !important;
 }
 .abicsAccessibilityPopover .ttsPlayBtn .sapMBtnInner:hover {
-  background-color: #2f6fe0 !important;
+  background-color: var(--sa-emph-hover) !important;
 }
 .abicsAccessibilityPopover .ttsPlayBtn .sapMBtnInner .sapUiIcon {
-  color: #ffffff !important;
+  color: var(--sa-emph-text) !important;
 }
 
 /* ── Flyout content padding ── */
@@ -933,13 +992,15 @@
 
 /* ── Slider ── */
 .abicsAccessibilityPopover .sapMSliderInner {
-  background-color: #cbd5e1;
+  background-color: var(--sa-track);
+  border: 1px solid var(--sa-track-line);
+  box-sizing: border-box;
   border-radius: 4px;
   height: 6px;
 }
 
 .abicsAccessibilityPopover .sapMSliderProgress {
-  background-color: #3b82f6;
+  background-color: var(--sa-track-fill);
   border-radius: 4px;
 }
 
@@ -950,11 +1011,11 @@
 /* Blue-light filter slider: a blue→warm gradient track that visualises the
    filter's effect (the progress fill is transparent so the gradient shows). */
 .abicsAccessibilityPopover .blueFilterSlider .sapMSliderInner {
-  background: linear-gradient(to right, #60a5fa, #fbbf24) !important;
+  background: linear-gradient(to right, var(--sa-bluefilter-cool), var(--sa-bluefilter-warm));
 }
 
 .abicsAccessibilityPopover .blueFilterSlider .sapMSliderProgress {
-  background: transparent !important;
+  background: transparent;
 }
 
 /* Remove the Horizon theme's slider end-cap dots (start dot on the inner
@@ -968,8 +1029,8 @@
 /* Keep the track inset from the slider box edges so the handle, at its 0%/100%
    extremes, keeps clear space from the flanking −/+ buttons. */
 .abicsAccessibilityPopover .typoSliderRow .sapMSlider {
-  padding-left: 12px !important;
-  padding-right: 12px !important;
+  padding-left: 12px;
+  padding-right: 12px;
 }
 
 /* Slider handle: keep the theme's default knob (with its grip icon), just a
@@ -998,7 +1059,7 @@
 /* ── Switch ── */
 .abicsAccessibilityPopover .sapMSwt {
   border-radius: 12px;
-  border: 0;
+  border-color: var(--sa-switch-line);
   background-color: transparent;
   height: 1.75rem;
   /* Consistent, slightly smaller size everywhere (matches the app standard). */
@@ -1021,16 +1082,16 @@
 }
 
 .abicsAccessibilityPopover .sapMSwtLabel {
-  background-color: #3b82f6;
-  color: #ffffff;
+  background-color: var(--sa-switch-on);
+  color: var(--sa-switch-text);
   border-radius: 12px;
 }
 
 .abicsAccessibilityPopover .sapMSwtInner .sapMSwtHandle {
-  background-color: #ffffff;
+  background-color: var(--sa-switch-handle);
   border-radius: 12px;
   border: 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--sa-shadow-s);
 }
 
 .abicsAccessibilityPopover .sapMSwtText {
@@ -1039,7 +1100,7 @@
 }
 
 .abicsAccessibilityPopover .sapMSwtOff .sapMSwtLabel {
-  background-color: #94a3b8;
+  background-color: var(--sa-switch-off);
 }
 
 /* ── Reset All footer ──
@@ -1048,20 +1109,20 @@
    uniformly (never blue). */
 .abicsAccessibilityPopover .sapMPopoverFooter,
 .abicsAccessibilityPopover .resetAllToolbar {
-  background-color: #fdecec !important;
+  background-color: var(--sa-danger-bg) !important;
   border: none !important;
-  box-shadow: none !important;
+  box-shadow: none;
 }
 
 .abicsAccessibilityPopover .resetAllToolbar {
-  padding: 6px 8px !important;
+  padding: 6px 8px;
   border-bottom-left-radius: 14px;
   border-bottom-right-radius: 14px;
 }
 
 .abicsAccessibilityPopover .sapMPopoverFooter:hover,
 .abicsAccessibilityPopover .resetAllToolbar:hover {
-  background-color: #fbd5d5 !important;
+  background-color: var(--sa-danger-hover) !important;
 }
 
 .abicsAccessibilityPopover .resetAllButton {
@@ -1076,14 +1137,14 @@
 .abicsAccessibilityPopover .resetAllButton .sapMBtnInner:active {
   border: none !important;
   border-radius: 9px !important;
-  color: #ef4444 !important;
+  color: var(--sa-danger-text) !important;
   background-color: transparent !important;
   box-shadow: none !important;
 }
 
 .abicsAccessibilityPopover .resetAllButton .sapMBtnInner .sapUiIcon,
 .abicsAccessibilityPopover .resetAllButton .sapMBtnInner .sapMBtnContent {
-  color: #ef4444 !important;
+  color: var(--sa-danger-text) !important;
 }
 
 /* UI5's default button hover flips the label to --sapButton_Hover_TextColor
@@ -1095,7 +1156,7 @@
 .abicsAccessibilityPopover .resetAllButton:hover .sapUiIcon,
 .abicsAccessibilityPopover .resetAllButton:active .sapUiIcon,
 .abicsAccessibilityPopover .resetAllButton:focus .sapUiIcon {
-  color: #ef4444 !important;
+  color: var(--sa-danger-text) !important;
 }
 
 /* ── No focus ring on mouse/click (UI5's default ring); keyboard focus still
@@ -1116,7 +1177,7 @@
    individual controls (buttons/select/switch/slider) show no ring, matching
    the app-wide "no border/outline" standard. */
 .abicsAccessibilityPopover .sapMTB:focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid var(--sa-focus);
   outline-offset: 2px;
 }
 
@@ -1141,19 +1202,19 @@
   .abicsAccessibilityPopover .sapMTB,
   .abicsAccessibilityPopover .sapMTitle,
   .abicsAccessibilityPopover .sapMLabel {
-    background-color: #ffffff;
-    color: #000000;
-    border-color: #000000;
+    background-color: var(--sa-bg);
+    color: var(--sa-text);
+    border-color: var(--sa-text);
   }
 
   .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner {
-    border: 2px solid #000000;
+    border: 2px solid var(--sa-text) !important;
   }
 
   .abicsAccessibilityPopover .sapMPopoverHeader .sapMBarContainer *,
   .abicsAccessibilityPopover .sapMPopoverHeader .sapMBarContainer {
-    background-color: #000000 !important;
-    color: #ffffff !important;
+    background-color: var(--sa-text) !important;
+    color: var(--sa-bg) !important;
   }
 }
 
@@ -1167,21 +1228,21 @@
 .abicsAccessibilityPopover .contrastThemeBtn .sapMBtnInner {
   width: 100%;
   border-radius: 9px !important;
-  box-shadow: none !important;
+  box-shadow: none;
 }
 .abicsAccessibilityPopover .contrastThemeHcw .sapMBtnInner {
-  background-color: #ffffff !important;
-  border: 1px solid #1e3a8a !important;
+  background-color: var(--sa-hcw-bg) !important;
+  border: 1px solid var(--sa-hcw-text) !important;
 }
 .abicsAccessibilityPopover .contrastThemeHcw .sapMBtnInner .sapMBtnContent {
-  color: #000000 !important;
+  color: var(--sa-hcw-text);
 }
 .abicsAccessibilityPopover .contrastThemeHcb .sapMBtnInner {
-  background-color: #000000 !important;
-  border: 1px solid #000000 !important;
+  background-color: var(--sa-hcb-bg) !important;
+  border: 1px solid var(--sa-hcb-text) !important;
 }
 .abicsAccessibilityPopover .contrastThemeHcb .sapMBtnInner .sapMBtnContent {
-  color: #ffffff !important;
+  color: var(--sa-hcb-text);
 }
 
 /* ══ Keyboard focus indicator (WCAG 2.4.7) ══
@@ -1204,6 +1265,6 @@ html .abicsAccessibilityPopover .sapMSlt:focus-visible,
 html .abicsAccessibilityPopover .sapMSwtCont:focus-visible,
 html .abicsAccessibilityPopover .sapMSwt:focus-visible,
 html .abicsAccessibilityPopover .sapMSliderHandle:focus-visible {
-  outline: 2px solid #3b82f6 !important;
+  outline: 2px solid var(--sa-focus) !important;
   outline-offset: 2px !important;
 }

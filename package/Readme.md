@@ -118,6 +118,27 @@ openAccessPopover(controller: Controller, oEvent: Event): Promise<unknown>;
 initAccessibility(controller: Controller, oTrigger: Control): void;
 ```
 
+## Theming
+
+The popover takes its colours from the active SAP theme. `css/style.css` declares
+`--sa-*` design tokens on `:root`, each bound to an SAP theme parameter, so Horizon,
+Horizon Dark (night mode), High Contrast Black/White and custom themes built with the
+UI Theme Designer are followed automatically, with no per-theme override.
+
+| Token | SAP theme parameter | Used for |
+|---|---|---|
+| `--sa-bg`, `--sa-text`, `--sa-text-2` | `sapList_Background`, `sapList_TextColor`, `sapContent_LabelColor` | popover surface, row text, secondary text |
+| `--sa-accent` | `sapContent_Selected_TextColor` | row icons, values, links |
+| `--sa-header-bg`, `--sa-header-text`, `--sa-header-line` | `sapPageHeader_*` | flat popover header |
+| `--sa-row-hover`, `--sa-row-active`, `--sa-row-active-line` | `sapList_Hover_Background`, `sapList_SelectionBackgroundColor`, `sapList_SelectionBorderColor` | row hover / active feature |
+| `--sa-control-bg`, `--sa-control-hover`, `--sa-control-text`, `--sa-control-line` | `sapButton_Neutral_*`, `sapButton_Lite_BorderColor` | stepper buttons, selects |
+| `--sa-emph-*`, `--sa-selected-*`, `--sa-danger-*` | `sapButton_Emphasized_*`, `sapButton_Selected_*`, `sapButton_Reject_*` | primary action, selected chip, Reset All |
+| `--sa-track*`, `--sa-switch-*`, `--sa-field-*` | `sapSlider_*`, `sapButton_Track_*`/`Handle_*`, `sapField_*` | sliders, switches, hex input |
+| `--sa-focus`, `--sa-scroll*`, `--sa-shadow*` | `sapContent_FocusColor`, `sapScrollBar_*`, `sapContent_Shadow0/2` | focus ring, scrollbar, hint shadow |
+
+To restyle the popover without touching the theme, override a token after the
+stylesheet is loaded, e.g. `:root { --sa-accent: #0a6ed1; }`.
+
 ## Develop & publish
 
 - **Link into an app:** `cd package && npm link`, then `cd ../<app> && npm link ui5-smart-access`.

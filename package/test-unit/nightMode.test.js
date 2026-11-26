@@ -15,23 +15,21 @@ beforeEach(async () => {
 });
 
 describe("toggleNightMode", () => {
-    it("turns dark mode on: returns true, sets the dark theme, tags <html>, injects both style blocks", () => {
+    it("turns dark mode on: returns true, sets the dark theme, tags <html>, injects the host style block", () => {
         const on = nm.toggleNightMode();
         expect(on).toBe(true);
         expect(nm.isNightModeActive()).toBe(true);
         expect(Theming.setTheme).toHaveBeenCalledWith("sap_horizon_dark");
         expect(document.documentElement.classList.contains("saNightMode")).toBe(true);
-        expect(document.getElementById("popover-dark-mode-styles")).toBeTruthy();
         expect(document.getElementById("host-dark-mode-styles")).toBeTruthy();
     });
 
-    it("attaches the theme-applied handler once", () => {
+    it("leaves the popover to the theme tokens: no popover colour override, no theme-applied hook", () => {
         nm.toggleNightMode();
-        expect(Theming.attachApplied).toHaveBeenCalledTimes(1);
-        nm.toggleNightMode(); // off
-        nm.toggleNightMode(); // on again
-        // Still attached only once (guarded by themeAppliedHandlerAttached).
-        expect(Theming.attachApplied).toHaveBeenCalledTimes(1);
+        expect(document.getElementById("popover-dark-mode-styles")).toBeNull();
+        const css = document.getElementById("host-dark-mode-styles").textContent;
+        expect(css).not.toContain("abicsAccessibilityPopover");
+        expect(Theming.attachApplied).not.toHaveBeenCalled();
     });
 
     it("turns dark mode off on the second call: returns false, restores theme, removes class + styles", () => {
