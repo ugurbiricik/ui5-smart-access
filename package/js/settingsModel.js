@@ -141,7 +141,8 @@ export const oSettingsModel = new JSONModel({
 
     profileId: savedSettings.profileId ?? "",
     profileSnapshot: savedSettings.profileSnapshot ?? null,
-    profileActive: {}
+    profileActive: {},
+    resetUndoOpen: false
 });
 
 export const saveCurrentSettings = () => {

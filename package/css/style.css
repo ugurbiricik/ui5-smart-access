@@ -20,9 +20,6 @@
   --sa-emph-hover: var(--sapButton_Emphasized_Hover_Background, #0064d9);
   --sa-emph-text: var(--sapButton_Emphasized_TextColor, #ffffff);
   --sa-emph-line: var(--sapButton_Emphasized_BorderColor, #0070f2);
-  --sa-danger-bg: var(--sapButton_Reject_Background, #ffd6e9);
-  --sa-danger-hover: var(--sapButton_Reject_Hover_Background, #ffbcdc);
-  --sa-danger-text: var(--sapButton_Reject_TextColor, #aa0808);
   --sa-field-bg: var(--sapField_Background, #ffffff);
   --sa-field-line: var(--sapField_BorderColor, #556b81);
   --sa-track: var(--sapSlider_Background, #d5dadd);
@@ -156,14 +153,6 @@
 .abicsAccessibilityPopover .saNav > .sapMNavItem.sapMNavItemSlideCenterToRight {
   position: absolute;
   top: 0;
-}
-
-.abicsAccessibilityPopover .resetAllToolbar {
-  position: sticky;
-  bottom: 0;
-  z-index: 1;
-  background-color: var(--sa-bg);
-  border-top: 1px solid var(--sa-line);
 }
 
 .abicsAccessibilityPopover .saNavChevron {
@@ -981,66 +970,9 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   gap: 12px;
 }
 
-/* ── Reset All footer ──
-   The WHOLE footer is one soft-red band; the button is transparent so it
-   blends into it. Hovering anywhere in the footer darkens the entire band
-   uniformly (never blue). */
-.abicsAccessibilityPopover .sapMPopoverFooter,
-.abicsAccessibilityPopover .resetAllToolbar {
-  background-color: var(--sa-danger-bg) !important;
-  border: none !important;
-  box-shadow: none;
-}
-
-.abicsAccessibilityPopover .resetAllToolbar {
-  padding: 6px 8px;
-  border-bottom-left-radius: 14px;
-  border-bottom-right-radius: 14px;
-}
-
-.abicsAccessibilityPopover .sapMPopoverFooter:hover,
-.abicsAccessibilityPopover .resetAllToolbar:hover {
-  background-color: var(--sa-danger-hover) !important;
-}
-
-.abicsAccessibilityPopover .resetAllButton {
-  margin: 0;
-}
-
-/* Button blends into the red footer band (transparent fill, red label in all
-   states) so the footer reads as a single colour, hover included. */
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner,
-.abicsAccessibilityPopover .resetAllButton:hover .sapMBtnInner,
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner:hover,
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner:active {
-  border: none !important;
-  border-radius: 9px !important;
-  color: var(--sa-danger-text) !important;
-  background-color: transparent !important;
-  box-shadow: none !important;
-}
-
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner .sapUiIcon,
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner .sapMBtnContent {
-  color: var(--sa-danger-text) !important;
-}
-
-/* UI5's default button hover flips the label to --sapButton_Hover_TextColor
-   (#0064d9, blue). Pin the label and icon to red in every interactive state
-   so the footer band always reads as a single colour. */
-.abicsAccessibilityPopover .resetAllButton:hover .sapMBtnContent,
-.abicsAccessibilityPopover .resetAllButton:active .sapMBtnContent,
-.abicsAccessibilityPopover .resetAllButton:focus .sapMBtnContent,
-.abicsAccessibilityPopover .resetAllButton:hover .sapUiIcon,
-.abicsAccessibilityPopover .resetAllButton:active .sapUiIcon,
-.abicsAccessibilityPopover .resetAllButton:focus .sapUiIcon {
-  color: var(--sa-danger-text) !important;
-}
-
 /* ── No focus ring on mouse/click (UI5's default ring); keyboard focus still
       shown via the :focus-visible rules below ── */
-.abicsAccessibilityPopover .sapMBtnInner:focus::after,
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner::after {
+.abicsAccessibilityPopover .sapMBtnInner:focus::after {
   display: none !important;
 }
 
@@ -1057,20 +989,6 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
 .abicsAccessibilityPopover .sapMTB:focus-visible {
   outline: 2px solid var(--sa-focus);
   outline-offset: 2px;
-}
-
-/* Reset button: never show any focus ring/outline (mouse or keyboard) —
-   more specific than the :focus-visible rule above so it always wins. */
-.abicsAccessibilityPopover .resetAllButton:focus-visible,
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner:focus,
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner::before,
-.abicsAccessibilityPopover .resetAllButton .sapMBtnInner::after {
-  display: none !important;
 }
 
 /* ── High contrast mode support ── */
@@ -1300,11 +1218,13 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   gap: 8px;
 }
 
-.abicsAccessibilityPopover .saDetailPage .saFooterReset .sapMBtnInner {
+.abicsAccessibilityPopover .saDetailPage .saFooterReset .sapMBtnInner,
+.abicsAccessibilityPopover .saMainFooter .saFooterBtn .sapMBtnInner {
   background-color: transparent !important;
 }
 
-.abicsAccessibilityPopover .saDetailPage .saFooterReset.sapMBtnDisabled {
+.abicsAccessibilityPopover .saDetailPage .saFooterReset.sapMBtnDisabled,
+.abicsAccessibilityPopover .saMainFooter .saFooterReset.sapMBtnDisabled {
   opacity: 0.45;
 }
 
@@ -1507,4 +1427,81 @@ html .saLauncherBadgeHost > span.saLauncherBadge {
   border-bottom-width: 2px;
   border-radius: 6px;
   padding: 2px 8px;
+}
+
+.abicsAccessibilityPopover .saMainFooter {
+  position: sticky;
+  margin: 0;
+  width: 100%;
+  min-height: 52px;
+  padding: 8px 12px;
+  overflow: hidden;
+}
+
+.abicsAccessibilityPopover .saMainFooter .saFooterBtn .sapMBtnInner {
+  border: 1px solid transparent !important;
+  border-radius: 9px !important;
+  box-shadow: none !important;
+  color: var(--sa-control-text);
+}
+
+.abicsAccessibilityPopover .saMainFooter .saFooterBtn .sapMBtnInner .sapUiIcon,
+.abicsAccessibilityPopover .saMainFooter .saFooterBtn .sapMBtnInner .sapMBtnContent {
+  color: var(--sa-control-text);
+}
+
+.abicsAccessibilityPopover .saMainFooter .saFooterBtn:not(.sapMBtnDisabled) .sapMBtnInner:hover {
+  background-color: var(--sa-control-hover) !important;
+}
+
+.abicsAccessibilityPopover .saMainFooter .saFooterBtn .sapMBtnInner::before,
+.abicsAccessibilityPopover .saMainFooter .saFooterBtn .sapMBtnInner::after {
+  display: none !important;
+}
+
+.abicsAccessibilityPopover .saMainFooter .saFooterReset.sapMBtnDisabled .sapMBtnInner .sapUiIcon,
+.abicsAccessibilityPopover .saMainFooter .saFooterReset.sapMBtnDisabled .sapMBtnInner .sapMBtnContent {
+  color: var(--sa-text-2);
+}
+
+.abicsAccessibilityPopover .saMainFooter .saResetUndoText {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--sa-text);
+  font-weight: 600;
+}
+
+.abicsAccessibilityPopover .saMainFooter .saFooterUndo {
+  flex: 0 0 auto;
+}
+
+.abicsAccessibilityPopover .saMainFooter .saFooterUndo .sapMBtnInner {
+  background-color: var(--sa-control-bg) !important;
+}
+
+.abicsAccessibilityPopover .saMainFooter.saUndoPending::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--sa-accent);
+  transform-origin: left center;
+  animation: saUndoCountdown 5s linear forwards;
+}
+
+.abicsAccessibilityPopover .saMainFooter.saUndoPaused::before {
+  animation-play-state: paused;
+}
+
+@keyframes saUndoCountdown {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+html .abicsAccessibilityPopover .saMainFooter .sapMBtn:focus-visible {
+  outline: 2px solid var(--sa-focus);
+  outline-offset: 2px;
+  border-radius: 9px;
 }

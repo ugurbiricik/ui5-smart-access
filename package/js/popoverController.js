@@ -67,6 +67,7 @@ import {
 import { injectStyle } from "./styleInjector.js";
 import { isDetailAtDefault } from "./detailDefaults.js";
 import { resetAll } from "./resetAll.js";
+import { BADGE_PATHS, countActiveFeatures } from "./launcherBadge.js";
 import { getText } from "./i18nModel.js";
 import { hideHint } from "./hoverHints.js";
 import { shortcutKeys } from "./shortcutList.js";
@@ -168,6 +169,20 @@ export const INFO_PAGES = {
 
 const navPageFor = (key) => DETAIL_PAGES[key] || INFO_PAGES[key] || null;
 
+export const RESET_UNDO_MS = 5000;
+
+export const RESET_SNAPSHOT_KEYS = [
+    "fontStep", "typoZoom", "typoFontSize", "typoLineHeight", "typoWordSpacing", "typoLetterSpacing", "typoAlign",
+    "ttsRate", "ttsVolume", "ttsHover",
+    "colorBlindnessType", "colorBlindnessIntensity",
+    "blueLightFilterLevel", "blueLightFilterActive",
+    "nightModeActive", "toggleImagesActive",
+    "contrastModeActive", "contrastTheme", "contrastBgColor", "contrastTextColor", "contrastUnderlineLinks",
+    "textSpacingLevel", "readingGuideMode", "bigCursorColor", "bigCursorCustomColor",
+    "highlightLinksActive", "stopAnimationsActive",
+    "profileId", "profileSnapshot"
+];
+
 const FOCUSABLE = "[tabindex='0'], button:not([disabled]), input:not([disabled]), select:not([disabled])";
 
 const scrollContainerOf = (oPopover) => {
@@ -205,6 +220,7 @@ export const popoverInternalController = {
         const target = page && this._byId(page.pageId);
         if (!nav || !target) return;
         hideHint();
+        if (this.isResetUndoOpen()) this._closeResetUndo(false);
         if (this.getCurrentPageKey() === "main") {
             const scroller = scrollContainerOf(this._oPopover);
             this._mainScrollTop = scroller ? scroller.scrollTop : 0;
@@ -1043,7 +1059,15 @@ export const popoverInternalController = {
     },
 
     // ---- Reset all ----
+    fmtCanResetAll(...values) {
+        return countActiveFeatures(Object.fromEntries(BADGE_PATHS.map((p, i) => [p, values[i]]))) > 0;
+    },
     onResetAllToolbarPress() {
+        const snapshot = Object.fromEntries(RESET_SNAPSHOT_KEYS.map((k) => [k, this._readSetting(k)]));
+        this._resetEverything();
+        this._offerResetUndo(snapshot);
+    },
+    _resetEverything() {
         resetAll();
         oSettingsModel.setProperty("/fontStep", 0);
         oSettingsModel.setProperty("/typoZoom", 100);
@@ -1087,7 +1111,177 @@ export const popoverInternalController = {
         this.refreshProfiles();
         this.navToMain();
         clearAllPrefs();
+    },
+    _offerResetUndo(snapshot) {
+        this._clearUndoClock();
+        this._resetUndoSnapshot = snapshot;
+        this._undoRemaining = RESET_UNDO_MS;
+        this._undoHover = false;
+        this._undoKeyboardFocus = false;
+        this._wireResetUndoFooter();
+        this._watchActivationDuringUndo();
+        oSettingsModel.setProperty("/resetUndoOpen", true);
+        this._setUndoFooterClass("saUndoPending", true);
+        this._setUndoFooterClass("saUndoPaused", false);
+        this._startUndoClock();
         announce(getText("announce.resetAll"), true);
+        const undo = this._byId("resetUndoButton");
+        if (undo && this._oPopover && this._oPopover.isOpen()) {
+            setTimeout(() => {
+                if (oSettingsModel.getProperty("/resetUndoOpen") && this._oPopover.isOpen()) undo.focus();
+            }, 0);
+        }
+    },
+    isResetUndoOpen() {
+        return !!oSettingsModel.getProperty("/resetUndoOpen");
+    },
+    onResetUndo() {
+        const snapshot = this._resetUndoSnapshot;
+        this._closeResetUndo(false);
+        if (!snapshot) return;
+        this._restoreResetSnapshot(snapshot);
+        announce(getText("announce.resetUndone"), true);
+        const reset = this._byId("resetAllButton");
+        if (reset && this._oPopover && this._oPopover.isOpen()) {
+            setTimeout(() => {
+                if (this._oPopover.isOpen()) reset.focus();
+            }, 0);
+        }
+    },
+    _restoreResetSnapshot(snap) {
+        const step = Number(snap.fontStep) || 0;
+        for (let i = 0; i < Math.abs(step); i++) {
+            if (step > 0) increaseFontSize(); else decreaseFontSize();
+        }
+        oSettingsModel.setProperty("/ttsRate", snap.ttsRate);
+        oSettingsModel.setProperty("/ttsVolume", snap.ttsVolume);
+        setTTSRate(snap.ttsRate);
+        setTTSVolume(snap.ttsVolume);
+        if (snap.ttsHover) {
+            oSettingsModel.setProperty("/ttsHover", true);
+            enableHoverRead();
+            toggleActiveFeatureClass.call(this, "ttsPanel", true);
+        }
+        oSettingsModel.setProperty("/blueLightFilterLevel", snap.blueLightFilterLevel);
+        if (snap.blueLightFilterActive) {
+            enableBlueLightFilter(snap.blueLightFilterLevel);
+            oSettingsModel.setProperty("/blueLightFilterActive", true);
+            toggleActiveFeatureClass.call(this, "blueLightFilterPanel", true);
+        }
+        if (snap.textSpacingLevel && snap.textSpacingLevel !== "none") {
+            oSettingsModel.setProperty("/textSpacingLevel", snap.textSpacingLevel);
+            applyTextSpacing(snap.textSpacingLevel);
+            toggleActiveFeatureClass.call(this, "textSpacingPanel", true);
+        }
+        if (snap.toggleImagesActive) this.setImagesHidden(true);
+        this._setProfileRecord(snap.profileId || "", snap.profileSnapshot || null);
+        this._applySettingValues({
+            typoZoom: snap.typoZoom,
+            typoFontSize: snap.typoFontSize,
+            typoLineHeight: snap.typoLineHeight,
+            typoWordSpacing: snap.typoWordSpacing,
+            typoLetterSpacing: snap.typoLetterSpacing,
+            typoAlign: snap.typoAlign,
+            contrastBgColor: snap.contrastBgColor,
+            contrastTextColor: snap.contrastTextColor,
+            contrastUnderlineLinks: snap.contrastUnderlineLinks,
+            contrastModeActive: snap.contrastModeActive,
+            contrastTheme: snap.contrastTheme || "",
+            nightModeActive: snap.nightModeActive,
+            highlightLinksActive: snap.highlightLinksActive,
+            stopAnimationsActive: snap.stopAnimationsActive,
+            bigCursorCustomColor: snap.bigCursorCustomColor,
+            bigCursorColor: snap.bigCursorColor,
+            readingGuideMode: snap.readingGuideMode,
+            colorBlindnessType: snap.colorBlindnessType,
+            colorBlindnessIntensity: snap.colorBlindnessIntensity
+        });
+    },
+    _closeResetUndo(bMoveFocus) {
+        const footer = this._byId("resetAllFooter");
+        const dom = footer && footer.getDomRef && footer.getDomRef();
+        const hadFocus = !!(bMoveFocus && dom && dom.contains(document.activeElement));
+        this._clearUndoClock();
+        this._resetUndoSnapshot = null;
+        this._undoHover = false;
+        this._undoKeyboardFocus = false;
+        this._setUndoFooterClass("saUndoPending", false);
+        this._setUndoFooterClass("saUndoPaused", false);
+        oSettingsModel.setProperty("/resetUndoOpen", false);
+        if (hadFocus) this._focusMainStart();
+    },
+    _focusMainStart() {
+        const main = this._byId("saMainPage");
+        const dom = main && main.getDomRef && main.getDomRef();
+        const target = dom && dom.querySelector(FOCUSABLE);
+        if (!target) return;
+        setTimeout(() => {
+            if (this._oPopover && this._oPopover.isOpen()) target.focus();
+        }, 0);
+    },
+    _expireResetUndo() {
+        this._undoTimer = null;
+        this._closeResetUndo(true);
+    },
+    _startUndoClock() {
+        if (this._undoTimer || !this._resetUndoSnapshot || this._undoHover || this._undoKeyboardFocus) return;
+        this._undoStartedAt = Date.now();
+        this._undoTimer = setTimeout(() => this._expireResetUndo(), Math.max(0, this._undoRemaining));
+        this._setUndoFooterClass("saUndoPaused", false);
+    },
+    _pauseUndoClock() {
+        if (!this._undoTimer) return;
+        clearTimeout(this._undoTimer);
+        this._undoTimer = null;
+        this._undoRemaining -= Date.now() - this._undoStartedAt;
+        this._setUndoFooterClass("saUndoPaused", true);
+    },
+    _clearUndoClock() {
+        if (this._undoTimer) clearTimeout(this._undoTimer);
+        this._undoTimer = null;
+    },
+    _setUndoFooterClass(cls, on) {
+        const footer = this._byId("resetAllFooter");
+        if (!footer || typeof footer.toggleStyleClass !== "function") return;
+        footer.toggleStyleClass(cls, on);
+    },
+    _setUndoHold(kind, on) {
+        if (!this._resetUndoSnapshot) return;
+        this[kind] = on;
+        if (this._undoHover || this._undoKeyboardFocus) this._pauseUndoClock();
+        else this._startUndoClock();
+    },
+    _watchActivationDuringUndo() {
+        if (this._undoBindings || typeof oSettingsModel.bindProperty !== "function") return;
+        const check = () => {
+            if (!this._resetUndoSnapshot) return;
+            const data = Object.fromEntries(BADGE_PATHS.map((p) => [p, oSettingsModel.getProperty("/" + p)]));
+            if (countActiveFeatures(data) > 0) this._closeResetUndo(false);
+        };
+        this._undoBindings = BADGE_PATHS.map((p) => {
+            const oBinding = oSettingsModel.bindProperty("/" + p);
+            oBinding.attachChange(check);
+            return oBinding;
+        });
+    },
+    _wireResetUndoFooter() {
+        const footer = this._byId("resetAllFooter");
+        if (!footer || footer === this._undoWiredFooter || typeof footer.addEventDelegate !== "function") return;
+        this._undoWiredFooter = footer;
+        const leaves = (e) => {
+            const dom = footer.getDomRef();
+            return !(dom && e.relatedTarget && dom.contains(e.relatedTarget));
+        };
+        footer.addEventDelegate({
+            onmouseover: () => this._setUndoHold("_undoHover", true),
+            onmouseout: (e) => { if (leaves(e)) this._setUndoHold("_undoHover", false); },
+            onfocusin: (e) => {
+                const t = e.target;
+                const keyboard = !!(t && typeof t.matches === "function" && t.matches(":focus-visible"));
+                this._setUndoHold("_undoKeyboardFocus", keyboard);
+            },
+            onfocusout: (e) => { if (leaves(e)) this._setUndoHold("_undoKeyboardFocus", false); }
+        });
     },
 
     // ---- Close ----

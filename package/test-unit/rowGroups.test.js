@@ -26,7 +26,7 @@ describe("main list groups (Popover.fragment.xml)", () => {
     });
 
     it("every main-list row sits in exactly one group, reset stays outside", () => {
-        const mainPage = popover.match(/<VBox id="saMainPage"[\s\S]*?<Toolbar class="resetAllToolbar">/)[0];
+        const mainPage = popover.match(/<VBox id="saMainPage"[\s\S]*?(?=<core:Fragment fragmentName="ui5-smart-access.fragments.ResetAllPanel")/)[0];
         const all = [...mainPage.matchAll(/fragments\.(\w+)Panel"/g)].map((m) => m[1]);
         const grouped = ROW_GROUPS.flatMap(rowsOf);
         expect(grouped).toHaveLength(11);

@@ -1,11 +1,29 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-   <Button
-      id="resetAllButton"
-      type="Transparent"
-      icon="sap-icon://reset"
-      text="{i18n>resetAll.title}"
-      press=".onResetAllToolbarPress"
-      width="100%"
-      class="resetAllButton"
-   />
+   <HBox id="resetAllFooter" class="saDetailFooter saMainFooter" justifyContent="SpaceBetween" alignItems="Center" renderType="Bare">
+      <Button
+         id="resetAllButton"
+         icon="sap-icon://reset"
+         text="{i18n>resetAll.title}"
+         press=".onResetAllToolbarPress"
+         enabled="{parts: ['settings>/typoFontSize', 'settings>/typoZoom', 'settings>/typoLineHeight', 'settings>/typoWordSpacing', 'settings>/typoLetterSpacing', 'settings>/typoAlign', 'settings>/contrastTheme', 'settings>/contrastModeActive', 'settings>/nightModeActive', 'settings>/colorBlindnessType', 'settings>/blueLightFilterActive', 'settings>/ttsHover', 'settings>/ttsPlaying', 'settings>/readingGuideMode', 'settings>/highlightLinksActive', 'settings>/stopAnimationsActive', 'settings>/toggleImagesActive', 'settings>/bigCursorColor'], formatter: '.fmtCanResetAll'}"
+         visible="{= !${settings>/resetUndoOpen}}"
+         class="saFooterBtn saFooterReset resetAllButton"
+      />
+      <Text
+         id="resetUndoText"
+         text="{i18n>resetAll.done}"
+         visible="{settings>/resetUndoOpen}"
+         wrapping="true"
+         class="saResetUndoText"
+      />
+      <Button
+         id="resetUndoButton"
+         icon="sap-icon://undo"
+         text="{i18n>resetAll.undo}"
+         press=".onResetUndo"
+         visible="{settings>/resetUndoOpen}"
+         ariaDescribedBy="resetUndoText"
+         class="saFooterBtn saFooterUndo"
+      />
+   </HBox>
 </core:FragmentDefinition>

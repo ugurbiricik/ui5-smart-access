@@ -74,9 +74,7 @@
                             <core:Fragment fragmentName="ui5-smart-access.fragments.ToggleImagesPanel" type="XML" />
                             <core:Fragment fragmentName="ui5-smart-access.fragments.BigCursorPanel" type="XML" />
                         </VBox>
-                        <Toolbar class="resetAllToolbar">
-                            <core:Fragment fragmentName="ui5-smart-access.fragments.ResetAllPanel" type="XML" />
-                        </Toolbar>
+                        <core:Fragment fragmentName="ui5-smart-access.fragments.ResetAllPanel" type="XML" />
                     </VBox>
                     <core:Fragment fragmentName="ui5-smart-access.fragments.FontSizePage" type="XML" />
                     <core:Fragment fragmentName="ui5-smart-access.fragments.ReadingGuidePage" type="XML" />
