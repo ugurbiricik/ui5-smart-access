@@ -10,7 +10,7 @@ get a ready-made panel with:
 - Color-blindness correction modes with adjustable intensity
 - Blue-light filter (tunable 0–100 %)
 - Night mode (universal: swaps the UI5 theme + darkens the popover **and** the host page's own markup)
-- Contrast mode (page-wide custom bg/text colours with live WCAG ratio, chosen in a flyout)
+- Contrast mode (SAP HC White/Black themes or labelled colour schemes with their WCAG ratio, plus custom colours)
 - Reading aid (guide line / dimming mask)
 - Big cursor (selectable colours + custom)
 - Highlight links & focus

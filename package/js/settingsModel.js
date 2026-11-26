@@ -11,7 +11,7 @@ import { enableBlueLightFilter } from "./blueLightFilter.js";
 import { toggleNightMode } from "./nightMode.js";
 import { applyCustomContrast, getContrastRatio } from "./contrast.js";
 import { applyHighContrastTheme } from "./highContrastTheme.js";
-import { buildContrastColors, buildContrastPresets } from "./contrastSwatches.js";
+import { buildContrastColors, buildContrastSchemes } from "./contrastSwatches.js";
 import { applyTextSpacing } from "./textSpacing.js";
 import { setBigCursor, setBigCursorCustom, buildBigCursorColors } from "./bigCursor.js";
 import { enableHighlightLinks } from "./highlightLinks.js";
@@ -108,7 +108,11 @@ export const oSettingsModel = new JSONModel({
     contrastUnderlineLinks: savedSettings.contrastUnderlineLinks ?? true,
     // Selectable colours + ready-made presets for the contrast panel.
     contrastColors: buildContrastColors(),
-    contrastPresets: buildContrastPresets(),
+    contrastSchemes: buildContrastSchemes(),
+    contrastScheme: "off",
+    contrastCustomOpen: false,
+    contrastInfo: "",
+    contrastInfoState: "None",
 
     // Text spacing (WCAG 1.4.12): none | light | moderate | heavy
     textSpacingLevel: savedSettings.textSpacingLevel ?? "none",

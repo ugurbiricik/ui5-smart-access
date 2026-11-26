@@ -1,4 +1,5 @@
 import { getText } from "./i18nModel.js";
+import { findSchemeId, schemeLabelKey } from "./contrastSwatches.js";
 
 const pct = (n) => getText("status.percent", [Math.round(Number(n) || 0)]);
 const join = (parts) => parts.filter(Boolean).join(" · ");
@@ -39,9 +40,13 @@ export const colorBlindnessStatus = (type, intensity) =>
 export const blueLightFilterStatus = (active, level) =>
     active ? join([getText("status.on"), pct(level)]) : getText("status.off");
 
-export const contrastStatus = (active, theme, ratio) => {
+export const contrastStatus = (active, theme, ratio, bg, text) => {
     if (theme === "hcb" || theme === "hcw") return getText("contrast." + theme);
-    if (active) return join([getText("status.contrastCustom"), ratio]);
+    if (active) {
+        const labelKey = bg && text ? schemeLabelKey(findSchemeId(bg, text)) : "";
+        const label = labelKey && labelKey !== "contrast.scheme.custom" ? getText(labelKey) : getText("status.contrastCustom");
+        return join([label, ratio]);
+    }
     return getText("status.off");
 };
 

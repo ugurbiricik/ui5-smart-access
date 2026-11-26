@@ -39,8 +39,10 @@ import {
     toggleContrastMode,
     applyCustomContrast,
     removeCustomContrast,
-    getContrastRatio
+    getContrastRatio,
+    getWcagLevel
 } from "./contrast.js";
+import { findSchemeId, buildSwatchCss } from "./contrastSwatches.js";
 import {
     applyHighContrastTheme,
     disableHighContrastTheme,
@@ -82,17 +84,33 @@ const pickedHex = (oEvent, picker) => {
 
 // Keeps the contrast-preview model properties in sync with the selected
 // foreground/background colors.
+const LEVEL_STATE = { AAA: "Success", AA: "Success", AALarge: "Warning", fail: "Error" };
+
 const updateContrastPreview = () => {
     const bg = oSettingsModel.getProperty("/contrastBgColor");
     const text = oSettingsModel.getProperty("/contrastTextColor");
-    const hasColors = !!(bg && text);
-    if (hasColors) {
+    const theme = oSettingsModel.getProperty("/contrastTheme");
+    const scheme = oSettingsModel.getProperty("/contrastScheme") || "off";
+    const hasColors = !!(bg && text) && !theme && scheme !== "off";
+    if (bg && text) {
         const { ratioText, readable } = getContrastRatio(bg, text);
         oSettingsModel.setProperty("/contrastRatio", ratioText);
         oSettingsModel.setProperty(
             "/contrastReadable",
             readable ? getText("contrast.readable") : getText("contrast.notReadable")
         );
+    }
+    if (theme) {
+        oSettingsModel.setProperty("/contrastInfo", getText("contrast.info.theme", [getText("contrast." + theme)]));
+        oSettingsModel.setProperty("/contrastInfoState", "None");
+    } else if (hasColors) {
+        const { ratio, ratioText } = getContrastRatio(bg, text);
+        const level = getWcagLevel(ratio);
+        oSettingsModel.setProperty("/contrastInfo", getText("contrast.info.ratio", [ratioText, getText("contrast.level." + level)]));
+        oSettingsModel.setProperty("/contrastInfoState", LEVEL_STATE[level]);
+    } else {
+        oSettingsModel.setProperty("/contrastInfo", getText("contrast.info.off"));
+        oSettingsModel.setProperty("/contrastInfoState", "None");
     }
     // Live-colour the preview box (empty draft → neutral). Setting inline
     // styles on existing elements is popover-safe (no DOM rebuild).
@@ -122,11 +140,7 @@ const syncPressed = (oSource, bPressed) => {
     if (oSource && typeof oSource.setPressed === "function") oSource.setPressed(!!bPressed);
 };
 
-const CONTRAST_PRESETS = {
-    "yellow-black": { bg: "#FFFF00", text: "#000000" },
-    "red-black": { bg: "#FF0000", text: "#000000" },
-    "green-black": { bg: "#00FF00", text: "#000000" }
-};
+const SWATCH_STYLE_ID = "ui5-smart-access-contrast-swatches";
 
 export const DETAIL_PAGES = {
     font: { pageId: "saPageFont", panelId: "fontSizePanel", titleKey: "fontSize.title" },
@@ -332,61 +346,94 @@ export const popoverInternalController = {
 
     // ---- Contrast mode ----
     _prepareContrastPage() {
+        const theme = oSettingsModel.getProperty("/contrastTheme") || "";
+        const active = !!oSettingsModel.getProperty("/contrastModeActive");
+        const bg = oSettingsModel.getProperty("/contrastBgColor");
+        const text = oSettingsModel.getProperty("/contrastTextColor");
+        const scheme = !theme && active ? findSchemeId(bg, text) : "off";
         this._contrastSnapshot = {
-            bg: oSettingsModel.getProperty("/contrastBgColor"),
-            text: oSettingsModel.getProperty("/contrastTextColor"),
+            bg,
+            text,
             underline: oSettingsModel.getProperty("/contrastUnderlineLinks"),
-            active: oSettingsModel.getProperty("/contrastModeActive"),
-            theme: oSettingsModel.getProperty("/contrastTheme")
+            active,
+            theme
         };
+        oSettingsModel.setProperty("/contrastScheme", scheme);
+        oSettingsModel.setProperty("/contrastCustomOpen", scheme === "custom");
+        injectStyle(SWATCH_STYLE_ID, buildSwatchCss(".abicsAccessibilityPopover"));
+        updateContrastPreview();
         prefetchHighContrastThemes();
     },
-    // SAP native high-contrast theme (HCB / HCW). Applies immediately (unlike
-    // the custom colours, which wait for SET) because it is a single, fixed,
-    // WCAG-compliant choice with a live preview being pointless. Mutually
-    // exclusive with night mode and with custom-colour contrast.
-    onContrastHighContrast(oEvent) {
-        const variant = oEvent.getSource().data("variant");
-        if (!variant) return;
-        // Night mode owns the theme too — turn it off first.
-        if (oSettingsModel.getProperty("/nightModeActive")) {
-            disableNightMode();
-            oSettingsModel.setProperty("/nightModeActive", false);
-            toggleActiveFeatureClass.call(this, "nightModePanel", false);
+    _setContrastTheme(variant) {
+        if (variant === "hcb" || variant === "hcw") {
+            if (oSettingsModel.getProperty("/nightModeActive")) {
+                disableNightMode();
+                oSettingsModel.setProperty("/nightModeActive", false);
+                toggleActiveFeatureClass.call(this, "nightModePanel", false);
+            }
+            removeCustomContrast();
+            applyHighContrastTheme(variant);
+            oSettingsModel.setProperty("/contrastTheme", variant);
+            oSettingsModel.setProperty("/contrastModeActive", true);
+            oSettingsModel.setProperty("/contrastScheme", "off");
+            toggleActiveFeatureClass.call(this, "contrastModePanel", true);
+            announce(getText(variant === "hcb" ? "announce.contrastHcb" : "announce.contrastHcw"));
+        } else {
+            if (!oSettingsModel.getProperty("/contrastTheme")) return;
+            disableHighContrastTheme();
+            oSettingsModel.setProperty("/contrastTheme", "");
+            oSettingsModel.setProperty("/contrastModeActive", false);
+            toggleActiveFeatureClass.call(this, "contrastModePanel", false);
+            announce(getText("announce.contrastOff"));
         }
-        // Drop any custom-colour CSS contrast so the two don't stack.
-        removeCustomContrast();
-        applyHighContrastTheme(variant);
-        oSettingsModel.setProperty("/contrastTheme", variant);
-        oSettingsModel.setProperty("/contrastModeActive", true);
-        toggleActiveFeatureClass.call(this, "contrastModePanel", true);
         saveCurrentSettings();
-        announce(getText(variant === "hcb" ? "announce.contrastHcb" : "announce.contrastHcw"));
-        this.navToMain();
+        updateContrastPreview();
     },
-    // Selections update the DRAFT + preview only; the page changes on SET.
-    onContrastPresetSelect(oEvent) {
-        const ctx = oEvent.getSource().getBindingContext("settings");
+    onContrastThemeSelect(oEvent) {
+        const item = oEvent.getParameter("item");
+        const key = item ? item.getKey() : oEvent.getParameter("key");
+        this._setContrastTheme(key);
+    },
+    _selectContrastScheme(id) {
+        if (id !== "off" && oSettingsModel.getProperty("/contrastTheme")) this._setContrastTheme("std");
+        oSettingsModel.setProperty("/contrastScheme", id);
+        if (id === "custom") {
+            oSettingsModel.setProperty("/contrastCustomOpen", true);
+        } else if (id !== "off") {
+            const hit = (oSettingsModel.getProperty("/contrastSchemes") || []).find((s) => s.id === id);
+            if (hit) {
+                oSettingsModel.setProperty("/contrastBgColor", hit.bg);
+                oSettingsModel.setProperty("/contrastTextColor", hit.text);
+            }
+        }
+        updateContrastPreview();
+    },
+    onContrastSchemeSelect(oEvent) {
+        const src = oEvent.getSource();
+        const ctx = src.getBindingContext("settings");
         if (!ctx) return;
-        oSettingsModel.setProperty("/contrastBgColor", ctx.getProperty("bg"));
-        oSettingsModel.setProperty("/contrastTextColor", ctx.getProperty("text"));
+        this._selectContrastScheme(ctx.getProperty("id"));
+        syncPressed(src, true);
+    },
+    _pickContrastColor(path, color) {
+        if (oSettingsModel.getProperty("/contrastTheme")) this._setContrastTheme("std");
+        oSettingsModel.setProperty(path, color);
+        oSettingsModel.setProperty("/contrastScheme", "custom");
         updateContrastPreview();
     },
     onContrastBgSelect(oEvent) {
-        const ctx = oEvent.getSource().getBindingContext("settings");
+        const src = oEvent.getSource();
+        const ctx = src.getBindingContext("settings");
         if (!ctx) return;
-        const color = ctx.getProperty("color");
-        if (color === "custom") { this._openContrastColorPicker(oEvent.getSource(), "/contrastBgColor"); return; }
-        oSettingsModel.setProperty("/contrastBgColor", color);
-        updateContrastPreview();
+        this._pickContrastColor("/contrastBgColor", ctx.getProperty("color"));
+        syncPressed(src, true);
     },
     onContrastTextSelect(oEvent) {
-        const ctx = oEvent.getSource().getBindingContext("settings");
+        const src = oEvent.getSource();
+        const ctx = src.getBindingContext("settings");
         if (!ctx) return;
-        const color = ctx.getProperty("color");
-        if (color === "custom") { this._openContrastColorPicker(oEvent.getSource(), "/contrastTextColor"); return; }
-        oSettingsModel.setProperty("/contrastTextColor", color);
-        updateContrastPreview();
+        this._pickContrastColor("/contrastTextColor", ctx.getProperty("color"));
+        syncPressed(src, true);
     },
     _openContrastColorPicker(oOpener, path) {
         this._contrastColorPath = path;
@@ -395,8 +442,8 @@ export const popoverInternalController = {
                 this._contrastColorPicker = new ColorPickerPopover({
                     displayMode: "Simplified",
                     change: (oEvent) => {
-                        oSettingsModel.setProperty(this._contrastColorPath, pickedHex(oEvent, this._contrastColorPicker));
-                        updateContrastPreview();
+                        const hex = pickedHex(oEvent, this._contrastColorPicker);
+                        if (hex) this._pickContrastColor(this._contrastColorPath, hex.toLowerCase());
                     }
                 });
             }
@@ -413,15 +460,26 @@ export const popoverInternalController = {
     onContrastSet() {
         const bg = oSettingsModel.getProperty("/contrastBgColor");
         const text = oSettingsModel.getProperty("/contrastTextColor");
-        // Nothing chosen → just close (don't apply an empty contrast).
-        if (!bg || !text) { this.navToMain(); return; }
-        // Custom colours and a native HC theme are mutually exclusive.
+        const scheme = oSettingsModel.getProperty("/contrastScheme") || "off";
+        if (oSettingsModel.getProperty("/contrastTheme")) {
+            saveCurrentSettings();
+            this.navToMain();
+            return;
+        }
+        if (scheme === "off" || !bg || !text) {
+            const wasActive = !!oSettingsModel.getProperty("/contrastModeActive");
+            removeCustomContrast();
+            oSettingsModel.setProperty("/contrastModeActive", false);
+            toggleActiveFeatureClass.call(this, "contrastModePanel", false);
+            saveCurrentSettings();
+            if (wasActive) announce(getText("announce.contrastOff"));
+            this.navToMain();
+            return;
+        }
         disableHighContrastTheme();
         oSettingsModel.setProperty("/contrastTheme", "");
         applyCustomContrast(bg, text, oSettingsModel.getProperty("/contrastUnderlineLinks"));
         oSettingsModel.setProperty("/contrastModeActive", true);
-        // Title stays fixed ("Kontrastmodus") — the row opens a config flyout, it
-        // is not a plain on/off toggle, so no activate/deactivate flip.
         toggleActiveFeatureClass.call(this, "contrastModePanel", true);
         saveCurrentSettings();
         announce(getText("announce.contrastOn"));
@@ -445,6 +503,9 @@ export const popoverInternalController = {
                 removeCustomContrast();
             }
             oSettingsModel.setProperty("/contrastModeActive", !!s.active);
+            toggleActiveFeatureClass.call(this, "contrastModePanel", !!s.active);
+            saveCurrentSettings();
+            updateContrastPreview();
         }
         this.navToMain();
     },
@@ -457,6 +518,8 @@ export const popoverInternalController = {
         oSettingsModel.setProperty("/contrastBgColor", "#ffffff");
         oSettingsModel.setProperty("/contrastTextColor", "#000000");
         oSettingsModel.setProperty("/contrastUnderlineLinks", true);
+        oSettingsModel.setProperty("/contrastScheme", "off");
+        oSettingsModel.setProperty("/contrastCustomOpen", false);
         toggleActiveFeatureClass.call(this, "contrastModePanel", false);
         updateContrastPreview();
         saveCurrentSettings();
@@ -799,6 +862,19 @@ export const popoverInternalController = {
     fmtColorBlindnessStatus: colorBlindnessStatus,
     fmtBlueLightFilterStatus: blueLightFilterStatus,
     fmtContrastStatus: contrastStatus,
+    fmtI18n(key) {
+        return key ? getText(key) : "";
+    },
+    fmtSchemeRatio(id, ratio, level) {
+        if (id === "off") return getText("contrast.schemeOffHint");
+        if (id === "custom") return getText("contrast.schemeCustomHint");
+        return ratio ? ratio + " · " + getText("contrast.levelShort." + level) : "";
+    },
+    fmtSchemeTooltip(labelKey, ratio, level) {
+        const label = labelKey ? getText(labelKey) : "";
+        if (!ratio) return label;
+        return getText("contrast.schemeTooltip", [label, ratio, getText("contrast.level." + level)]);
+    },
     fmtToggleStatus: toggleStatus,
 
     // ---- Reset all ----

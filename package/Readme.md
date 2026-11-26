@@ -132,6 +132,12 @@ The assistant is a single `sap.m.ResponsivePopover` holding a `sap.m.NavContaine
 - **Phone** — opens as a full-screen dialog (`ResponsivePopover` on `sap.ui.Device.system.phone`).
 - **Focus** — opening a detail page focuses its first control; back returns focus
   to the row that opened it. `Esc` closes the assistant.
+- **Contrast page** — SAP high-contrast theme as a segmented choice (Standard ·
+  HC White · HC Black, applied at once), labelled colour schemes that show their
+  WCAG contrast ratio and level (AAA / AA), and a collapsible "Custom colours"
+  section with named colour buttons. Schemes and colours are toggle buttons
+  (`aria-pressed`); a scheme is a draft until **Apply**, **Cancel** restores the
+  state the page was opened with.
 
 | Shortcut | Action |
 |---|---|

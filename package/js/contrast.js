@@ -68,5 +68,13 @@ export const getContrastRatio = (bg, text) => {
     const l1 = luminance(bg);
     const l2 = luminance(text);
     const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
-    return { ratioText: ratio.toFixed(1) + ":1", readable: ratio >= 4.5 };
+    return { ratio, ratioText: ratio.toFixed(1) + ":1", readable: ratio >= 4.5 };
+};
+
+export const getWcagLevel = (ratio) => {
+    const r = Math.round(Number(ratio) * 10) / 10;
+    if (r >= 7) return "AAA";
+    if (r >= 4.5) return "AA";
+    if (r >= 3) return "AALarge";
+    return "fail";
 };

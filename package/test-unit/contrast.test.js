@@ -9,7 +9,7 @@ import {
 
 describe("getContrastRatio (WCAG luminance math)", () => {
     it("white on black is the maximum 21:1", () => {
-        expect(getContrastRatio("#ffffff", "#000000")).toEqual({ ratioText: "21.0:1", readable: true });
+        expect(getContrastRatio("#ffffff", "#000000")).toMatchObject({ ratio: 21, ratioText: "21.0:1", readable: true });
     });
 
     it("is symmetric (order of bg/text does not matter)", () => {

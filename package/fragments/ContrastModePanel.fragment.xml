@@ -10,7 +10,7 @@
             <VBox class="saRowTexts" renderType="Bare">
                <layoutData><ToolbarLayoutData shrinkable="true" /></layoutData>
                <Title id="contrastModeTitle" text="{i18n>contrastMode.title}" class="saRowTitle" wrapping="false" />
-               <Text id="contrastModeStatus" text="{parts: ['settings>/contrastModeActive', 'settings>/contrastTheme', 'settings>/contrastRatio'], formatter: '.fmtContrastStatus'}" class="saRowStatus" wrapping="false" />
+               <Text id="contrastModeStatus" text="{parts: ['settings>/contrastModeActive', 'settings>/contrastTheme', 'settings>/contrastRatio', 'settings>/contrastBgColor', 'settings>/contrastTextColor'], formatter: '.fmtContrastStatus'}" class="saRowStatus" wrapping="false" />
             </VBox>
             <ToolbarSpacer />
             <core:Icon src="sap-icon://slim-arrow-right" size="14px" class="saNavChevron" decorative="true" />

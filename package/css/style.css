@@ -694,33 +694,6 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   margin: 10px 0 4px 0;
 }
 
-/* Preset + swatch rows: items evenly spread across the full width
-   (SpaceBetween in the fragment); a small min-gap keeps them from touching. */
-.abicsAccessibilityPopover .contrastPresetRow,
-.abicsAccessibilityPopover .contrastSwatchRow {
-  gap: 4px;
-  flex-wrap: nowrap;
-}
-
-.abicsAccessibilityPopover .contrastPreset,
-.abicsAccessibilityPopover .contrastSwatch {
-  cursor: pointer;
-  border-radius: 8px;
-  box-shadow: 0 0 0 1px var(--sa-line);
-}
-
-.abicsAccessibilityPopover .contrastPreset:hover,
-.abicsAccessibilityPopover .contrastSwatch:hover {
-  opacity: 0.8;
-}
-
-/* No focus ring on the colour/preset chips (matches the app standard). */
-.abicsAccessibilityPopover .contrastSection .sapMImg:focus,
-.abicsAccessibilityPopover .contrastSection .sapMImg:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
 .abicsAccessibilityPopover .contrastPreviewBox {
   min-height: 46px;
   border-radius: 8px;
@@ -732,6 +705,139 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
 
 .abicsAccessibilityPopover .contrastPreviewText {
   font-weight: 600;
+}
+
+.abicsAccessibilityPopover .contrastRatioInfo {
+  display: block;
+  margin-top: 6px;
+}
+
+.abicsAccessibilityPopover .contrastRatioInfo .sapMObjStatusText,
+.abicsAccessibilityPopover .contrastRatioInfo .sapMObjStatusIcon {
+  font-size: 13px !important;
+  font-weight: 600;
+}
+
+.abicsAccessibilityPopover .contrastSchemeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 8px;
+}
+
+.abicsAccessibilityPopover .contrastSchemeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  min-width: 0;
+}
+
+.abicsAccessibilityPopover .saScheme,
+.abicsAccessibilityPopover .saScheme .sapMBtnInner {
+  width: 100%;
+  min-width: 0;
+}
+
+.abicsAccessibilityPopover .saScheme {
+  height: auto;
+  padding: 0;
+}
+
+.abicsAccessibilityPopover .saScheme .sapMBtnInner {
+  height: 48px;
+  padding: 0 6px;
+  border-radius: 10px !important;
+  border: 1px solid var(--sa-field-line) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.abicsAccessibilityPopover .saScheme .sapMBtnInner .sapMBtnIcon {
+  position: static;
+  margin: 0;
+  flex: none;
+}
+
+.abicsAccessibilityPopover .saScheme .sapMBtnInner .sapMBtnContent {
+  white-space: normal;
+  line-height: 1.15 !important;
+  height: auto;
+  padding: 0;
+  font-size: 13px !important;
+  font-weight: 700;
+  text-align: center;
+  overflow: hidden;
+}
+
+.abicsAccessibilityPopover .saDetailPage .saScheme .sapMBtnInner.sapMToggleBtnPressed,
+.abicsAccessibilityPopover .saDetailPage .saSwatch .sapMBtnInner.sapMToggleBtnPressed {
+  border: 1px solid var(--sa-field-line) !important;
+  box-shadow: 0 0 0 3px var(--sa-selected-line);
+}
+
+.abicsAccessibilityPopover .contrastSchemeRatio.sapMText {
+  font-size: 12px !important;
+  color: var(--sa-text-2);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.abicsAccessibilityPopover .contrastCustomPanel {
+  border: 1px solid var(--sa-line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.abicsAccessibilityPopover .contrastCustomPanel .sapMPanelContent {
+  padding: 4px 12px 12px;
+  border-bottom: none;
+}
+
+.abicsAccessibilityPopover .contrastCustomBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.abicsAccessibilityPopover .contrastCustomBody .contrastLabel {
+  margin: 6px 0 0 0;
+}
+
+.abicsAccessibilityPopover .contrastSwatchRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.abicsAccessibilityPopover .saSwatch,
+.abicsAccessibilityPopover .saSwatch .sapMBtnInner {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0;
+}
+
+.abicsAccessibilityPopover .saSwatch .sapMBtnInner {
+  border-radius: 10px !important;
+  border: 1px solid var(--sa-field-line) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.abicsAccessibilityPopover .saSwatch .sapMBtnInner .sapMBtnIcon {
+  position: static;
+  margin: 0;
+  width: auto;
+  line-height: 1;
+}
+
+.abicsAccessibilityPopover .saSwatchMore {
+  align-self: flex-start;
 }
 
 /* −/reset/+ icon buttons: never show a focus ring/outline/border in any state
@@ -976,33 +1082,6 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   }
 }
 
-/* ── SAP native high-contrast theme buttons (contrast flyout) ──
-   Each button previews the theme it applies: HCW = black text on white,
-   HCB = white text on black. Tooltips carry the full name. */
-.abicsAccessibilityPopover .contrastThemeRow {
-  gap: 8px;
-  margin-bottom: 6px;
-}
-.abicsAccessibilityPopover .contrastThemeBtn .sapMBtnInner {
-  width: 100%;
-  border-radius: 9px !important;
-  box-shadow: none;
-}
-.abicsAccessibilityPopover .contrastThemeHcw .sapMBtnInner {
-  background-color: var(--sa-hcw-bg) !important;
-  border: 1px solid var(--sa-hcw-text) !important;
-}
-.abicsAccessibilityPopover .contrastThemeHcw .sapMBtnInner .sapMBtnContent {
-  color: var(--sa-hcw-text);
-}
-.abicsAccessibilityPopover .contrastThemeHcb .sapMBtnInner {
-  background-color: var(--sa-hcb-bg) !important;
-  border: 1px solid var(--sa-hcb-text) !important;
-}
-.abicsAccessibilityPopover .contrastThemeHcb .sapMBtnInner .sapMBtnContent {
-  color: var(--sa-hcb-text);
-}
-
 .abicsAccessibilityPopover .saTpl {
   display: flex;
   flex-direction: column;
@@ -1239,8 +1318,7 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
 html .abicsAccessibilityPopover .cbIntBtn:focus-visible,
 html .abicsAccessibilityPopover .saDetailPage .sapMBtn:focus-visible,
 html .abicsAccessibilityPopover .saSegControl .sapMSegBBtn:focus-visible,
-html .abicsAccessibilityPopover .contrastThemeBtn:focus-visible,
-html .abicsAccessibilityPopover .contrastSection .sapMImg:focus-visible,
+html .abicsAccessibilityPopover .contrastSection .sapMPanelHeadingDiv .sapMPanelWrappingDiv:focus-visible,
 html .abicsAccessibilityPopover .cbList .sapMCLI:focus-visible,
 html .abicsAccessibilityPopover .cbList .sapMLIB:focus-visible,
 html .abicsAccessibilityPopover .sapMSlt:focus-visible,

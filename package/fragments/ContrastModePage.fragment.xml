@@ -6,42 +6,89 @@
    <VBox id="saPageContrast" class="saPage saDetailPage saTpl contrastSection" width="100%">
       <VBox class="saPreview saPreviewContrast" width="100%" renderType="Bare">
           <Text text="{i18n>detail.preview}" class="saPreviewLabel" />
-          <HBox class="contrastPreviewBox" alignItems="Center" justifyContent="Center" width="100%">
-              <Text text="{i18n>contrast.sample}" class="contrastPreviewText" />
-          </HBox>
+          <VBox class="contrastPreviewBox" width="100%" renderType="Bare">
+              <Text text="{i18n>detail.sample}" class="contrastPreviewText" />
+          </VBox>
+          <ObjectStatus
+              id="contrastRatioInfo"
+              text="{settings>/contrastInfo}"
+              state="{settings>/contrastInfoState}"
+              icon="{= ${settings>/contrastInfoState} === 'Success' ? 'sap-icon://accept' : ${settings>/contrastInfoState} === 'None' ? '' : 'sap-icon://alert'}"
+              class="contrastRatioInfo" />
       </VBox>
 
-      <Label text="{i18n>contrast.sapThemes}" class="contrastLabel" />
-      <HBox class="contrastThemeRow" alignItems="Center" width="100%">
-          <Button text="{i18n>contrast.hcw}" press=".onContrastHighContrast" custom:variant="hcw" tooltip="{i18n>contrast.hcwTooltip}" class="contrastThemeBtn contrastThemeHcw">
-              <layoutData><FlexItemData growFactor="1" /></layoutData>
-          </Button>
-          <Button text="{i18n>contrast.hcb}" press=".onContrastHighContrast" custom:variant="hcb" tooltip="{i18n>contrast.hcbTooltip}" class="contrastThemeBtn contrastThemeHcb">
-              <layoutData><FlexItemData growFactor="1" /></layoutData>
-          </Button>
-      </HBox>
+      <VBox class="saField" width="100%" renderType="Bare">
+         <Label id="contrastThemeLabel" text="{i18n>contrast.sapThemes}" class="contrastLabel" labelFor="contrastThemeSeg" />
+         <SegmentedButton id="contrastThemeSeg" selectedKey="{= ${settings>/contrastTheme} || 'std'}" selectionChange=".onContrastThemeSelect" width="100%" ariaLabelledBy="contrastThemeLabel" class="saSegControl contrastThemeSeg">
+            <items>
+               <SegmentedButtonItem key="std" text="{i18n>contrast.themeStandard}" tooltip="{i18n>contrast.themeStandardTooltip}" />
+               <SegmentedButtonItem key="hcw" text="{i18n>contrast.hcwShort}" tooltip="{i18n>contrast.hcwTooltip}" />
+               <SegmentedButtonItem key="hcb" text="{i18n>contrast.hcbShort}" tooltip="{i18n>contrast.hcbTooltip}" />
+            </items>
+         </SegmentedButton>
+      </VBox>
 
-      <Label text="{i18n>contrast.preset}" class="contrastLabel" />
-      <HBox class="contrastPresetRow" items="{settings>/contrastPresets}" alignItems="Center" justifyContent="SpaceBetween" width="100%">
-          <Image src="{settings>preview}" width="40px" height="40px" densityAware="false" press=".onContrastPresetSelect" class="contrastPreset" />
-      </HBox>
+      <VBox class="saField" width="100%" renderType="Bare">
+         <Label id="contrastSchemeLabel" text="{i18n>contrast.scheme}" class="contrastLabel" />
+         <HBox class="contrastSchemeGrid" items="{settings>/contrastSchemes}" renderType="Bare" width="100%">
+            <VBox class="contrastSchemeCard" renderType="Bare">
+               <ToggleButton
+                  text="{path: 'settings>labelKey', formatter: '.fmtI18n'}"
+                  icon="{= ${settings>id} === 'custom' ? 'sap-icon://palette' : ''}"
+                  pressed="{= ${settings>/contrastScheme} === ${settings>id}}"
+                  tooltip="{parts: ['settings>labelKey', 'settings>ratio', 'settings>level'], formatter: '.fmtSchemeTooltip'}"
+                  press=".onContrastSchemeSelect"
+                  width="100%"
+                  class="saScheme">
+                  <customData>
+                     <core:CustomData key="sa-scheme" value="{settings>id}" writeToDom="true" />
+                  </customData>
+               </ToggleButton>
+               <Text text="{parts: ['settings>id', 'settings>ratio', 'settings>level'], formatter: '.fmtSchemeRatio'}" class="contrastSchemeRatio" />
+            </VBox>
+         </HBox>
+      </VBox>
 
-      <Label text="{i18n>contrast.background}" class="contrastLabel" />
-      <HBox class="contrastSwatchRow" items="{settings>/contrastColors}" alignItems="Center" justifyContent="SpaceBetween" width="100%">
-          <Image src="{settings>preview}" width="28px" height="28px" densityAware="false" press=".onContrastBgSelect" tooltip="{= ${settings>color} === 'custom' ? ${i18n>contrast.custom} : ${settings>color}}" class="contrastSwatch" />
-      </HBox>
+      <Panel id="contrastCustomPanel" expandable="true" expanded="{settings>/contrastCustomOpen}" headerText="{i18n>contrast.customColors}" width="auto" class="contrastCustomPanel">
+         <VBox class="contrastCustomBody" width="100%" renderType="Bare">
+            <Label id="contrastBgLabel" text="{i18n>contrast.background}" class="contrastLabel" />
+            <HBox class="contrastSwatchRow" items="{settings>/contrastColors}" alignItems="Center" renderType="Bare" width="100%">
+               <ToggleButton
+                  icon="{= ${settings>/contrastScheme} === 'custom' &amp;&amp; ${settings>/contrastBgColor}.toLowerCase() === ${settings>color} ? 'sap-icon://accept' : ''}"
+                  pressed="{= ${settings>/contrastScheme} === 'custom' &amp;&amp; ${settings>/contrastBgColor}.toLowerCase() === ${settings>color}}"
+                  tooltip="{path: 'settings>nameKey', formatter: '.fmtI18n'}"
+                  press=".onContrastBgSelect"
+                  class="saSwatch">
+                  <customData>
+                     <core:CustomData key="sa-color" value="{settings>key}" writeToDom="true" />
+                  </customData>
+               </ToggleButton>
+            </HBox>
+            <Button text="{i18n>contrast.moreBg}" icon="sap-icon://palette" press=".onContrastCustomBg" class="saSwatchMore" />
 
-      <Label text="{i18n>contrast.text}" class="contrastLabel" />
-      <HBox class="contrastSwatchRow" items="{settings>/contrastColors}" alignItems="Center" justifyContent="SpaceBetween" width="100%">
-          <Image src="{settings>preview}" width="28px" height="28px" densityAware="false" press=".onContrastTextSelect" tooltip="{= ${settings>color} === 'custom' ? ${i18n>contrast.custom} : ${settings>color}}" class="contrastSwatch" />
-      </HBox>
+            <Label id="contrastTextLabel" text="{i18n>contrast.text}" class="contrastLabel" />
+            <HBox class="contrastSwatchRow" items="{settings>/contrastColors}" alignItems="Center" renderType="Bare" width="100%">
+               <ToggleButton
+                  icon="{= ${settings>/contrastScheme} === 'custom' &amp;&amp; ${settings>/contrastTextColor}.toLowerCase() === ${settings>color} ? 'sap-icon://accept' : ''}"
+                  pressed="{= ${settings>/contrastScheme} === 'custom' &amp;&amp; ${settings>/contrastTextColor}.toLowerCase() === ${settings>color}}"
+                  tooltip="{path: 'settings>nameKey', formatter: '.fmtI18n'}"
+                  press=".onContrastTextSelect"
+                  class="saSwatch">
+                  <customData>
+                     <core:CustomData key="sa-color" value="{settings>key}" writeToDom="true" />
+                  </customData>
+               </ToggleButton>
+            </HBox>
+            <Button text="{i18n>contrast.moreText}" icon="sap-icon://palette" press=".onContrastCustomText" class="saSwatchMore" />
+         </VBox>
+      </Panel>
 
       <HBox class="saDetailFooter" justifyContent="SpaceBetween" alignItems="Center" renderType="Bare">
           <Button
               text="{i18n>detail.reset}"
               icon="sap-icon://reset"
               press=".onDetailReset"
-              enabled="{= ${settings>/contrastModeActive} || ${settings>/contrastTheme} !== '' || ${settings>/contrastBgColor} !== '#ffffff' || ${settings>/contrastTextColor} !== '#000000' || ${settings>/contrastUnderlineLinks} !== true}"
+              enabled="{= ${settings>/contrastModeActive} || ${settings>/contrastTheme} !== '' || ${settings>/contrastScheme} !== 'off'}"
               class="saFooterBtn saFooterReset" />
           <HBox class="saFooterEnd" alignItems="Center" renderType="Bare">
               <Button text="{i18n>contrast.cancel}" press=".onContrastCancel" class="saFooterBtn saFooterCancel" />

@@ -1,45 +1,71 @@
-// Inline data-URI swatches for the contrast-mode panel (no external assets).
+import { getContrastRatio, getWcagLevel } from "./contrast.js";
 
-// Single colour chip.
-const colorSquare = (color) =>
-    "data:image/svg+xml," + encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28">` +
-        `<rect width="28" height="28" rx="6" fill="${color}" stroke="rgba(0,0,0,0.15)"/></svg>`
-    );
-
-// Preset chip: background fill with a sample "A" in the text colour.
-const presetSquare = (bg, text) =>
-    "data:image/svg+xml," + encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36">` +
-        `<rect width="36" height="36" rx="8" fill="${bg}" stroke="rgba(0,0,0,0.15)"/>` +
-        `<text x="18" y="25" font-size="20" font-family="Arial" text-anchor="middle" fill="${text}">A</text></svg>`
-    );
-
-// Rainbow chip for the "custom colour" entry (opens the colour picker).
-const rainbowSquare = () =>
-    "data:image/svg+xml," + encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28">` +
-        `<defs><linearGradient id="r" x1="0" y1="0" x2="1" y2="1">` +
-        `<stop offset="0" stop-color="#f43f5e"/><stop offset="0.25" stop-color="#facc15"/>` +
-        `<stop offset="0.5" stop-color="#22c55e"/><stop offset="0.75" stop-color="#3b82f6"/>` +
-        `<stop offset="1" stop-color="#a855f7"/></linearGradient></defs>` +
-        `<rect width="28" height="28" rx="6" fill="url(#r)" stroke="rgba(0,0,0,0.15)"/></svg>`
-    );
-
-// Six selectable colours (shared by background + text pickers).
-const COLORS = ["#000000", "#ffffff", "#7f1d1d", "#facc15", "#22c55e", "#2563eb"];
-
-// Four ready-made high-contrast combinations.
-const PRESETS = [
-    { bg: "#1e3a8a", text: "#facc15" },
-    { bg: "#7f1d1d", text: "#22c55e" },
-    { bg: "#000000", text: "#ffffff" },
-    { bg: "#ffffff", text: "#000000" }
+const COLORS = [
+    { color: "#000000", mark: "#ffffff", nameKey: "contrast.color.black" },
+    { color: "#ffffff", mark: "#000000", nameKey: "contrast.color.white" },
+    { color: "#7f1d1d", mark: "#ffffff", nameKey: "contrast.color.darkRed" },
+    { color: "#ffeb3b", mark: "#000000", nameKey: "contrast.color.yellow" },
+    { color: "#166534", mark: "#ffffff", nameKey: "contrast.color.green" },
+    { color: "#0a3d8f", mark: "#ffffff", nameKey: "contrast.color.blue" }
 ];
 
-export const buildContrastColors = () =>
-    COLORS.map((color) => ({ color, preview: colorSquare(color) }))
-        .concat([{ color: "custom", preview: rainbowSquare() }]);
+const SCHEMES = [
+    { id: "off", labelKey: "contrast.scheme.off" },
+    { id: "yellowOnBlack", labelKey: "contrast.scheme.yellowOnBlack", bg: "#000000", text: "#ffeb3b" },
+    { id: "whiteOnBlack", labelKey: "contrast.scheme.whiteOnBlack", bg: "#000000", text: "#ffffff" },
+    { id: "darkOnCream", labelKey: "contrast.scheme.darkOnCream", bg: "#fdf6e3", text: "#1d2d3e" },
+    { id: "whiteOnBlue", labelKey: "contrast.scheme.whiteOnBlue", bg: "#0a3d8f", text: "#ffffff" },
+    { id: "custom", labelKey: "contrast.scheme.custom" }
+];
 
-export const buildContrastPresets = () =>
-    PRESETS.map((p) => ({ bg: p.bg, text: p.text, preview: presetSquare(p.bg, p.text) }));
+const hexKey = (hex) => String(hex || "").replace("#", "").toLowerCase();
+
+const sameColor = (a, b) => !!a && !!b && hexKey(a) === hexKey(b);
+
+export const buildContrastColors = () =>
+    COLORS.map((c) => ({ color: c.color, key: hexKey(c.color), nameKey: c.nameKey }));
+
+export const buildContrastSchemes = () =>
+    SCHEMES.map((s) => {
+        const item = { id: s.id, labelKey: s.labelKey, bg: s.bg || "", text: s.text || "", ratio: "", level: "" };
+        if (s.bg && s.text) {
+            const { ratio, ratioText } = getContrastRatio(s.bg, s.text);
+            item.ratio = ratioText;
+            item.level = getWcagLevel(ratio);
+        }
+        return item;
+    });
+
+export const findSchemeId = (bg, text) => {
+    const hit = SCHEMES.find((s) => s.bg && sameColor(s.bg, bg) && sameColor(s.text, text));
+    return hit ? hit.id : "custom";
+};
+
+export const schemeLabelKey = (id) => {
+    const hit = SCHEMES.find((s) => s.id === id);
+    return hit ? hit.labelKey : "";
+};
+
+export const buildSwatchCss = (scope) => {
+    const rules = [];
+    SCHEMES.filter((s) => s.bg && s.text).forEach((s) => {
+        rules.push(
+            `${scope} .saScheme[data-sa-scheme="${s.id}"] .sapMBtnInner,` +
+            `${scope} .saScheme[data-sa-scheme="${s.id}"] .sapMBtnInner.sapMToggleBtnPressed` +
+            ` { background-color: ${s.bg} !important; }`,
+            `${scope} .saScheme[data-sa-scheme="${s.id}"] .sapMBtnInner .sapMBtnContent,` +
+            `${scope} .saScheme[data-sa-scheme="${s.id}"] .sapMBtnInner .sapUiIcon` +
+            ` { color: ${s.text} !important; }`
+        );
+    });
+    COLORS.forEach((c) => {
+        rules.push(
+            `${scope} .saSwatch[data-sa-color="${hexKey(c.color)}"] .sapMBtnInner,` +
+            `${scope} .saSwatch[data-sa-color="${hexKey(c.color)}"] .sapMBtnInner.sapMToggleBtnPressed` +
+            ` { background-color: ${c.color} !important; }`,
+            `${scope} .saSwatch[data-sa-color="${hexKey(c.color)}"] .sapMBtnInner .sapUiIcon` +
+            ` { color: ${c.mark} !important; }`
+        );
+    });
+    return rules.join("\n");
+};
