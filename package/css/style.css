@@ -1010,6 +1010,10 @@ html .abicsAccessibilityPopover .saGroup > .saGroupTitle {
   padding-bottom: 0;
 }
 
+.abicsAccessibilityPopover .saTpl.sapMNavItemHidden {
+  display: none;
+}
+
 .abicsAccessibilityPopover .saPreview {
   border: 1px dashed var(--sa-field-line);
   border-radius: 10px;

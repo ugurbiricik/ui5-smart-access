@@ -321,3 +321,10 @@ describe("font preview css", () => {
         expect(previewCss(".x", {})).toContain("font-size: 14px");
     });
 });
+
+describe("detail pages leave the NavContainer cleanly", () => {
+    it("a hidden detail page is not forced visible by the template flex layout", () => {
+        const css = readFileSync(resolve(__dirname, "../css/style.css"), "utf8");
+        expect(css).toMatch(/\.abicsAccessibilityPopover \.saTpl\.sapMNavItemHidden \{\s*display: none;\s*\}/);
+    });
+});
