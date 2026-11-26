@@ -112,11 +112,32 @@ cf deploy mta_archives/<app>_<version>.mtar -f
 ## API
 
 ```ts
-// Opens the assistant, anchored to the event source. Resolves to the sap.m.Popover.
+// Opens the assistant, anchored to the event source. Resolves to the sap.m.ResponsivePopover.
 openAccessPopover(controller: Controller, oEvent: Event): Promise<unknown>;
 // Recommended onInit entry point: re-applies saved prefs + registers Alt+Shift shortcuts.
 initAccessibility(controller: Controller, oTrigger: Control): void;
 ```
+
+## Layout
+
+The assistant is a single `sap.m.ResponsivePopover` holding a `sap.m.NavContainer`:
+
+- **Main list** — one row per feature. On/off features (night mode, highlight
+  links, stop animations, hide images) toggle on click; features with settings
+  (font, reading aid, big cursor, read aloud, colour blindness, blue filter,
+  contrast) show a `›` and open their **detail page in the same popover**, with a
+  back button in the header. Opening a row never changes the page by itself.
+- **Desktop / tablet** — 360 px popover below the launcher; its height follows the
+  current page and scrolls inside the viewport. "Reset all" stays pinned at the bottom.
+- **Phone** — opens as a full-screen dialog (`ResponsivePopover` on `sap.ui.Device.system.phone`).
+- **Focus** — opening a detail page focuses its first control; back returns focus
+  to the row that opened it. `Esc` closes the assistant.
+
+| Shortcut | Action |
+|---|---|
+| `Alt+Shift+A` | open / close the assistant |
+| `Alt+Shift+F` · `R` · `G` · `V` · `S` · `B` · `K` | open font · reading aid · big cursor · read aloud · colour blindness · blue filter · contrast page (again: back to the list) |
+| `Alt+Shift+L` · `N` · `M` · `I` | toggle highlight links · night mode · stop animations · hide images |
 
 ## Theming
 

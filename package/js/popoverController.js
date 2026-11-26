@@ -1,9 +1,9 @@
 import { oSettingsModel, saveCurrentSettings, clearAllPrefs } from "./settingsModel.js";
+import Fragment from "sap/ui/core/Fragment";
 import {
     toggleActiveFeatureClass,
     updateTitleText,
-    updateIconSrc,
-    closePopoverFromEvent
+    updateIconSrc
 } from "./popoverHelpers.js";
 import {
     onIncreaseFontSize as increaseFontSize,
@@ -56,6 +56,7 @@ import {
 } from "./typography.js";
 import { resetAll } from "./resetAll.js";
 import { getText } from "./i18nModel.js";
+import { hideHint } from "./hoverHints.js";
 
 // Resolve the picked colour from a ColorPickerPopover `change` event. Prefer
 // the event's own colour params (colorString/hex/rgb); fall back to the
@@ -97,11 +98,22 @@ const CONTRAST_PRESETS = {
     "green-black": { bg: "#00FF00", text: "#000000" }
 };
 
-// Toggle helper for expand/collapse-only panels.
-const togglePanelExpanded = (propertyPath) => {
-    const expanded = oSettingsModel.getProperty(propertyPath);
-    oSettingsModel.setProperty(propertyPath, !expanded);
-    return !expanded;
+export const DETAIL_PAGES = {
+    font: { pageId: "saPageFont", panelId: "fontSizePanel", titleKey: "fontSize.title" },
+    readingGuide: { pageId: "saPageReadingGuide", panelId: "readingGuidePanel", titleKey: "readingGuide.title" },
+    bigCursor: { pageId: "saPageBigCursor", panelId: "bigCursorPanel", titleKey: "bigCursor.title" },
+    tts: { pageId: "saPageTts", panelId: "ttsPanel", titleKey: "tts.title" },
+    colorBlindness: { pageId: "saPageColorBlindness", panelId: "colorBlindnessPanel", titleKey: "colorBlindness.title" },
+    blueLightFilter: { pageId: "saPageBlueLightFilter", panelId: "blueLightFilterPanel", titleKey: "blueFilter.title" },
+    contrast: { pageId: "saPageContrast", panelId: "contrastModePanel", titleKey: "contrastMode.activate" }
+};
+
+const FOCUSABLE = "[tabindex='0'], button:not([disabled]), input:not([disabled]), select:not([disabled])";
+
+const scrollContainerOf = (oPopover) => {
+    const dom = oPopover && oPopover.getDomRef && oPopover.getDomRef();
+    if (!dom) return null;
+    return dom.querySelector(".sapMPopoverCont, .sapMDialogSection");
 };
 
 // The object passed as `controller` to Fragment.load for the popover.
@@ -109,37 +121,87 @@ const togglePanelExpanded = (propertyPath) => {
 // refs `_oPopover` and `_sFragmentId` set by openAccessPopover.
 export const popoverInternalController = {
 
-    // ---- Expand/collapse ----
-    onFontSizeToolbarPress() {
-        togglePanelExpanded("/fontSizeExpanded");
+    _byId(sId) {
+        return this._sFragmentId ? Fragment.byId(this._sFragmentId, sId) : null;
     },
-    onColorBlindnessToolbarPress() {
-        togglePanelExpanded("/colorBlindnessExpanded");
+    getCurrentPageKey() {
+        return oSettingsModel.getProperty("/navPage") || "main";
     },
-
-    // Read-aloud opens in the left flyout (grows with player + settings).
-    onTTSOpenFlyout(oEvent) {
-        oSettingsModel.setProperty("/activeFlyout", "tts");
-        oSettingsModel.setProperty("/activeFlyoutTitle", getText("tts.title"));
-        oSettingsModel.setProperty("/activeFlyoutIcon", "sap-icon://sound-loud");
-        this._openFlyout(oEvent.getSource());
+    onNavToDetail(oEvent) {
+        this.navToDetail(oEvent.getSource().data("page"));
+    },
+    navToDetail(key) {
+        const page = DETAIL_PAGES[key];
+        const nav = this._byId("saNav");
+        const target = page && this._byId(page.pageId);
+        if (!nav || !target) return;
+        hideHint();
+        if (this.getCurrentPageKey() === "main") {
+            const scroller = scrollContainerOf(this._oPopover);
+            this._mainScrollTop = scroller ? scroller.scrollTop : 0;
+        }
+        if (key === "contrast") this._prepareContrastPage();
+        this._navOrigin = key;
+        oSettingsModel.setProperty("/navTitle", getText(page.titleKey));
+        oSettingsModel.setProperty("/navPage", key);
+        if (nav.getCurrentPage() !== target) nav.to(target);
+    },
+    onNavBack() {
+        this.navToMain();
+    },
+    navToMain(bInstant) {
+        const nav = this._byId("saNav");
+        oSettingsModel.setProperty("/navPage", "main");
+        if (!nav) return;
+        const main = this._byId("saMainPage");
+        if (nav.getCurrentPage() === main) return;
+        if (bInstant) {
+            this._navOrigin = null;
+            this._mainScrollTop = 0;
+        }
+        nav.backToTop();
+    },
+    onNavigate() {
+        hideHint();
+        const scroller = scrollContainerOf(this._oPopover);
+        if (scroller) scroller.scrollTop = 0;
+    },
+    onAfterNavigate(oEvent) {
+        const to = oEvent.getParameter("to");
+        const toMain = to === this._byId("saMainPage");
+        let target = null;
+        if (toMain) {
+            const scroller = scrollContainerOf(this._oPopover);
+            if (scroller) scroller.scrollTop = this._mainScrollTop || 0;
+            const page = this._navOrigin && DETAIL_PAGES[this._navOrigin];
+            this._navOrigin = null;
+            const panel = page && this._byId(page.panelId);
+            target = panel && panel.getHeaderToolbar && panel.getHeaderToolbar();
+        } else {
+            if (this.getCurrentPageKey() === "contrast") updateContrastPreview();
+            const dom = to && to.getDomRef();
+            target = dom && dom.querySelector(FOCUSABLE);
+        }
+        if (!target) return;
+        setTimeout(() => {
+            if (this._oPopover && this._oPopover.isOpen()) target.focus();
+        }, 0);
     },
 
     // ---- Blue light filter ----
-    onBlueLightFilterToolbarPress() {
-        const nowExpanded = togglePanelExpanded("/blueLightFilterExpanded");
+    onBlueLightFilterSwitch(oEvent) {
+        const on = oEvent.getParameter("state");
         updateTitleText.call(this, "blueLightFilterTitle",
-            nowExpanded ? "blueFilter.deactivate" : "blueFilter.activate");
-        if (nowExpanded) {
+            on ? "blueFilter.deactivate" : "blueFilter.activate");
+        if (on) {
             enableBlueLightFilter(oSettingsModel.getProperty("/blueLightFilterLevel"));
-            oSettingsModel.setProperty("/blueLightFilterActive", true);
         } else {
             disableBlueLightFilter();
-            oSettingsModel.setProperty("/blueLightFilterActive", false);
         }
-        toggleActiveFeatureClass.call(this, "blueLightFilterPanel", nowExpanded);
+        oSettingsModel.setProperty("/blueLightFilterActive", on);
+        toggleActiveFeatureClass.call(this, "blueLightFilterPanel", on);
         saveCurrentSettings();
-        announce(getText(nowExpanded ? "announce.blueFilterOn" : "announce.blueFilterOff"));
+        announce(getText(on ? "announce.blueFilterOn" : "announce.blueFilterOff"));
     },
     onBlueLightFilterSliderChange(e) {
         const level = e.getParameter("value");
@@ -212,14 +274,7 @@ export const popoverInternalController = {
     },
 
     // ---- Contrast mode ----
-    // Row press opens the config flyout directly (no default applied, no inline
-    // panel). Colours are chosen there and applied with SET; RESET clears it.
-    onContrastModeToolbarPress(oEvent) {
-        this.onContrastOpenFlyout(oEvent);
-    },
-    onContrastOpenFlyout(oEvent) {
-        // Snapshot for CANCEL. No forced default — the draft stays as-is (empty
-        // = neutral preview) so nothing changes until the user picks a colour.
+    _prepareContrastPage() {
         this._contrastSnapshot = {
             bg: oSettingsModel.getProperty("/contrastBgColor"),
             text: oSettingsModel.getProperty("/contrastTextColor"),
@@ -227,15 +282,7 @@ export const popoverInternalController = {
             active: oSettingsModel.getProperty("/contrastModeActive"),
             theme: oSettingsModel.getProperty("/contrastTheme")
         };
-        // Warm the HCB/HCW stylesheet caches so tapping a theme button switches
-        // instantly instead of flashing while UI5 downloads the theme.
         prefetchHighContrastThemes();
-        oSettingsModel.setProperty("/activeFlyout", "contrast");
-        oSettingsModel.setProperty("/activeFlyoutTitle", getText("contrastMode.activate"));
-        oSettingsModel.setProperty("/activeFlyoutIcon", "sap-icon://paint-bucket");
-        this._openFlyout(oEvent.getSource());
-        // Colour the preview once the flyout DOM exists.
-        setTimeout(updateContrastPreview, 60);
     },
     // SAP native high-contrast theme (HCB / HCW). Applies immediately (unlike
     // the custom colours, which wait for SET) because it is a single, fixed,
@@ -259,7 +306,7 @@ export const popoverInternalController = {
         toggleActiveFeatureClass.call(this, "contrastModePanel", true);
         saveCurrentSettings();
         announce(getText(variant === "hcb" ? "announce.contrastHcb" : "announce.contrastHcw"));
-        this.onCloseFlyout();
+        this.navToMain();
     },
     // Selections update the DRAFT + preview only; the page changes on SET.
     onContrastPresetSelect(oEvent) {
@@ -311,7 +358,7 @@ export const popoverInternalController = {
         const bg = oSettingsModel.getProperty("/contrastBgColor");
         const text = oSettingsModel.getProperty("/contrastTextColor");
         // Nothing chosen → just close (don't apply an empty contrast).
-        if (!bg || !text) { this.onCloseFlyout(); return; }
+        if (!bg || !text) { this.navToMain(); return; }
         // Custom colours and a native HC theme are mutually exclusive.
         disableHighContrastTheme();
         oSettingsModel.setProperty("/contrastTheme", "");
@@ -322,7 +369,7 @@ export const popoverInternalController = {
         toggleActiveFeatureClass.call(this, "contrastModePanel", true);
         saveCurrentSettings();
         announce(getText("announce.contrastOn"));
-        this.onCloseFlyout();
+        this.navToMain();
     },
     onContrastCancel() {
         const s = this._contrastSnapshot;
@@ -343,7 +390,7 @@ export const popoverInternalController = {
             }
             oSettingsModel.setProperty("/contrastModeActive", !!s.active);
         }
-        this.onCloseFlyout();
+        this.navToMain();
     },
     onContrastReset() {
         // Turn contrast off and restore the default (normal) white/black pair.
@@ -448,7 +495,7 @@ export const popoverInternalController = {
 
     // ---- Text spacing (WCAG 1.4.12) ----
     onTextSpacingToolbarPress() {
-        togglePanelExpanded("/textSpacingExpanded");
+        oSettingsModel.setProperty("/textSpacingExpanded", !oSettingsModel.getProperty("/textSpacingExpanded"));
     },
     onTextSpacingChange(e) {
         const level = e.getParameter("selectedItem").getKey();
@@ -465,9 +512,6 @@ export const popoverInternalController = {
     },
 
     // ---- Reading aid (guide / mask) ----
-    onReadingGuideToolbarPress() {
-        togglePanelExpanded("/readingGuideExpanded");
-    },
     onReadingGuideChange(e) {
         const mode = e.getParameter("selectedItem").getKey();
         oSettingsModel.setProperty("/readingGuideMode", mode);
@@ -483,10 +527,6 @@ export const popoverInternalController = {
     },
 
     // ---- Big cursor (selectable colours + custom) ----
-    onBigCursorToggle() {
-        const open = oSettingsModel.getProperty("/bigCursorExpanded");
-        oSettingsModel.setProperty("/bigCursorExpanded", !open);
-    },
     _openBigCursorColorPicker(oOpener) {
         sap.ui.require(["sap/ui/unified/ColorPickerPopover"], (ColorPickerPopover) => {
             if (!this._bigCursorColorPicker) {
@@ -589,82 +629,11 @@ export const popoverInternalController = {
         saveCurrentSettings();
     },
 
-    // Header press TOGGLES the feature: off → activate a default mode and open
-    // the inline panel (shows that mode's intensity); on → turn the correction
-    // off and close. The mode can still be changed via "Advanced settings".
-    onColorBlindnessToggle() {
-        const current = oSettingsModel.getProperty("/colorBlindnessType");
-        if (current === "none") {
-            const modes = oSettingsModel.getProperty("/colorBlindnessModes");
-            const first = (modes && modes.length) ? modes[0].key : "protanomaly";
-            oSettingsModel.setProperty("/colorBlindnessType", first);
-            applyColorBlindness(first, oSettingsModel.getProperty("/colorBlindnessIntensity"));
-            oSettingsModel.setProperty("/colorBlindnessExpanded", true);
-            toggleActiveFeatureClass.call(this, "colorBlindnessPanel", true);
-        } else {
-            oSettingsModel.setProperty("/colorBlindnessType", "none");
-            applyColorBlindness("none", oSettingsModel.getProperty("/colorBlindnessIntensity"));
-            oSettingsModel.setProperty("/colorBlindnessExpanded", false);
-            toggleActiveFeatureClass.call(this, "colorBlindnessPanel", false);
-        }
-        saveCurrentSettings();
-        const on = oSettingsModel.getProperty("/colorBlindnessType") !== "none";
-        announce(getText(on ? "announce.colorBlindnessOn" : "announce.colorBlindnessOff"));
-    },
-
-    // ---- Left flyout (detailed settings) ----
-    onColorBlindnessOpenFlyout(oEvent) {
-        oSettingsModel.setProperty("/activeFlyout", "colorBlindness");
-        oSettingsModel.setProperty("/activeFlyoutTitle", getText("colorBlindness.title"));
-        oSettingsModel.setProperty("/activeFlyoutIcon", "sap-icon://palette");
-        // A detail panel should never open "empty": if nothing is active yet,
-        // default-select the first mode (still changeable afterwards).
-        if (oSettingsModel.getProperty("/colorBlindnessType") === "none") {
-            const modes = oSettingsModel.getProperty("/colorBlindnessModes");
-            const first = (modes && modes.length) ? modes[0].key : "protanomaly";
-            oSettingsModel.setProperty("/colorBlindnessType", first);
-            applyColorBlindness(first, oSettingsModel.getProperty("/colorBlindnessIntensity"));
-            toggleActiveFeatureClass.call(this, "colorBlindnessPanel", true);
-            saveCurrentSettings();
-        }
-        this._openFlyout(oEvent.getSource());
-    },
-
-    // Opens the flyout beside the main popover and keeps it open while the user
-    // interacts with the main popover (main popover added as an extra-content
-    // area so it is not treated as an outside click).
-    _openFlyout(oOpener) {
-        if (!this._oFlyout) return;
-        this._oFlyout.openBy(oOpener);
-        const oPopup = this._oFlyout.oPopup;
-        if (this._oPopover && oPopup && typeof oPopup.setExtraContent === "function") {
-            oPopup.setExtraContent([this._oPopover]);
-        }
-    },
-    onCloseFlyout() {
-        if (this._oFlyout) {
-            this._oFlyout.close();
-        }
-    },
-
     // ---- Font (typography) ----
-    // Header press just expands/collapses the inline simple font-size control;
-    // the full typography panel opens from the "Advanced settings" opener.
-    onFontToggle() {
-        const open = oSettingsModel.getProperty("/fontSizeExpanded");
-        oSettingsModel.setProperty("/fontSizeExpanded", !open);
-    },
     onFontSizeReset() {
         this._applyTypo("fontPct", 0);
     },
 
-    // ---- Font (typography) flyout: zoom, size, line height, spacing, align ----
-    onFontOpenFlyout(oEvent) {
-        oSettingsModel.setProperty("/activeFlyout", "font");
-        oSettingsModel.setProperty("/activeFlyoutTitle", getText("fontSize.title"));
-        oSettingsModel.setProperty("/activeFlyoutIcon", "sap-icon://text");
-        this._openFlyout(oEvent.getSource());
-    },
     _typoMap: {
         zoom: { path: "/typoZoom", set: setTypoZoom, min: 50, max: 200, step: 10 },
         fontPct: { path: "/typoFontPct", set: setTypoFontPct, min: -50, max: 100, step: 10 },
@@ -740,9 +709,6 @@ export const popoverInternalController = {
         oSettingsModel.setProperty("/colorBlindnessIntensity", 100);
         oSettingsModel.setProperty("/blueLightFilterLevel", 50);
         oSettingsModel.setProperty("/blueLightFilterActive", false);
-        oSettingsModel.setProperty("/fontSizeExpanded", false);
-        oSettingsModel.setProperty("/colorBlindnessExpanded", false);
-        oSettingsModel.setProperty("/blueLightFilterExpanded", false);
         oSettingsModel.setProperty("/nightModeActive", false);
         oSettingsModel.setProperty("/toggleImagesActive", false);
         oSettingsModel.setProperty("/contrastModeActive", false);
@@ -753,8 +719,6 @@ export const popoverInternalController = {
         oSettingsModel.setProperty("/highlightLinksActive", false);
         oSettingsModel.setProperty("/stopAnimationsActive", false);
         oSettingsModel.setProperty("/textSpacingExpanded", false);
-        oSettingsModel.setProperty("/readingGuideExpanded", false);
-        oSettingsModel.setProperty("/bigCursorExpanded", false);
         disableBigCursor();
 
         updateTitleText.call(this, "nightModeTitle", "nightMode.activate");
@@ -774,14 +738,13 @@ export const popoverInternalController = {
         toggleActiveFeatureClass.call(this, "colorBlindnessPanel", false);
         toggleActiveFeatureClass.call(this, "fontSizePanel", false);
         toggleActiveFeatureClass.call(this, "ttsPanel", false);
-        oSettingsModel.setProperty("/activeFlyout", "");
-        if (this._oFlyout) {
-            this._oFlyout.close();
-        }
+        this.navToMain();
         clearAllPrefs();
         announce(getText("announce.resetAll"), true);
     },
 
     // ---- Close ----
-    onPopoverClosePress: closePopoverFromEvent
+    onPopoverClosePress() {
+        if (this._oPopover) this._oPopover.close();
+    }
 };

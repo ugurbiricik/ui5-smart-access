@@ -25,7 +25,6 @@ describe("keyboardShortcuts — Alt+Shift+A open/close", () => {
     beforeEach(() => {
         registerShortcuts(); // no-op after the first call
         popoverInternalController._oPopover = null;
-        popoverInternalController._oFlyout = null;
         popoverInternalController._sFragmentId = undefined;
     });
 
@@ -60,7 +59,6 @@ describe("keyboardShortcuts — mapped feature panel", () => {
     beforeEach(() => {
         registerShortcuts();
         popoverInternalController._oPopover = null;
-        popoverInternalController._oFlyout = null;
         popoverInternalController._sFragmentId = undefined;
     });
 
@@ -97,7 +95,6 @@ describe("keyboardShortcuts — guards (ignored combos)", () => {
     beforeEach(() => {
         registerShortcuts();
         popoverInternalController._oPopover = null;
-        popoverInternalController._oFlyout = null;
         popoverInternalController._sFragmentId = undefined;
     });
 

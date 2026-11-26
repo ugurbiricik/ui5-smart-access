@@ -1,24 +1,16 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-   <Panel id="blueLightFilterPanel" expandable="true" expanded="{settings>/blueLightFilterExpanded}" width="auto" class="blueLightFilterPanel">
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <Panel id="blueLightFilterPanel" expandable="false" width="auto" class="blueLightFilterPanel saNavRow">
       <headerToolbar>
-         <OverflowToolbar active="true" press=".onBlueLightFilterToolbarPress">
+         <OverflowToolbar active="true" press=".onNavToDetail" custom:page="blueLightFilter">
             <core:Icon src="sap-icon://light-mode" size="20px" />
             <Title id="blueLightFilterTitle" text="{i18n>blueFilter.activate}" />
+            <ToolbarSpacer />
+            <core:Icon src="sap-icon://slim-arrow-right" size="14px" class="saNavChevron" decorative="true" />
          </OverflowToolbar>
       </headerToolbar>
-      <content>
-         <VBox class="cbQuick" width="100%">
-            <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
-               <Label text="{i18n>blueFilter.intensity}" />
-               <Text text="{settings>/blueLightFilterLevel}%" class="cbPercent" />
-            </HBox>
-            <Slider id="blueLightFilterSlider" min="0" max="100" step="1" value="{settings>/blueLightFilterLevel}" width="100%" change=".onBlueLightFilterSliderChange" class="blueFilterSlider"/>
-            <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="cbIntensityBtns">
-               <Button icon="sap-icon://less" press=".onBlueLightFilterDecrease" tooltip="{i18n>aria.blueFilterDecrease}" class="cbIntBtn"/>
-               <Button id="blueLightFilterResetButton" icon="sap-icon://refresh" press=".onBlueLightFilterReset" tooltip="{i18n>aria.resetBlueLightFilter}" class="cbIntBtn"/>
-               <Button icon="sap-icon://add" press=".onBlueLightFilterIncrease" tooltip="{i18n>aria.blueFilterIncrease}" class="cbIntBtn"/>
-            </HBox>
-         </VBox>
-      </content>
    </Panel>
 </core:FragmentDefinition>

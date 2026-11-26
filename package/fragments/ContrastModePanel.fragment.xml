@@ -1,10 +1,16 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-    <Panel id="contrastModePanel" expandable="false" width="auto" class="contrastModePanel">
-        <headerToolbar>
-            <OverflowToolbar active="true" press=".onContrastModeToolbarPress">
-                <core:Icon src="sap-icon://paint-bucket" size="20px" />
-                <Title id="contrastModeTitle" text="{i18n>contrastMode.activate}" />
-            </OverflowToolbar>
-        </headerToolbar>
-    </Panel>
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <Panel id="contrastModePanel" expandable="false" width="auto" class="contrastModePanel saNavRow">
+      <headerToolbar>
+         <OverflowToolbar active="true" press=".onNavToDetail" custom:page="contrast">
+            <core:Icon src="sap-icon://paint-bucket" size="20px" />
+            <Title id="contrastModeTitle" text="{i18n>contrastMode.activate}" />
+            <ToolbarSpacer />
+            <core:Icon src="sap-icon://slim-arrow-right" size="14px" class="saNavChevron" decorative="true" />
+         </OverflowToolbar>
+      </headerToolbar>
+   </Panel>
 </core:FragmentDefinition>

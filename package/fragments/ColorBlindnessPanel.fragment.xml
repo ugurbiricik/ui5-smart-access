@@ -1,37 +1,16 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-   <Panel id="colorBlindnessPanel" expandable="false" width="auto" class="colorBlindnessPanel">
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <Panel id="colorBlindnessPanel" expandable="false" width="auto" class="colorBlindnessPanel saNavRow">
       <headerToolbar>
-         <OverflowToolbar active="true" press=".onColorBlindnessToggle">
+         <OverflowToolbar active="true" press=".onNavToDetail" custom:page="colorBlindness">
             <core:Icon src="sap-icon://palette" size="20px" />
             <Title text="{i18n>colorBlindness.title}" />
+            <ToolbarSpacer />
+            <core:Icon src="sap-icon://slim-arrow-right" size="14px" class="saNavChevron" decorative="true" />
          </OverflowToolbar>
       </headerToolbar>
-      <content>
-         <!-- Opened inline from the row. Shows the compact intensity (once a
-              mode is active) and an "Advanced settings" opener for the full
-              card picker in the left flyout. -->
-         <VBox class="cbAdvancedBox" width="100%" visible="{settings>/colorBlindnessExpanded}">
-            <VBox class="cbQuick" width="100%" visible="{= ${settings>/colorBlindnessType} !== 'none'}">
-               <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
-                  <Label text="{i18n>colorBlindness.intensity}" />
-                  <Text text="{settings>/colorBlindnessIntensity}%" class="cbPercent" />
-               </HBox>
-               <Slider min="0" max="100" step="1" value="{settings>/colorBlindnessIntensity}" width="100%" change=".onColorBlindnessIntensityChange" />
-               <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="cbIntensityBtns">
-                  <Button icon="sap-icon://less" press=".onColorBlindnessIntensityDecrease" tooltip="{i18n>aria.colorIntensityDecrease}" class="cbIntBtn" />
-                  <Button icon="sap-icon://refresh" press=".onColorBlindnessIntensityReset" tooltip="{i18n>aria.colorIntensityReset}" class="cbIntBtn" />
-                  <Button icon="sap-icon://add" press=".onColorBlindnessIntensityIncrease" tooltip="{i18n>aria.colorIntensityIncrease}" class="cbIntBtn" />
-               </HBox>
-            </VBox>
-            <Button
-               text="{i18n>font.advanced}"
-               icon="sap-icon://slim-arrow-right"
-               iconFirst="false"
-               type="Transparent"
-               press=".onColorBlindnessOpenFlyout"
-               class="advancedSettingsBtn"
-               width="100%" />
-         </VBox>
-      </content>
    </Panel>
 </core:FragmentDefinition>

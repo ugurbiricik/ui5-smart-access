@@ -60,14 +60,10 @@ describe("settingsModel — colour-blindness legacy migration", () => {
         expect(oSettingsModel.getProperty("/colorBlindnessType")).toBe("none");
     });
 
-    it("expands the colour-blindness panel only when a mode is active", async () => {
-        const active = await loadModel({ colorBlindnessType: "protanopia" });
-        expect(active.oSettingsModel.getProperty("/colorBlindnessExpanded")).toBe(true);
-        // loadModel() only clears via the outer beforeEach; clear again so the
-        // "no mode" case starts from empty storage.
-        localStorage.clear();
-        const none = await loadModel();
-        expect(none.oSettingsModel.getProperty("/colorBlindnessExpanded")).toBe(false);
+    it("always starts on the main page, even with an active mode", async () => {
+        const { oSettingsModel } = await loadModel({ colorBlindnessType: "protanopia" });
+        expect(oSettingsModel.getProperty("/navPage")).toBe("main");
+        expect(oSettingsModel.getProperty("/colorBlindnessExpanded")).toBeUndefined();
     });
 });
 

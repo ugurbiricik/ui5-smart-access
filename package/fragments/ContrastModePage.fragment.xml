@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <VBox id="saPageContrast" class="saPage saDetailPage contrastSection" width="100%">
+      <Label text="{i18n>contrast.sapThemes}" class="contrastLabel" />
+      <HBox class="contrastThemeRow" alignItems="Center" width="100%">
+          <Button text="{i18n>contrast.hcw}" press=".onContrastHighContrast" custom:variant="hcw" tooltip="{i18n>contrast.hcwTooltip}" class="contrastThemeBtn contrastThemeHcw">
+              <layoutData><FlexItemData growFactor="1" /></layoutData>
+          </Button>
+          <Button text="{i18n>contrast.hcb}" press=".onContrastHighContrast" custom:variant="hcb" tooltip="{i18n>contrast.hcbTooltip}" class="contrastThemeBtn contrastThemeHcb">
+              <layoutData><FlexItemData growFactor="1" /></layoutData>
+          </Button>
+      </HBox>
+
+      <Label text="{i18n>contrast.preset}" class="contrastLabel" />
+      <HBox class="contrastPresetRow" items="{settings>/contrastPresets}" alignItems="Center" justifyContent="SpaceBetween" width="100%">
+          <Image src="{settings>preview}" width="40px" height="40px" densityAware="false" press=".onContrastPresetSelect" class="contrastPreset" />
+      </HBox>
+
+      <Label text="{i18n>contrast.background}" class="contrastLabel" />
+      <HBox class="contrastSwatchRow" items="{settings>/contrastColors}" alignItems="Center" justifyContent="SpaceBetween" width="100%">
+          <Image src="{settings>preview}" width="28px" height="28px" densityAware="false" press=".onContrastBgSelect" tooltip="{= ${settings>color} === 'custom' ? ${i18n>contrast.custom} : ${settings>color}}" class="contrastSwatch" />
+      </HBox>
+
+      <Label text="{i18n>contrast.text}" class="contrastLabel" />
+      <HBox class="contrastSwatchRow" items="{settings>/contrastColors}" alignItems="Center" justifyContent="SpaceBetween" width="100%">
+          <Image src="{settings>preview}" width="28px" height="28px" densityAware="false" press=".onContrastTextSelect" tooltip="{= ${settings>color} === 'custom' ? ${i18n>contrast.custom} : ${settings>color}}" class="contrastSwatch" />
+      </HBox>
+
+      <Label text="{i18n>contrast.preview}" class="contrastLabel" />
+      <HBox class="contrastPreviewBox" alignItems="Center" justifyContent="Center" width="100%">
+          <Text text="{i18n>contrast.sample}" class="contrastPreviewText" />
+      </HBox>
+
+      <HBox class="contrastActions" alignItems="Center" justifyContent="SpaceBetween" width="100%">
+          <Button icon="sap-icon://accept" press=".onContrastSet" tooltip="{i18n>contrast.set}" class="contrastSetBtn" />
+          <Button icon="sap-icon://refresh" press=".onContrastReset" tooltip="{i18n>contrast.reset}" class="contrastActionBtn" />
+          <Button icon="sap-icon://decline" press=".onContrastCancel" tooltip="{i18n>contrast.cancel}" class="contrastActionBtn" />
+      </HBox>
+   </VBox>
+</core:FragmentDefinition>

@@ -1,6 +1,6 @@
 import Fragment from "sap/ui/core/Fragment";
 import { oSettingsModel } from "./settingsModel.js";
-import { popoverInternalController } from "./popoverController.js";
+import { popoverInternalController, DETAIL_PAGES } from "./popoverController.js";
 
 // Global keyboard shortcuts for the accessibility assistant. A single keydown
 // listener on the document maps Alt+Shift+<letter> combos to features:
@@ -39,19 +39,11 @@ const isOpen = () => {
     return !!(pop && pop.isOpen && pop.isOpen());
 };
 
-// Panels whose row opens a flyout (instead of an inline section). Their
-// shortcut toggles that flyout open/closed.
-const FLYOUT_PANELS = {
-    contrastModePanel: "contrast",
-    ttsPanel: "tts"
-};
+const DETAIL_KEY_BY_PANEL = Object.fromEntries(
+    Object.entries(DETAIL_PAGES).map(([key, page]) => [page.panelId, key])
+);
 
-// True when the flyout is currently showing the given section.
-const flyoutOpenFor = (key) => {
-    const fly = popoverInternalController._oFlyout;
-    return !!(fly && fly.isOpen && fly.isOpen()
-        && oSettingsModel.getProperty("/activeFlyout") === key);
-};
+const detailOpenFor = (key) => isOpen() && popoverInternalController.getCurrentPageKey() === key;
 
 // Resolves once the popover is open, opening it first if needed. Resolves to
 // null when there is no controller/anchor to open by (init never ran).
@@ -95,11 +87,9 @@ const handleKey = (code) => {
     // Any other feature: open the assistant, then click that row.
     if (FEATURE_PANELS[code]) {
         const panelId = FEATURE_PANELS[code];
-        // Flyout-opening rows (contrast, read-aloud) don't toggle on press, so
-        // make the shortcut toggle them: close if that flyout is already open.
-        const flyoutKey = FLYOUT_PANELS[panelId];
-        if (flyoutKey && flyoutOpenFor(flyoutKey)) {
-            popoverInternalController.onCloseFlyout();
+        const detailKey = DETAIL_KEY_BY_PANEL[panelId];
+        if (detailKey && detailOpenFor(detailKey)) {
+            popoverInternalController.navToMain();
             return true;
         }
         void ensureOpen().then((oPop) => {

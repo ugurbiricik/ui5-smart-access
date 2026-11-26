@@ -75,16 +75,10 @@ export const oSettingsModel = new JSONModel({
     colorBlindnessIntensity: savedSettings.colorBlindnessIntensity ?? 100,
     colorBlindnessModes: [],
 
-    // Left flyout popover: which detailed feature it currently shows.
-    activeFlyout: "",
-    activeFlyoutTitle: "",
-    activeFlyoutIcon: "",
+    navPage: "main",
+    navTitle: "",
     blueLightFilterLevel: savedSettings.blueLightFilterLevel ?? 50,
     blueLightFilterActive: savedSettings.blueLightFilterActive ?? false,
-    fontSizeExpanded: false,
-    // Open the inline panel on load if a colour-correction mode is already active.
-    colorBlindnessExpanded: (migrateCbType(savedSettings.colorBlindnessType) ?? "none") !== "none",
-    blueLightFilterExpanded: false,
     nightModeActive: false,
     toggleImagesActive: false,
     contrastModeActive: savedSettings.contrastModeActive ?? false,
@@ -109,12 +103,10 @@ export const oSettingsModel = new JSONModel({
     textSpacingExpanded: false,
     // Reading aid: none | guide | mask
     readingGuideMode: savedSettings.readingGuideMode ?? "none",
-    readingGuideExpanded: false,
     // Enlarged pointer: 'none' | black | white | red | blue | green.
     // Migrates the old boolean (true → black).
     bigCursorColor: savedSettings.bigCursorColor ?? (savedSettings.bigCursorActive ? "black" : "none"),
     bigCursorCustomColor: savedSettings.bigCursorCustomColor ?? "#3b82f6",
-    bigCursorExpanded: false,
     bigCursorColors: [],
     // Link + focus highlighting
     highlightLinksActive: savedSettings.highlightLinksActive ?? false,

@@ -96,19 +96,10 @@
   border-radius: 14px;
 }
 
-/* Keep a small gap from the viewport edge. UI5 anchors the main popover flush
-   to the right edge (inline `right:1px`) when it opens below a top-right
-   trigger, and `offsetX` loses to that edge-clamping — so nudge it inward with
-   a transform (safe: the open popover carries no transform of its own). The
-   flyout is excluded (it keeps its own offset). */
-.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) {
-  transform: translateX(-12px);
-}
-
 .abicsAccessibilityPopover .sapMPopoverScroll,
 .abicsAccessibilityPopover .sapMPopoverCont {
   background-color: var(--sa-bg);
-  overflow-x: hidden !important;
+  overflow-x: clip !important;
   /* Firefox (no ::-webkit-scrollbar support): thin bar + subtle blue thumb.
      UI5's Horizon theme sets `scrollbar-color` here, so we override it. */
   scrollbar-width: thin;
@@ -147,6 +138,50 @@
   background-color: var(--sa-scroll-hover) !important;
 }
 
+.abicsAccessibilityPopover.sapMPopover {
+  margin-right: 12px;
+}
+
+.abicsAccessibilityPopover .saNav {
+  overflow: clip;
+}
+
+.abicsAccessibilityPopover .saNav > .sapMNavItem {
+  position: relative;
+  height: auto;
+}
+
+.abicsAccessibilityPopover .saNav > .sapMNavItem.sapMNavItemRendering,
+.abicsAccessibilityPopover .saNav > .sapMNavItem.sapMNavItemTransparent:not(.sapMNavItemFading),
+.abicsAccessibilityPopover .saNav:has(> .sapMNavItemFading.sapMNavItemOpaque) > .sapMNavItem.sapMNavItemTransparent,
+.abicsAccessibilityPopover .saNav > .sapMNavItem.sapMNavItemSlideCenterToLeft,
+.abicsAccessibilityPopover .saNav > .sapMNavItem.sapMNavItemSlideCenterToRight {
+  position: absolute;
+  top: 0;
+}
+
+.abicsAccessibilityPopover .resetAllToolbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  background-color: var(--sa-bg);
+  border-top: 1px solid var(--sa-line);
+}
+
+.abicsAccessibilityPopover .saNavChevron {
+  color: var(--sa-text-2);
+  margin-right: 4px;
+}
+
+.abicsAccessibilityPopover .saDetailRow {
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.abicsAccessibilityPopover.sapMDialog {
+  border-radius: 0;
+}
+
 .abicsAccessibilityPopover .sapMPopoverHeader {
   background: var(--sa-header-bg) !important;
   border-bottom: 1px solid var(--sa-header-line);
@@ -160,7 +195,7 @@
 /* ── Panel cards ── */
 /* Main popover: flat list rows (no separators, no borders; cards live only
    inside the flyout). Hover/selected are conveyed purely by background color. */
-.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel {
+.abicsAccessibilityPopover .sapMPanel {
   background-color: transparent;
   border-radius: 0;
   box-shadow: none;
@@ -171,24 +206,24 @@
 
 /* Header toolbar + content transparent so the panel-level hover/selected
    background shows through the whole row. */
-.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMTB.sapMPanelHeaderTB,
-.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelContent {
+.abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB,
+.abicsAccessibilityPopover .sapMPanel .sapMPanelContent {
   background-color: transparent;
 }
 
 /* Hover: subtle SOLID tint on the HEADER ROW only — never on the expanded
    inner content area (opaque so tones never blend/stack inconsistently). */
-.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMTB.sapMPanelHeaderTB:hover {
+.abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB:hover {
   background-color: var(--sa-row-hover) !important;
 }
 
 /* Kill the rounded corners AND every inner border the theme puts on the
    (still-expandable) rows, so the list reads as flat with no lines at all. */
-.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelWrappingDivTb,
-.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelWrappingDivTbExpanded,
-.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelHdr,
-.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMTB.sapMPanelHeaderTB,
-.abicsAccessibilityPopover:not(.abicsAccessibilityFlyout) .sapMPanel .sapMPanelContent {
+.abicsAccessibilityPopover .sapMPanel .sapMPanelWrappingDivTb,
+.abicsAccessibilityPopover .sapMPanel .sapMPanelWrappingDivTbExpanded,
+.abicsAccessibilityPopover .sapMPanel .sapMPanelHdr,
+.abicsAccessibilityPopover .sapMPanel .sapMTB.sapMPanelHeaderTB,
+.abicsAccessibilityPopover .sapMPanel .sapMPanelContent {
   border: 0;
   border-radius: 0;
 }
@@ -202,28 +237,6 @@
 
 .abicsAccessibilityPopover .sapMPanelContent:not(.sapMPanelBGTransparent) {
   border-bottom: 0;
-}
-
-/* fontSize + colorBlindness are non-expandable panels whose inline compact
-   control is visibility-bound; when it is hidden the content div must not
-   reserve vertical padding (else an empty gap shows). The compact controls
-   (.fontQuick / .cbQuick) supply their own vertical spacing when visible. */
-.abicsAccessibilityPopover .fontSizePanel > .sapMPanelContent,
-.abicsAccessibilityPopover .colorBlindnessPanel > .sapMPanelContent,
-.abicsAccessibilityPopover .bigCursorPanel > .sapMPanelContent,
-.abicsAccessibilityPopover .contrastModePanel > .sapMPanelContent {
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-/* The Font panel's content shrink-wraps to the stepper (~154px), which left the
-   "Advanced settings" link looking centred in the row. Force the content +
-   inline box to the full panel width so the link sits at the true left edge
-   (the value box + stepper stay centred via their own alignment). */
-.abicsAccessibilityPopover .fontSizePanel > .sapMPanelContent,
-.abicsAccessibilityPopover .fontSizePanel .fontQuick {
-  width: 100%;
-  box-sizing: border-box;
 }
 
 /* Big-cursor colour swatches + reset (swatches spread across; reset at right) */
@@ -261,28 +274,20 @@
 .abicsAccessibilityPopover .bigCursorSwatch:focus,
 .abicsAccessibilityPopover .bigCursorSwatch:focus-visible,
 .abicsAccessibilityPopover .bigCursorSwatch:active,
-.abicsAccessibilityPopover .bigCursorPanel .sapMImg,
-.abicsAccessibilityPopover .bigCursorPanel .sapMImg:focus,
-.abicsAccessibilityPopover .bigCursorPanel .sapMImg:focus-visible {
+.abicsAccessibilityPopover .bigCursorRow .sapMImg,
+.abicsAccessibilityPopover .bigCursorRow .sapMImg:focus,
+.abicsAccessibilityPopover .bigCursorRow .sapMImg:focus-visible {
   outline: none !important;
   box-shadow: none !important;
   border: none !important;
 }
 
 /* ── Header-only panels (opener rows / switches, no inline content) ── */
-.abicsAccessibilityPopover .nightModePanel,
-.abicsAccessibilityPopover .toggleImagesPanel,
-.abicsAccessibilityPopover .highlightLinksPanel,
-.abicsAccessibilityPopover .stopAnimationsPanel,
-.abicsAccessibilityPopover .ttsPanel {
+.abicsAccessibilityPopover .saMainPage .sapMPanel {
   padding: 0;
 }
 
-.abicsAccessibilityPopover .nightModePanel > .sapMPanelContent,
-.abicsAccessibilityPopover .toggleImagesPanel > .sapMPanelContent,
-.abicsAccessibilityPopover .highlightLinksPanel > .sapMPanelContent,
-.abicsAccessibilityPopover .stopAnimationsPanel > .sapMPanelContent,
-.abicsAccessibilityPopover .ttsPanel > .sapMPanelContent {
+.abicsAccessibilityPopover .saMainPage .sapMPanel > .sapMPanelContent {
   display: none;
 }
 
@@ -447,7 +452,7 @@
 }
 
 /* App-wide button standard: solid light-blue fill, no border/outline. */
-.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner {
+.abicsAccessibilityPopover .saDetailPage .sapMBtnInner {
   border: 1px solid var(--sa-control-line) !important;
   border-radius: 9px !important;
   background-color: var(--sa-control-bg) !important;
@@ -455,24 +460,24 @@
   color: var(--sa-control-text);
 }
 
-.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner .sapUiIcon {
+.abicsAccessibilityPopover .saDetailPage .sapMBtnInner .sapUiIcon {
   border: 0;
   color: var(--sa-control-text);
 }
 
-.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner:hover {
+.abicsAccessibilityPopover .saDetailPage .sapMBtnInner:hover {
   background-color: var(--sa-control-hover) !important;
 }
 
-.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner:focus,
-.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner:focus-visible,
-.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner:active {
+.abicsAccessibilityPopover .saDetailPage .sapMBtnInner:focus,
+.abicsAccessibilityPopover .saDetailPage .sapMBtnInner:focus-visible,
+.abicsAccessibilityPopover .saDetailPage .sapMBtnInner:active {
   outline: none !important;
   box-shadow: none !important;
 }
 
-.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner::before,
-.abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner::after {
+.abicsAccessibilityPopover .saDetailPage .sapMBtnInner::before,
+.abicsAccessibilityPopover .saDetailPage .sapMBtnInner::after {
   display: none !important;
 }
 
@@ -724,11 +729,6 @@
   padding: 4px 0 10px 0;
 }
 
-/* Colour-blindness inline panel (compact intensity + "Advanced settings"). */
-.abicsAccessibilityPopover .cbAdvancedBox {
-  padding: 8px 0 6px 0;
-}
-
 /* ── Contrast-mode flyout (presets + colour pickers + live preview) ── */
 .abicsAccessibilityPopover .contrastSection .contrastLabel {
   font-weight: 600;
@@ -857,72 +857,6 @@
   gap: 18px;
 }
 
-/* "Advanced settings" opener: a plain text link — no bg, left-aligned, small,
-   underline on hover (user request). */
-.abicsAccessibilityPopover .advancedSettingsBtn {
-  margin-top: 6px;
-}
-
-.abicsAccessibilityPopover .advancedSettingsBtn {
-  width: 100%;
-}
-
-.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner {
-  width: 100%;
-  min-width: 100%;
-  border: none !important;
-  background-color: transparent !important;
-  box-shadow: none;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 4px;
-  padding: 0 !important;
-  height: auto;
-}
-
-.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner:hover {
-  background-color: transparent !important;
-}
-
-.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner:hover .sapMBtnContent {
-  text-decoration: underline !important;
-}
-
-.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnContent {
-  color: var(--sa-accent);
-  font-weight: 600 !important;
-  font-size: 12px !important;
-}
-
-.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner .sapUiIcon {
-  color: var(--sa-accent) !important;
-  font-size: 12px !important;
-  width: auto !important;
-  min-width: 0 !important;
-}
-
-/* No focus ring/outline/border on the opener in ANY state — unconditional on
-   both the outer button and inner (beats the theme ring whatever form). */
-.abicsAccessibilityPopover .advancedSettingsBtn,
-.abicsAccessibilityPopover .advancedSettingsBtn:hover,
-.abicsAccessibilityPopover .advancedSettingsBtn:focus,
-.abicsAccessibilityPopover .advancedSettingsBtn:focus-visible,
-.abicsAccessibilityPopover .advancedSettingsBtn:active,
-.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner,
-.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner:focus,
-.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner:focus-visible,
-.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner:active {
-  outline: none !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-
-.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner::before,
-.abicsAccessibilityPopover .advancedSettingsBtn .sapMBtnInner::after {
-  display: none !important;
-}
-
 /* −/reset/+ icon buttons: never show a focus ring/outline/border in any state
    (user request — the solid button already signals the affordance). */
 .abicsAccessibilityPopover .cbIntBtn:focus-visible,
@@ -971,7 +905,7 @@
 /* ── Flyout content padding ── */
 /* The flyout's VBox sections had no inset, so content hugged the popover
    edges. Give every flyout section comfortable side padding. */
-.abicsAccessibilityFlyout .flyoutSection {
+.abicsAccessibilityPopover .saDetailPage {
   padding: 8px 16px 14px 16px;
   box-sizing: border-box;
 }
@@ -1207,7 +1141,7 @@
     border-color: var(--sa-text);
   }
 
-  .abicsAccessibilityPopover .sapMPanelContent .sapMBtnInner {
+  .abicsAccessibilityPopover .saDetailPage .sapMBtnInner {
     border: 2px solid var(--sa-text) !important;
   }
 
@@ -1255,10 +1189,9 @@
 html .abicsAccessibilityPopover .cbIntBtn:focus-visible,
 html .abicsAccessibilityPopover .contrastActions .sapMBtn:focus-visible,
 html .abicsAccessibilityPopover .contrastThemeBtn:focus-visible,
-html .abicsAccessibilityPopover .advancedSettingsBtn:focus-visible,
 html .abicsAccessibilityPopover .contrastSection .sapMImg:focus-visible,
 html .abicsAccessibilityPopover .bigCursorSwatch:focus-visible,
-html .abicsAccessibilityPopover .bigCursorPanel .sapMImg:focus-visible,
+html .abicsAccessibilityPopover .bigCursorRow .sapMImg:focus-visible,
 html .abicsAccessibilityPopover .cbList .sapMCLI:focus-visible,
 html .abicsAccessibilityPopover .cbList .sapMLIB:focus-visible,
 html .abicsAccessibilityPopover .sapMSlt:focus-visible,

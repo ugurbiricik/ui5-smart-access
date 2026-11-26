@@ -1,9 +1,15 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-   <Panel id="ttsPanel" expandable="false" width="auto" class="ttsPanel">
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <Panel id="ttsPanel" expandable="false" width="auto" class="ttsPanel saNavRow">
       <headerToolbar>
-         <OverflowToolbar active="true" press=".onTTSOpenFlyout">
+         <OverflowToolbar active="true" press=".onNavToDetail" custom:page="tts">
             <core:Icon src="sap-icon://sound-loud" size="20px" />
             <Title text="{i18n>tts.title}" />
+            <ToolbarSpacer />
+            <core:Icon src="sap-icon://slim-arrow-right" size="14px" class="saNavChevron" decorative="true" />
          </OverflowToolbar>
       </headerToolbar>
    </Panel>

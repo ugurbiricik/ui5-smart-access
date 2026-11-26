@@ -1,0 +1,18 @@
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+>
+   <VBox id="saPageReadingGuide" class="saPage saDetailPage" width="100%">
+      <HBox alignItems="Center" width="100%" justifyContent="SpaceBetween" class="saDetailRow">
+         <Select id="readingGuideSelect" selectedKey="{settings>/readingGuideMode}" type="Default" change=".onReadingGuideChange" width="100%" ariaLabelledBy="popoverTitle">
+            <layoutData><FlexItemData growFactor="1" /></layoutData>
+            <items>
+               <core:Item key="none" text="{i18n>readingGuide.none}" />
+               <core:Item key="guide" text="{i18n>readingGuide.guide}" />
+               <core:Item key="mask" text="{i18n>readingGuide.mask}" />
+            </items>
+         </Select>
+         <Button id="readingGuideResetButton" icon="sap-icon://refresh" press=".onReadingGuideReset" tooltip="{i18n>aria.resetReadingGuide}" class="cbIntBtn"/>
+      </HBox>
+   </VBox>
+</core:FragmentDefinition>

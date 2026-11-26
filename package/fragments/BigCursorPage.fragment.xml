@@ -1,0 +1,28 @@
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+>
+   <VBox id="saPageBigCursor" class="saPage saDetailPage" width="100%">
+      <HBox class="bigCursorRow" alignItems="Center" width="100%">
+         <HBox class="bigCursorSwatches" items="{settings>/bigCursorColors}" alignItems="Center" justifyContent="SpaceBetween">
+            <layoutData><FlexItemData growFactor="1" /></layoutData>
+            <Image
+               src="{settings>preview}"
+               width="34px"
+               height="34px"
+               densityAware="false"
+               tooltip="{settings>label}"
+               press=".onBigCursorSelect"
+               class="bigCursorSwatch">
+               <customData>
+                  <core:CustomData
+                     key="sacursorsel"
+                     writeToDom="true"
+                     value="{= ${settings>key} === ${settings>/bigCursorColor} ? 'yes' : 'no' }" />
+               </customData>
+            </Image>
+         </HBox>
+         <Button icon="sap-icon://refresh" press=".onBigCursorReset" tooltip="{i18n>aria.bigCursorReset}" class="cbIntBtn bigCursorResetBtn" />
+      </HBox>
+   </VBox>
+</core:FragmentDefinition>

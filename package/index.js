@@ -102,31 +102,13 @@ const ensurePopoverLoaded = (controller) => {
         oPopover.attachAfterClose(() => {
             stopReading();
             hideHint();
-            if (popoverInternalController._oFlyout) {
-                popoverInternalController._oFlyout.close();
-            }
+            popoverInternalController.navToMain(true);
         });
 
         // Wire per-feature hover hints once the panels have a DOM ref.
         oPopover.attachAfterOpen(function _hintsOnce() {
             attachHoverHints(sFragmentId);
             oPopover.detachAfterOpen(_hintsOnce);
-        });
-
-        // Left flyout popover for detailed feature settings.
-        const sFlyoutId = sFragmentId + "-fly";
-        Fragment.load({
-            id: sFlyoutId,
-            name: "ui5-smart-access.Flyout",
-            controller: popoverInternalController
-        }).then((oFlyout) => {
-            // Same ordering as the popover: set our models first so the
-            // flyout's bindings never resolve against the host "i18n" model.
-            oFlyout.setModel(oSettingsModel, "settings");
-            oFlyout.setModel(i18nModel, "i18n");
-            oView.addDependent(oFlyout);
-            popoverInternalController._oFlyout = oFlyout;
-            popoverInternalController._sFlyoutId = sFlyoutId;
         });
 
         return oPopover;

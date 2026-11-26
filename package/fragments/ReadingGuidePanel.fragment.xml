@@ -1,24 +1,16 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-   <Panel id="readingGuidePanel" expandable="true" expanded="{settings>/readingGuideExpanded}" width="auto" class="readingGuidePanel">
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <Panel id="readingGuidePanel" expandable="false" width="auto" class="readingGuidePanel saNavRow">
       <headerToolbar>
-         <OverflowToolbar active="true" press=".onReadingGuideToolbarPress">
+         <OverflowToolbar active="true" press=".onNavToDetail" custom:page="readingGuide">
             <core:Icon src="sap-icon://horizontal-grip" size="20px" />
             <Title text="{i18n>readingGuide.title}" />
+            <ToolbarSpacer />
+            <core:Icon src="sap-icon://slim-arrow-right" size="14px" class="saNavChevron" decorative="true" />
          </OverflowToolbar>
       </headerToolbar>
-      <content>
-         <VBox justifyContent="Center" alignItems="Center" width="100%">
-            <HBox alignItems="Center" width="200px" justifyContent="SpaceBetween">
-               <Select id="readingGuideSelect" selectedKey="{settings>/readingGuideMode}" type="Default" change=".onReadingGuideChange">
-                  <items>
-                     <core:Item key="none" text="{i18n>readingGuide.none}" />
-                     <core:Item key="guide" text="{i18n>readingGuide.guide}" />
-                     <core:Item key="mask" text="{i18n>readingGuide.mask}" />
-                  </items>
-               </Select>
-               <Button id="readingGuideResetButton" icon="sap-icon://refresh" press=".onReadingGuideReset" tooltip="{i18n>aria.resetReadingGuide}" class="cbIntBtn"/>
-            </HBox>
-         </VBox>
-      </content>
    </Panel>
 </core:FragmentDefinition>

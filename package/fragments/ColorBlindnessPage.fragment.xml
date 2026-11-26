@@ -1,0 +1,36 @@
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+   <VBox id="saPageColorBlindness" class="saPage saDetailPage" width="100%">
+      <List items="{settings>/colorBlindnessModes}" showSeparators="None" mode="None" backgroundDesign="Transparent" width="100%" class="cbList">
+          <CustomListItem type="Active" press=".onColorBlindnessSelect" class="cbItem">
+              <VBox class="cbCard" width="100%">
+                  <HBox alignItems="Center" width="100%" class="cbCardRow">
+                      <Image src="{settings>icon}" width="36px" height="36px" densityAware="false" class="cbSwatch" />
+                      <VBox class="cbTexts">
+                          <layoutData>
+                              <FlexItemData growFactor="1" />
+                          </layoutData>
+                          <Text text="{settings>title}" class="cbTitle" />
+                          <Text text="{settings>sub}" class="cbSub" />
+                      </VBox>
+                  </HBox>
+                  <VBox class="cbIntensity" width="100%" visible="{= ${settings>key} === ${settings>/colorBlindnessType}}">
+                      <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
+                          <Label text="{i18n>colorBlindness.intensity}" />
+                          <Text text="{settings>/colorBlindnessIntensity}%" class="cbPercent" />
+                      </HBox>
+                      <Slider min="0" max="100" step="1" value="{settings>/colorBlindnessIntensity}" width="100%" change=".onColorBlindnessIntensityChange" />
+                      <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="cbIntensityBtns">
+                          <Button icon="sap-icon://less" press=".onColorBlindnessIntensityDecrease" tooltip="{i18n>aria.colorIntensityDecrease}" class="cbIntBtn" />
+                          <Button icon="sap-icon://refresh" press=".onColorBlindnessIntensityReset" tooltip="{i18n>aria.colorIntensityReset}" class="cbIntBtn" />
+                          <Button icon="sap-icon://add" press=".onColorBlindnessIntensityIncrease" tooltip="{i18n>aria.colorIntensityIncrease}" class="cbIntBtn" />
+                      </HBox>
+                  </VBox>
+              </VBox>
+          </CustomListItem>
+      </List>
+   </VBox>
+</core:FragmentDefinition>

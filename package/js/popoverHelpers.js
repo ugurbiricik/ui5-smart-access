@@ -33,15 +33,3 @@ export function updateIconSrc(controlId, src) {
         control.setSrc(src);
     }
 }
-
-// Walks up the control tree from the event source until it finds the
-// surrounding sap.m.Popover, then closes it. Used by the header close button.
-export function closePopoverFromEvent(oEvent) {
-    let oPopover = oEvent.getSource().getParent();
-    while (oPopover && !(oPopover.isA && oPopover.isA("sap.m.Popover"))) {
-        oPopover = oPopover.getParent && oPopover.getParent();
-    }
-    if (oPopover && oPopover.close) {
-        oPopover.close();
-    }
-}
