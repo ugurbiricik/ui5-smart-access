@@ -41,6 +41,9 @@
   --sa-hcw-text: #000000;
   --sa-hcb-bg: #000000;
   --sa-hcb-text: #ffffff;
+  --sa-badge-bg: var(--sapContent_BadgeBackground, #d04343);
+  --sa-badge-text: var(--sapContent_BadgeTextColor, #ffffff);
+  --sa-badge-line: var(--sapContent_BadgeBorderColor, #ffffff);
   --sa-spectrum: linear-gradient(90deg, #e53935, #fb8c00, #fdd835, #43a047, #00acc1, #1e88e5, #8e24aa);
 }
 
@@ -1327,4 +1330,46 @@ html .abicsAccessibilityPopover .sapMSwt:focus-visible,
 html .abicsAccessibilityPopover .sapMSliderHandle:focus-visible {
   outline: 2px solid var(--sa-focus) !important;
   outline-offset: 2px !important;
+}
+
+.saLauncherBadgeHost {
+  overflow: visible !important;
+}
+
+.saLauncherBadgeHost.saLauncherBadgeRel {
+  position: relative;
+}
+
+html .saLauncherBadgeHost > span.saLauncherBadge {
+  position: absolute;
+  top: -0.375rem;
+  right: -0.375rem;
+  z-index: 2;
+  box-sizing: border-box;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.3125rem;
+  border: 0.125rem solid var(--sa-badge-line);
+  border-radius: 0.625rem;
+  background: var(--sa-badge-bg) !important;
+  color: var(--sa-badge-text) !important;
+  font-family: var(--sapFontFamily, "72", Arial, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1rem;
+  letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (forced-colors: active) {
+  html .saLauncherBadgeHost > span.saLauncherBadge {
+    border-color: CanvasText;
+    background: Canvas !important;
+    color: CanvasText !important;
+    forced-color-adjust: none;
+  }
 }

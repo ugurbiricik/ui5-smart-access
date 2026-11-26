@@ -80,6 +80,17 @@ types ship via `index.d.ts`. `openAccessPopover` is `async`, so call it as
 `initAccessibility` is optional but recommended: without it, saved preferences
 re-apply and the keyboard shortcuts activate only after the first open.
 
+### Launcher badge
+
+The launcher shows how many features are active as a small badge in its top-right
+corner (hidden when nothing is active) and its accessible name is extended to
+e.g. "Barrierefreiheits-Assistent öffnen, 3 Funktionen aktiv" /
+"Open accessibility assistant, 3 features active". The badge follows the SAP theme
+(`--sapContent_Badge*`, incl. high-contrast themes) and updates live. It is attached
+to the control passed to `initAccessibility` (or the button that opened the popover);
+for an `sap.m.Button` it sits on the inner round/rect shape, so keep that element
+free of `overflow: hidden` overrides.
+
 ## Deployment (BTP / SAP Build Work Zone)
 
 A standard html5-apps-repo / managed-approuter deployment. Only three

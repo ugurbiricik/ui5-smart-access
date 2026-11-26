@@ -17,6 +17,7 @@ import { attachHoverHints, hideHint } from "./js/hoverHints.js";
 import { buildColorBlindnessModes } from "./js/cbSwatches.js";
 import { buildBigCursorColors } from "./js/bigCursor.js";
 import { registerShortcuts, setShortcutContext } from "./js/keyboardShortcuts.js";
+import { attachLauncherBadge } from "./js/launcherBadge.js";
 
 // Opens the popover using the given controller, anchored to `trigger`. Shared
 // by the public entry point and the keyboard shortcut handler.
@@ -128,6 +129,7 @@ export const openAccessPopover = async (controller, oEvent) => {
     // handler returns, so oEvent.getSource() can be null by the time the popover
     // promise resolves.
     const oSource = oEvent.getSource();
+    attachLauncherBadge(oSource);
 
     const oPopover = await ensurePopoverLoaded(controller);
 
@@ -145,6 +147,7 @@ export const initAccessibility = (controller, oTrigger) => {
     ensureInitialized();
     setShortcutContext(openByTrigger, controller, oTrigger);
     registerShortcuts();
+    attachLauncherBadge(oTrigger);
     // Warm the popover fragment in the background so the first open is instant
     // even on a cold page load — otherwise the fragment/css/i18n only start
     // loading on the first click, blocking the UI for 2-3s in a deployed app.
