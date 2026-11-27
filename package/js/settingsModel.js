@@ -1,11 +1,6 @@
 import JSONModel from "sap/ui/model/json/JSONModel";
 import Fragment from "sap/ui/core/Fragment";
 import { savePref, loadPref, clearPrefs } from "./preferences.js";
-import {
-    initFontSizer,
-    onIncreaseFontSize,
-    onDecreaseFontSize
-} from "./fontsize.js";
 import { applyColorBlindness } from "./colorBlindness.js";
 import { enableBlueLightFilter } from "./blueLightFilter.js";
 import { toggleNightMode } from "./nightMode.js";
@@ -38,6 +33,7 @@ export const PERSISTED_KEYS = [
     "bigCursorColor", "bigCursorCustomColor", "highlightLinksActive", "stopAnimationsActive",
     "typoZoom", "typoFontSize", "typoLineHeight", "typoWordSpacing",
     "typoLetterSpacing", "typoAlign",
+    "textSpacingLevel",
     "profileId", "profileSnapshot"
 ];
 

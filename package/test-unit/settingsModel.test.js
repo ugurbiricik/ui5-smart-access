@@ -167,14 +167,12 @@ describe("settingsModel — PERSISTED_KEYS", () => {
             "bigCursorColor", "bigCursorCustomColor", "highlightLinksActive", "stopAnimationsActive",
             "typoZoom", "typoFontSize", "typoLineHeight", "typoWordSpacing",
             "typoLetterSpacing", "typoAlign",
+            "textSpacingLevel",
             "profileId", "profileSnapshot"
         ]);
     });
 
-    // BUG: `textSpacingLevel` is used in the model (settingsModel.js:107) and
-    // re-applied in restoreSavedState() (line 176), but it is not in
-    // PERSISTED_KEYS, so the chosen text-spacing level never survives a reload.
-    it.skip("INTENDED: textSpacingLevel should be persisted (missing from PERSISTED_KEYS)", async () => {
+    it("persists textSpacingLevel so the chosen spacing survives a reload", async () => {
         const { PERSISTED_KEYS } = await loadModel();
         expect(PERSISTED_KEYS).toContain("textSpacingLevel");
     });
