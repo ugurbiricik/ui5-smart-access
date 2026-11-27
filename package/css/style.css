@@ -1505,3 +1505,61 @@ html .abicsAccessibilityPopover .saMainFooter .sapMBtn:focus-visible {
   outline-offset: 2px;
   border-radius: 9px;
 }
+
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saDetailPage .sapMBtnInner.sapMToggleBtnPressed,
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtn.sapMSegBBtnSel,
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtn.sapMSegBBtnSel .sapMSegBBtnInner {
+  background-color: var(--sa-emph-bg) !important;
+  border-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saDetailPage .sapMBtnInner.sapMToggleBtnPressed .sapMBtnContent,
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saDetailPage .sapMBtnInner.sapMToggleBtnPressed .sapUiIcon,
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtn.sapMSegBBtnSel .sapMSegBBtnInner,
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtn.sapMSegBBtnSel .sapUiIcon {
+  color: var(--sa-emph-text) !important;
+}
+
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl.sapMSegB {
+  gap: 4px;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtn,
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtn .sapMSegBBtnInner {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 8px;
+}
+
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtn {
+  background-color: var(--sa-control-bg) !important;
+}
+
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtn::before,
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtn::after,
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtnInner::before,
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtnInner::after {
+  display: none !important;
+}
+
+.abicsAccessibilityPopover .saDetailPage {
+  padding-top: 12px;
+}
+
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtn:focus-visible {
+  outline: 2px solid var(--sa-focus) !important;
+  outline-offset: 2px !important;
+}
+
+html:not([class*="_hc"]) .abicsAccessibilityPopover .saSegControl .sapMSegBBtnInnerWrapper {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 8px;
+}
